@@ -1,6 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BDSAProject.Core", "BDSAProject.Core\BDSAProject.Core.csproj", "{B0A85036-C050-4891-9C67-98670FAEFBE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebAssembly.Server", "BlazorWebAssembly\Server\BlazorWebAssembly.Server.csproj", "{08D5718D-D58C-409F-AA23-51787843E3F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebAssembly.Client", "BlazorWebAssembly\Client\BlazorWebAssembly.Client.csproj", "{05F75303-B36F-44E7-AD67-09F2CC844D66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorWebAssembly.Shared", "BlazorWebAssembly\Shared\BlazorWebAssembly.Shared.csproj", "{BAF81C30-0FDF-47EC-A4ED-E4D13B0F7009}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +19,17 @@ Global
 		{B0A85036-C050-4891-9C67-98670FAEFBE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0A85036-C050-4891-9C67-98670FAEFBE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0A85036-C050-4891-9C67-98670FAEFBE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08D5718D-D58C-409F-AA23-51787843E3F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08D5718D-D58C-409F-AA23-51787843E3F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08D5718D-D58C-409F-AA23-51787843E3F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08D5718D-D58C-409F-AA23-51787843E3F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05F75303-B36F-44E7-AD67-09F2CC844D66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05F75303-B36F-44E7-AD67-09F2CC844D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05F75303-B36F-44E7-AD67-09F2CC844D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05F75303-B36F-44E7-AD67-09F2CC844D66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAF81C30-0FDF-47EC-A4ED-E4D13B0F7009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAF81C30-0FDF-47EC-A4ED-E4D13B0F7009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAF81C30-0FDF-47EC-A4ED-E4D13B0F7009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAF81C30-0FDF-47EC-A4ED-E4D13B0F7009}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
