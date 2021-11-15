@@ -5,13 +5,13 @@ services:
     container_name: postgres_container
     image: postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       PGDATA: /data/postgres
     volumes:
       - postgres:/data/postgres
     ports:
-      - "5431:5432"
+      - "5433:5432"
     networks:
       - postgres
     restart: unless-stopped
