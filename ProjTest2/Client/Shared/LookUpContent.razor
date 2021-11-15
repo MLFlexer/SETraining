@@ -1,0 +1,21 @@
+﻿@using ProjTest2.Shared.Models
+
+@inject HttpClient Http
+
+
+<h3>LookUpContent</h3>
+
+<EditForm Model="content" OnSubmit="OnSubmit">
+    <InputText Value="content.Title"></InputText>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+    public Content content;
+
+    async void OnSubmit()
+    {
+        content = await Http.GetFromJsonAsync<Article[]>($"api/Content/{id}");
+    }
+}
