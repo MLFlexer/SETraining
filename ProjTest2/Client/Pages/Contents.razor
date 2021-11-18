@@ -3,6 +3,7 @@
 @using ProjTest2.Shared.Models
 @using Microsoft.EntityFrameworkCore
 @using System.Linq;
+@using System.Diagnostics
 
 @inject HttpClient Http
 
@@ -26,6 +27,7 @@ else
                 <th>Language</th>
                 <th>Rating</th>
                 <th>Type</th>
+                <th>Extra</th>
             </tr>
         </thead>
         <tbody>
@@ -38,23 +40,33 @@ else
                     <td>@c.Language</td>
                     <td>@c.Rating</td>
                     <td>@c.Type</td>
+                    <td>
+                        <button>@(c.Type == "Article" ? "Læs artikel" : "Se video")</button>                        
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
-
-    <EditForm>
-
-    </EditForm>
+    @* *@
+    @* <EditForm> *@
+    @* *@
+    @* </EditForm> *@
 }
 
 @code {
-    private Content[]? content;
+    private ContentDetailsDTO[]? content;
 
     protected override async Task OnInitializedAsync()
     {
         // Det der Article[] skal måske ændres?? men det virker ikke med Content.
         // Jeg tror det er fordi Content er en abstrakt klasse
-        content = await Http.GetFromJsonAsync<Article[]>("api/Content");
+        //Har ændret det til ContentDetailsDTO, samme klasse som bliver sendt afsted
+        content = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+    }
+
+    private static void alertDescription()
+    {
+        Console.WriteLine("HEJ");
+
     }
 }

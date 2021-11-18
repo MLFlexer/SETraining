@@ -5,19 +5,27 @@ A repository to help users navigate the confusing web of ever emerging technolog
 ________
 ## Get started
 
-### 1. Create your local .env
+#### Note:
+- Step `1.` and `2.` are only run on first setup of the project
+
+### 1. Create your local .env for docker-compose
 1. Create `.env` file in Project root directory.
 2. Populate the file with the following line: `POSTGRES_PASSWORD=$secret`.
 3. Change the `$secret` keyword above with our super secret GUID that is not in VCS.
 
-### 2. Run database with docker 🐳:
+### 2. Set connections string in user secrets 
+1. cd into `/Server` folder.
+2. type `dotnet user-secrets set  "ConnectionStrings:Khan" "$connectionsstring" `
+3. Where `$connectionsstring` is our secret connectionsstring not found in VCS.
+
+### 3. Run database with docker 🐳:
 1. Open terminal.
-2. `cd` to the projects root directory.
+2. `cd` to the projects root directory ⚠️ IMPORTANT IN ORDER TO LOAD `.env` file into docker-compose ⚠️.
 3. Run `docker-compose up`.
 4. Optional: `docker-compose up --detach` to continue using same terminal
 
-### 3. Stop a database instance 😵:
-1. Run `docker-compose down` in terminal
+### 4. Stop a database instance 😵:
+1. Run `docker-compose down` in terminal or press trash button in Docker Desktop App
 _____
 
 ## Troubleshooting
@@ -25,13 +33,16 @@ _____
 Run the following commands:
 - `docker compose down`
 - `docker system prune`
-- `docker volume prune
+- `docker volume prune`
 
 After that you should 
 - Restart the containers with step `2. Run database with docker 🐳`
 
-### User doesn't exist
-- Fuck, ask Jens
+
+## Extra 
+Find total line count in whole project from bash:
+- cd to root directory 
+- run command `find . -name '*.cs' | xargs wc -l`
 
 ## Resources 🔗:
 - [Overleaf](https://www.overleaf.com/9249462866zsfhsbjmvxmg)

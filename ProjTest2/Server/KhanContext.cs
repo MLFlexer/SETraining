@@ -11,6 +11,8 @@ public class KhanContext : DbContext, IKhanContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Content>().HasDiscriminator(c => c.Type);
+        
         modelBuilder.Entity<Content>()
             .HasDiscriminator<string>("Type")
             .HasValue<Article>("Article")

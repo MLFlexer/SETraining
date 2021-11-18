@@ -1,3 +1,5 @@
+using System;
+
 namespace ProjTest2.Shared
 {
     public class WeatherForecast

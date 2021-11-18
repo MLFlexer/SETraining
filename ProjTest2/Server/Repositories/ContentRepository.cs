@@ -1,9 +1,12 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ProjTest2.Shared;
 using ProjTest2.Shared.DTOs;
 using ProjTest2.Shared.Models;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ProjTest2.Server.Repositories;
 public class ContentRepository : IContentRepository

@@ -1,5 +1,10 @@
+using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using ProjTest2.Server;
 using ProjTest2.Server.Repositories;
 
@@ -10,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+var connS = builder.Configuration.GetConnectionString("Khan");
+Console.WriteLine(connS);
 builder.Services.AddDbContext<KhanContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Khan")));
 builder.Services.AddScoped<IKhanContext, KhanContext>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
