@@ -49,3 +49,4 @@ Find total line count in whole project from bash:
 - [Trello](https://trello.com/invite/b/C1tRzypF/1aef96c54dce7720d977a2b082b4ba0e/bdsa-project)
 - [Discord](https://discord.gg/vGYScYvGRj)
 - [Github](https://github.com/MLFlexer/BDSAProject)
+- https://www.figma.com/file/JwxyhxTZZtYT2hkQBury1o/UI-BDSA
