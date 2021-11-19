@@ -27,16 +27,16 @@ public static class SeedExtensions
 
         if(!context.Content.Any())
         {
-            /* context.Content.AddRange(
-                new Video("Boring Video") { },
-                new Article("TestArticle1") { Description = "Description for Article 1", Language = "C#", Difficulty = 5, Rating = 4.8f },
-                new Video("Java Tutorial") { Description = "Quick Java tutorial", Language = "Java", Difficulty = 3, Rating = 2.5f, Length = 1069 },
-                new Video("Great Video") { Description = "This is an even better video!", Language = "JavaScript", Difficulty = 4, Rating = 3.2f, Length = 724 },
-                new Article("Better Article") { Description = "This is a better article", Language = "C#", Difficulty = 3, Rating = 5.0f },
-                new Article("Article 2") { Language = "Java", Difficulty = 3, Rating = 2.5f },
-                new Article("Boring Article") { },
-                new Video("TestVideo1") { Description = "Description for Video 1", Language = "C#", Difficulty = 4, Rating = 4.9f, Length = 253 }
-            ); */
+            context.Content.AddRange(
+                new Video("Boring Video", new byte[0]) { },
+                new Article("TestArticle1", "textbody") { Description = "Description for Article 1", Language = "C#", Difficulty = 5, Rating = 4.8f },
+                new Video("Java Tutorial", new byte[0]) { Description = "Quick Java tutorial", Language = "Java", Difficulty = 3, Rating = 2.5f, Length = 1069 },
+                new Video("Great Video", new byte[0]) { Description = "This is an even better video!", Language = "JavaScript", Difficulty = 4, Rating = 3.2f, Length = 724 },
+                new Article("Better Article", "textbody") { Description = "This is a better article", Language = "C#", Difficulty = 3, Rating = 5.0f },
+                new Article("Article 2", "textbody") { Language = "Java", Difficulty = 3, Rating = 2.5f },
+                new Article("Boring Article", "textbody") { },
+                new Video("TestVideo1", new byte[0]) { Description = "Description for Video 1", Language = "C#", Difficulty = 4, Rating = 4.9f, Length = 253 }
+            );
 
             context.SaveChanges();
         }
