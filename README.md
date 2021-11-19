@@ -21,11 +21,11 @@ ________
 ### 3. Run database with docker 🐳:
 1. Open terminal.
 2. `cd` to the projects root directory ⚠️ IMPORTANT IN ORDER TO LOAD `.env` file into docker-compose ⚠️.
-3. Run `docker-compose up`.
-4. Optional: `docker-compose up --detach` to continue using same terminal
+3. Run `docker compose up`.
+4. Optional: `docker compose up --detach` to continue using same terminal
 
 ### 4. Stop a database instance 😵:
-1. Run `docker-compose down` in terminal or press trash button in Docker Desktop App
+1. Run `docker compose down` in terminal or press trash button in Docker Desktop App
 _____
 
 ## Troubleshooting
