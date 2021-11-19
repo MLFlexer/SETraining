@@ -12,8 +12,8 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211119131014_test3")]
-    partial class test3
+    [Migration("20211119151527_test6")]
+    partial class test6
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,8 +35,8 @@ namespace ProjTest2.Server.Migrations
                     b.Property<float>("AvgRating")
                         .HasColumnType("real");
 
-                    b.Property<string>("Creator")
-                        .HasColumnType("text");
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -44,17 +44,8 @@ namespace ProjTest2.Server.Migrations
                     b.Property<int?>("Difficulty")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Language")
-                        .HasColumnType("text");
-
                     b.Property<int?>("LearnerId")
                         .HasColumnType("integer");
-
-                    b.Property<int?>("ModeratorId")
-                        .HasColumnType("integer");
-
-                    b.Property<float?>("Rating")
-                        .HasColumnType("real");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -66,9 +57,9 @@ namespace ProjTest2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LearnerId");
+                    b.HasIndex("CreatorId");
 
-                    b.HasIndex("ModeratorId");
+                    b.HasIndex("LearnerId");
 
                     b.ToTable("Content");
 
@@ -223,13 +214,17 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("Content", b =>
                 {
+                    b.HasOne("ProjTest2.Shared.Models.Moderator", "Creator")
+                        .WithMany("Contents")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ProjTest2.Shared.Models.Learner", null)
                         .WithMany("favorites")
                         .HasForeignKey("LearnerId");
 
-                    b.HasOne("ProjTest2.Shared.Models.Moderator", null)
-                        .WithMany("Contents")
-                        .HasForeignKey("ModeratorId");
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -261,7 +256,7 @@ namespace ProjTest2.Server.Migrations
             modelBuilder.Entity("ProjTest2.Shared.Models.Rating", b =>
                 {
                     b.HasOne("Content", "Content")
-                        .WithMany("ratings")
+                        .WithMany("Ratings")
                         .HasForeignKey("ContentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -281,7 +276,7 @@ namespace ProjTest2.Server.Migrations
                 {
                     b.Navigation("ProgrammingLanguages");
 
-                    b.Navigation("ratings");
+                    b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Learner", b =>

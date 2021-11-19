@@ -4,10 +4,9 @@ namespace ProjTest2.Shared.Models
 {
     public class Learner
     {
-        public Learner(string name, int id)
+        public Learner(string name)
         {
             Name = name;
-            Id = id;
         }
 
         public string Name { get; set; }

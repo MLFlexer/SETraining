@@ -2,9 +2,8 @@ namespace ProjTest2.Shared.Models
 {
     public class Image
     {
-        public Image(int id, byte[] rawImage)
+        public Image(byte[] rawImage)
         {
-            Id = id;
             RawImage = rawImage;
         }
 

@@ -8,9 +8,8 @@ namespace ProjTest2.Shared.Models
         {
 
         }
-        public Rating(int id, int value, Content content, Learner learner)
+        public Rating(int value, Content content, Learner learner)
         {
-            Id = id;
             Value = value;
             Content = content;
             Learner = learner; 

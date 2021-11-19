@@ -6,47 +6,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ProjTest2.Server.Migrations
 {
-    public partial class test1 : Migration
+    public partial class test6 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<float>(
-                name: "AvgRating",
-                table: "Content",
-                type: "real",
-                nullable: false,
-                defaultValue: 0f);
-
-            migrationBuilder.AddColumn<string>(
-                name: "Creator",
-                table: "Content",
-                type: "text",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "LearnerId",
-                table: "Content",
-                type: "integer",
-                nullable: true);
-
-            migrationBuilder.AddColumn<int>(
-                name: "ModeratorId",
-                table: "Content",
-                type: "integer",
-                nullable: true);
-
-            migrationBuilder.AddColumn<byte[]>(
-                name: "RawVideo",
-                table: "Content",
-                type: "bytea",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "TextBody",
-                table: "Content",
-                type: "text",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "Image",
                 columns: table => new
@@ -88,20 +51,36 @@ namespace ProjTest2.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProgrammingLanguage",
+                name: "Content",
                 columns: table => new
                 {
-                    Language = table.Column<string>(type: "text", nullable: false),
-                    ContentId = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Difficulty = table.Column<int>(type: "integer", nullable: true),
+                    CreatorId = table.Column<int>(type: "integer", nullable: false),
+                    AvgRating = table.Column<float>(type: "real", nullable: false),
+                    Type = table.Column<string>(type: "text", nullable: false),
+                    LearnerId = table.Column<int>(type: "integer", nullable: true),
+                    TextBody = table.Column<string>(type: "text", nullable: true),
+                    Length = table.Column<int>(type: "integer", nullable: true),
+                    RawVideo = table.Column<byte[]>(type: "bytea", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Language);
+                    table.PrimaryKey("PK_Content", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProgrammingLanguage_Content_ContentId",
-                        column: x => x.ContentId,
-                        principalTable: "Content",
+                        name: "FK_Content_Learner_LearnerId",
+                        column: x => x.LearnerId,
+                        principalTable: "Learner",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Content_Moderator_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Moderator",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -132,6 +111,23 @@ namespace ProjTest2.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProgrammingLanguage",
+                columns: table => new
+                {
+                    Language = table.Column<string>(type: "text", nullable: false),
+                    ContentId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Language);
+                    table.ForeignKey(
+                        name: "FK_ProgrammingLanguage_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Rating",
                 columns: table => new
                 {
@@ -159,14 +155,14 @@ namespace ProjTest2.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Content_CreatorId",
+                table: "Content",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Content_LearnerId",
                 table: "Content",
                 column: "LearnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Content_ModeratorId",
-                table: "Content",
-                column: "ModeratorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HistoryEntry_ContentId",
@@ -192,40 +188,15 @@ namespace ProjTest2.Server.Migrations
                 name: "IX_Rating_LearnerId",
                 table: "Rating",
                 column: "LearnerId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Content_Learner_LearnerId",
-                table: "Content",
-                column: "LearnerId",
-                principalTable: "Learner",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Content_Moderator_ModeratorId",
-                table: "Content",
-                column: "ModeratorId",
-                principalTable: "Moderator",
-                principalColumn: "Id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Content_Learner_LearnerId",
-                table: "Content");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Content_Moderator_ModeratorId",
-                table: "Content");
-
             migrationBuilder.DropTable(
                 name: "HistoryEntry");
 
             migrationBuilder.DropTable(
                 name: "Image");
-
-            migrationBuilder.DropTable(
-                name: "Moderator");
 
             migrationBuilder.DropTable(
                 name: "ProgrammingLanguage");
@@ -234,39 +205,13 @@ namespace ProjTest2.Server.Migrations
                 name: "Rating");
 
             migrationBuilder.DropTable(
+                name: "Content");
+
+            migrationBuilder.DropTable(
                 name: "Learner");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Content_LearnerId",
-                table: "Content");
-
-            migrationBuilder.DropIndex(
-                name: "IX_Content_ModeratorId",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "AvgRating",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "Creator",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "LearnerId",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "ModeratorId",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "RawVideo",
-                table: "Content");
-
-            migrationBuilder.DropColumn(
-                name: "TextBody",
-                table: "Content");
+            migrationBuilder.DropTable(
+                name: "Moderator");
         }
     }
 }

@@ -16,53 +16,47 @@ public static class SeedExtensions
         {
             var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
 
-            SeedCharacters(context);
+            SeedContents(context);
         }
         return host;
     }
 
-    private static void SeedCharacters(KhanContext context)
+    private static void SeedContents(KhanContext context)
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any())
-        {
-            /* context.Content.AddRange(
-                new Video("Boring Video") { },
-                new Article("TestArticle1") { Description = "Description for Article 1", Language = "C#", Difficulty = 5, Rating = 4.8f },
-                new Video("Java Tutorial") { Description = "Quick Java tutorial", Language = "Java", Difficulty = 3, Rating = 2.5f, Length = 1069 },
-                new Video("Great Video") { Description = "This is an even better video!", Language = "JavaScript", Difficulty = 4, Rating = 3.2f, Length = 724 },
-                new Article("Better Article") { Description = "This is a better article", Language = "C#", Difficulty = 3, Rating = 5.0f },
-                new Article("Article 2") { Language = "Java", Difficulty = 3, Rating = 2.5f },
-                new Article("Boring Article") { },
-                new Video("TestVideo1") { Description = "Description for Video 1", Language = "C#", Difficulty = 4, Rating = 4.9f, Length = 253 }
-            ); */
+        if(!context.Content.Any()) {
+            var Java = new ProgrammingLanguage("java");
+            var JavaList = new List<ProgrammingLanguage>();
+            JavaList.Add(Java);
+            var creator = new Moderator("Jens");
 
-            context.SaveChanges();
-        }
-
-        /*if (!context.Articles.Any())
-        {
-            context.Articles.AddRange(
-                new Article("TestArticle1") { Description = "Description for Article 1", Language = "C#", Difficulty = 5, Rating = 4.8f },
-                new Article("Article 2") { Language = "Java", Difficulty = 3, Rating = 2.5f },
-                new Article("Better Article") { Description = "This is a better article", Language = "C#", Difficulty = 3, Rating = 5.0f },
-                new Article("Boring Article") { }
+            context.Content.AddRange(
+                new Video("Boring Video", new byte[0]/* , creator */) {Creator = creator },
+                new Article("TestArticle1", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Description for Article 1",  Difficulty = DifficultyLevel.Novice, AvgRating = 4.8f },
+                new Video("Java Tutorial", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Quick Java tutorial",  Difficulty = DifficultyLevel.Novice, AvgRating = 2.5f, Length = 1069 },
+                new Video("Great Video", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "This is an even better video!",  Difficulty = DifficultyLevel.Novice, AvgRating = 3.2f, Length = 724 },
+                new Article("Better Article", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "This is a better article",  Difficulty = DifficultyLevel.Novice, AvgRating = 5.0f },
+                new Article("Article 2", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Difficulty = DifficultyLevel.Novice, AvgRating = 2.5f },
+                new Article("Boring Article", "textbody"/* , creator */) {Creator = creator },
+                new Video("TestVideo1", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Description for Video 1",  Difficulty = DifficultyLevel.Novice, AvgRating = 4.9f, Length = 253 }
             );
 
             context.SaveChanges();
         }
+    }
 
-        if (!context.Videos.Any())
+    private static void SeedHistoryEntries(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if(!context.HistoryEntry.Any())
         {
-            context.Videos.AddRange(
-                new Video("TestVideo1") { Description = "Description for Video 1", Language = "C#", Difficulty = 4, Rating = 4.9f, Length = 253 },
-                new Video("Java Tutorial") { Description = "Quick Java tutorial", Language = "Java", Difficulty = 3, Rating = 2.5f, Length = 1069 },
-                new Video("Great Video") { Description = "This is an even better video!", Language = "JavaScript", Difficulty = 4, Rating = 3.2f, Length = 724 },
-                new Video("Boring Video") {  }
+            context.HistoryEntry.AddRange(
+                
             );
 
             context.SaveChanges();
-        }*/
+        }
     }
 }

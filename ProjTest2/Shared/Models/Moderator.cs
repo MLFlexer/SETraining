@@ -5,9 +5,8 @@ namespace ProjTest2.Shared.Models
 {
     public class Moderator
     {
-        public Moderator(int id, string name)
+        public Moderator(string name)
         {
-            Id = id;
             Name = name;
             Contents = new List<Content>();
         }

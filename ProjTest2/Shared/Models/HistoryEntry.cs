@@ -7,9 +7,8 @@ namespace ProjTest2.Shared.Models
         private HistoryEntry() //EFC-contructor
         {
         }
-        public HistoryEntry(int id, DateTime date, Content content, Learner learner)
+        public HistoryEntry(DateTime date, Content content, Learner learner)
         {
-            Id = id;
             Date = date;
             Content = content;
             Learner = learner;
