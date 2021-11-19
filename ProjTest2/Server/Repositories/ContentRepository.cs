@@ -68,7 +68,7 @@ public class ContentRepository : IContentRepository
                 content.Type
             ); */
 
-        return new ContentDetailsDTO(1, ",", "","",1,1.2f,"article");
+        return new ContentDetailsDTO(1, ",", "",new List<ProgrammingLanguage>(), DifficultyLevel.Novice, 1.2f, "article");
     }
 
     public Task<Status> DeleteAsync(int contentId)
@@ -88,9 +88,9 @@ public class ContentRepository : IContentRepository
                 content.Id,
                 content.Title,
                 content.Description,
-                content.Language,
+                content.ProgrammingLanguages,
                 content.Difficulty,
-                content.Rating,
+                content.AvgRating,
                 content.Type)
             ).ToListAsync();
 

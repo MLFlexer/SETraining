@@ -1,9 +1,11 @@
 ﻿
+using ProjTest2.Shared.Models;
+
 namespace ProjTest2.Shared.DTOs;
 
 public record ContentDTO(int Id, string Title, string Type);
 
-public record ContentDetailsDTO(int Id, string Title, string? Description, string? Language, int? Difficulty, float? Rating/*, IReadOnlySet<Tag>? Tags,*/, string Type) : ContentDTO(Id, Title, Type);
+public record ContentDetailsDTO(int Id, string Title, string? Description, ICollection<ProgrammingLanguage>? ProgrammingLanguages, DifficultyLevel? Difficulty, float? AvgRating, string Type) : ContentDTO(Id, Title, Type);
 
 public record ContentCreateDTO
 {
@@ -15,10 +17,10 @@ public record ContentCreateDTO
 
     public string Title { get; init; }
     public string? Description { get; init; }
-    public string? Language { get; init; }
-    public int? Difficulty { get; init; }
+    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; init; }
+    public DifficultyLevel? Difficulty { get; init; }
 
-    public float? Rating { get; init; }
+    public float? AvgRating { get; init; }
 
     public string Type { get; init; }
 }
