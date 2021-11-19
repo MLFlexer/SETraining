@@ -1,0 +1,44 @@
+@* @page "/Login"
+
+<PageTitle>Login</PageTitle>
+
+<h1>Welcome too SE training</h1>
+
+
+<div class="row">
+    <RadzenLogin AllowResetPassword="false" ResetPasswordText="Forgot password">
+    </RadzenLogin>
+</div>
+@code
+{
+
+
+
+
+
+} *@
+@page "/Login"
+<form method="post" action="account/login">
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenHeading Size="H1" Text="Login">
+    </RadzenHeading>
+    <RadzenTemplateForm Action="/Account/Login" Method="post" TItem="dynamic">
+      <ChildContent>
+        <RadzenLabel Component="Username" style="display: block; margin-top: 16px" Text="Username">
+        </RadzenLabel>
+        <RadzenTextBox style="width: 100%" Name="Username">
+        </RadzenTextBox>
+        <RadzenLabel Component="Password" style="display: block; margin-top: 16px" Text="Password">
+        </RadzenLabel>
+        <RadzenPassword style="width: 100%" Name="Password">
+        </RadzenPassword>
+        <RadzenButton ButtonType="ButtonType.Submit" style="margin-top: 16px; width: 100%" Text="Login">
+        </RadzenButton>
+        <RadzenButton ButtonType="ButtonType.Submit" style="margin-top: 16px; width: 100%" Text="Create account">
+        </RadzenButton>
+      </ChildContent>
+    </RadzenTemplateForm>
+  </ChildContent>
+</RadzenContent>
+</form>
