@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ProjTest2.Shared.Models
 {
     public class ProgrammingLanguage
@@ -7,7 +9,7 @@ namespace ProjTest2.Shared.Models
             Language = language;
         }
         //Skal være unik
-        
+        [Key]        
         public string Language { get; set; }
     }
 }

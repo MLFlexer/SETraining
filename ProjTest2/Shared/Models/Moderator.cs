@@ -12,8 +12,8 @@ namespace ProjTest2.Shared.Models
             Contents = new List<Content>();
         }
         
-        private int Id { get; set; }
-        private string Name { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
         public ICollection<Content> Contents { get; set; }
 
     }

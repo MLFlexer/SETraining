@@ -3,9 +3,9 @@ namespace ProjTest2.Shared.Models;
 
 public class Article : Content
 {
-    public Article(string Title, string text) : base(Title, "Article")
+    public Article(string Title, string textBody) : base(Title, "Article")
     {
-        textBody = text;
+        TextBody = textBody;
     }
-    private string textBody { get; set; }
+    public string TextBody { get; set; }
 }
