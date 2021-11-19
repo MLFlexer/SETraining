@@ -20,7 +20,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<ContentDetailsDTO> CreateAsync(ContentCreateDTO content)
     {
-        Content entity = null;
+        /* Content entity = null;
         if (content.Type == "Article")
         {
             entity = new Article(content.Title)
@@ -66,7 +66,9 @@ public class ContentRepository : IContentRepository
                 entity.Difficulty,
                 entity.Rating,
                 content.Type
-            );
+            ); */
+
+        return new ContentDetailsDTO(1, ",", "","",1,1.2f,"article");
     }
 
     public Task<Status> DeleteAsync(int contentId)

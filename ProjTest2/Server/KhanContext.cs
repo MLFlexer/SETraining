@@ -6,6 +6,13 @@ namespace ProjTest2.Server;
 public class KhanContext : DbContext, IKhanContext
 {
     public DbSet<Content> Content => Set<Content>();
+    public DbSet<Learner> Learner => Set<Learner>();
+    public DbSet<Moderator> Moderator => Set<Moderator>();
+    public DbSet<Rating> Rating => Set<Rating>();
+    public DbSet<ProgrammingLanguage> ProgrammingLanguage => Set<ProgrammingLanguage>();
+    public DbSet<HistoryEntry> HistoryEntry => Set<HistoryEntry>();
+    public DbSet<Image> Image => Set<Image>();
+
 
     public KhanContext(DbContextOptions<KhanContext> options) : base(options) { }
 

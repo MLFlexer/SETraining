@@ -27,7 +27,7 @@ public static class SeedExtensions
 
         if(!context.Content.Any())
         {
-            context.Content.AddRange(
+            /* context.Content.AddRange(
                 new Video("Boring Video") { },
                 new Article("TestArticle1") { Description = "Description for Article 1", Language = "C#", Difficulty = 5, Rating = 4.8f },
                 new Video("Java Tutorial") { Description = "Quick Java tutorial", Language = "Java", Difficulty = 3, Rating = 2.5f, Length = 1069 },
@@ -36,7 +36,7 @@ public static class SeedExtensions
                 new Article("Article 2") { Language = "Java", Difficulty = 3, Rating = 2.5f },
                 new Article("Boring Article") { },
                 new Video("TestVideo1") { Description = "Description for Video 1", Language = "C#", Difficulty = 4, Rating = 4.9f, Length = 253 }
-            );
+            ); */
 
             context.SaveChanges();
         }

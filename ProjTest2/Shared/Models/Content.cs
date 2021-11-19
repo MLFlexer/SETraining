@@ -1,5 +1,6 @@
 ﻿
-namespace ProjTest2.Shared.Models;
+using System.Collections.Generic;
+using ProjTest2.Shared.Models;
 
 public abstract class Content
 {
@@ -7,6 +8,7 @@ public abstract class Content
     {
         Title = title;
         Type = type;
+        ProgrammingLanguages = new List<ProgrammingLanguage>();
     }
 
     public int Id { get; set; }
@@ -15,6 +17,11 @@ public abstract class Content
     public string? Language { get; set; }
     public int? Difficulty { get; set; }
     public float? Rating { get; set; }
+    public string? Creator { get; set; }
+
+    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; }
+    public ICollection<Rating>? ratings { get; set; }
+    public float AvgRating { get; set; }
 
     public string Type { get; set; }
 }
