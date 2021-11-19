@@ -1,0 +1,61 @@
+@page "/Create_Account"
+
+@*
+NOTE: MANGE ELEMENTER HER ER TAGET FRA LOGIN, SÅ VI SKAL LIGE FINDE UD AF HVAD SOM FØRER TIL HVAD!!
+*@
+
+<form method="post" action="account/create">
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenHeading Size="H1" Text="Create a new account">
+    </RadzenHeading>
+    <RadzenTemplateForm Action="/Account/Login" Method="post" TItem="dynamic">
+      <ChildContent>
+        <RadzenLabel Component="Username" style="display: block; margin-top: 16px" Text="Username">
+        </RadzenLabel>
+        <RadzenTextBox Placeholder="Enter username..." style="width: 100%" Name="Username">
+        </RadzenTextBox>
+        <RadzenLabel Component="Password" style="display: block; margin-top: 16px" Text="Password">
+        </RadzenLabel>
+        <RadzenPassword Placeholder="Enter password..." style="width: 100%" Name="Password">
+        </RadzenPassword>
+        <RadzenButton ButtonType="ButtonType.Submit" style="margin-top: 16px; width: 100%" Text="Login">
+        </RadzenButton>
+         <RadzenButton ButtonType="ButtonType.Submit" style="margin-top: 16px; width: 100%" Text="Back">
+        </RadzenButton>
+      </ChildContent>
+    </RadzenTemplateForm>
+  </ChildContent>
+</RadzenContent>
+</form>
+
+
+
+@* <PageTitle>Create_Account</PageTitle>
+
+<h1>Create a new account</h1>
+
+
+<div class="row">
+    <div class="col-xl-6">
+        <h3>Username</h3>
+        <RadzenTextBox Placeholder="Enter username..." />
+        <h3>Password</h3>
+        <RadzenPassword Placeholder="Enter password..." />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xl-6">
+        <RadzenButton Text="@textBack"></RadzenButton>
+        <RadzenButton Text="@textLogin"></RadzenButton>
+    </div>
+</div>
+
+@code
+{
+    string textBack = "Back";
+    string textLogin = "Login";
+
+
+} *@

@@ -1,0 +1,27 @@
+@page "/Search"
+
+<PageTitle>Search</PageTitle>
+
+<RadzenContent Container="main">
+  <ChildContent>
+    <RadzenTemplateForm TItem="dynamic">
+      <ChildContent>
+        <RadzenTextBox Placeholder="Search..." Component="Search" style="width: 100%">
+        </RadzenTextBox>
+          <RadzenCard Style="height: 500px">
+          
+          <RadzenMenu>
+            <RadzenMenuItem Text="Programming language" Icon="keyboard_alt">
+              <RadzenMenuItem Text="Buttons" Path="buttons" Icon="account_circle"></RadzenMenuItem>
+            </RadzenMenuItem>
+          </RadzenMenu>
+          
+          </RadzenCard>
+      </ChildContent>
+    </RadzenTemplateForm>
+  </ChildContent>
+</RadzenContent>
+
+@code{
+
+}
