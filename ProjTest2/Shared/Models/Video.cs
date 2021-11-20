@@ -1,6 +1,8 @@
 ﻿namespace ProjTest2.Shared.Models;
 public class Video : Content
 {
+   
+
     public Video(string Title, byte[] rawVideo) : base(Title, "Video")
     {
         RawVideo = rawVideo;
