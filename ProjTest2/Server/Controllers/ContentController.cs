@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjTest2.Server.Repositories;
 using ProjTest2.Shared.DTOs;
+using ProjTest2.Shared;
 
 namespace ProjTest2.Server.Controllers
 {
@@ -25,6 +25,14 @@ namespace ProjTest2.Server.Controllers
         public async Task<IEnumerable<ContentDTO>> Get()
         {
             return await _repository.ReadAsync();
+        }
+
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ContentDetailsDTO), 200)]
+        [HttpGet("{id}")]
+        public async Task<Option<ContentDetailsDTO>> Get(int id)
+        {
+            return await _repository.ReadAsync(id);
         }
 
         [HttpPost]
