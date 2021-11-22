@@ -12,7 +12,7 @@
 <h3>Content</h3>
 <p>This component fetches content from the server's database using a REST API.</p>
 
-@if (content == null)
+@if (contents == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -31,7 +31,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var c in content)
+            @foreach (var c in contents)
             {
                 <tr>
                     <td>@c.Title</td>
@@ -41,32 +41,25 @@ else
                     <td>@c.AvgRating</td>
                     <td>@c.Type</td>
                     <td>
-                        <button>@(c.Type == "Article" ? "Læs artikel" : "Se video")</button>                        
+                        <button class="btn btn-primary" @onclick="() => OnContentClicked(c.Id)">@(c.Type == "Article" ? "Læs artikel" : "Se video")</button>                        
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-    @* *@
-    @* <EditForm> *@
-    @* *@
-    @* </EditForm> *@
 }
 
 @code {
-    private ContentDetailsDTO[]? content;
+    private ContentDetailsDTO[]? contents;
+    private ContentDetailsDTO? content;
 
     protected override async Task OnInitializedAsync()
     {
-        // Det der Article[] skal måske ændres?? men det virker ikke med Content.
-        // Jeg tror det er fordi Content er en abstrakt klasse
-        //Har ændret det til ContentDetailsDTO, samme klasse som bliver sendt afsted
-        content = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+        contents = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
     }
 
-    private static void alertDescription()
+    private async void OnContentClicked(int id)
     {
-        Console.WriteLine("HEJ");
-
+        content = await Http.GetFromJsonAsync<ContentDetailsDTO>($"api/Content/{id}");
     }
 }

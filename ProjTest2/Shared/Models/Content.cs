@@ -1,5 +1,4 @@
 ﻿
-using System.Collections.Generic;
 using ProjTest2.Shared.Models;
 
 public abstract class Content

@@ -1,12 +1,8 @@
 ﻿
-using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using ProjTest2.Shared;
 using ProjTest2.Shared.DTOs;
 using ProjTest2.Shared.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjTest2.Server.Repositories;
 public class ContentRepository : IContentRepository
@@ -76,48 +72,32 @@ public class ContentRepository : IContentRepository
         throw new NotImplementedException();
     }
 
-    public Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
+    public async Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
     {
-        throw new NotImplementedException();
+        return await _context.Content.Where(c => c.Id == contentId)
+            .Select(c => new ContentDetailsDTO(
+                c.Id,
+                c.Title,
+                c.Description,
+                c.ProgrammingLanguages,
+                c.Difficulty,
+                c.AvgRating,
+                c.Type))
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<ContentDetailsDTO>> ReadAsync()
     {
         var all = await _context.Content.Select(content =>
-        new ContentDetailsDTO(
-                content.Id,
-                content.Title,
-                content.Description,
-                content.ProgrammingLanguages,
-                content.Difficulty,
-                content.AvgRating,
-                content.Type)
-            ).ToListAsync();
-
-        /*var videos = await _context.Videos.Select(video =>
             new ContentDetailsDTO(
-                video.Id,
-                video.Title,
-                video.Description,
-                video.Language,
-                video.Difficulty,
-                video.Rating,
-                video.Type)
-            ).ToListAsync();
-
-        var articles = await _context.Articles.Select(article => 
-            new ContentDetailsDTO(
-                article.Id, 
-                article.Title,
-                article.Description,
-                article.Language,
-                article.Difficulty,
-                article.Rating,
-                article.Type)
-            ).ToListAsync();
-
-
-        var contents = articles.Concat(videos);*/
+                    content.Id,
+                    content.Title,
+                    content.Description,
+                    content.ProgrammingLanguages,
+                    content.Difficulty,
+                    content.AvgRating,
+                    content.Type)
+                ).ToListAsync();
 
         return all;
     }
