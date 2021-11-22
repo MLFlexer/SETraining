@@ -12,8 +12,8 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211119151527_test6")]
-    partial class test6
+    [Migration("20211122132440_213")]
+    partial class _213
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,10 +32,10 @@ namespace ProjTest2.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<float>("AvgRating")
+                    b.Property<float?>("AvgRating")
                         .HasColumnType("real");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Description")
@@ -64,6 +64,21 @@ namespace ProjTest2.Server.Migrations
                     b.ToTable("Content");
 
                     b.HasDiscriminator<string>("Type").HasValue("Content");
+                });
+
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.Property<int>("ContentsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProgrammingLanguagesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ContentsId", "ProgrammingLanguagesId");
+
+                    b.HasIndex("ProgrammingLanguagesId");
+
+                    b.ToTable("ContentProgrammingLanguage");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -117,12 +132,12 @@ namespace ProjTest2.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("Level")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("level")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -148,15 +163,17 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
                 {
-                    b.Property<string>("Language")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("ContentId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.HasKey("Language");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.HasIndex("ContentId");
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.ToTable("ProgrammingLanguage");
                 });
@@ -187,6 +204,23 @@ namespace ProjTest2.Server.Migrations
                     b.ToTable("Rating");
                 });
 
+            modelBuilder.Entity("ProjTest2.Shared.Models.RawVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("Video")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RawVideo");
+                });
+
             modelBuilder.Entity("ProjTest2.Shared.Models.Article", b =>
                 {
                     b.HasBaseType("Content");
@@ -205,9 +239,10 @@ namespace ProjTest2.Server.Migrations
                     b.Property<int?>("Length")
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("RawVideo")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<int>("RawVideoId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("RawVideoId");
 
                     b.HasDiscriminator().HasValue("Video");
                 });
@@ -216,15 +251,28 @@ namespace ProjTest2.Server.Migrations
                 {
                     b.HasOne("ProjTest2.Shared.Models.Moderator", "Creator")
                         .WithMany("Contents")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("ProjTest2.Shared.Models.Learner", null)
-                        .WithMany("favorites")
+                        .WithMany("Favorites")
                         .HasForeignKey("LearnerId");
 
                     b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.HasOne("Content", null)
+                        .WithMany()
+                        .HasForeignKey("ContentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjTest2.Shared.Models.ProgrammingLanguage", null)
+                        .WithMany()
+                        .HasForeignKey("ProgrammingLanguagesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -236,7 +284,7 @@ namespace ProjTest2.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("ProjTest2.Shared.Models.Learner", "Learner")
-                        .WithMany("history")
+                        .WithMany("History")
                         .HasForeignKey("LearnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -244,13 +292,6 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
-                });
-
-            modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
-                {
-                    b.HasOne("Content", null)
-                        .WithMany("ProgrammingLanguages")
-                        .HasForeignKey("ContentId");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Rating", b =>
@@ -262,7 +303,7 @@ namespace ProjTest2.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("ProjTest2.Shared.Models.Learner", "Learner")
-                        .WithMany("ratings")
+                        .WithMany("Ratings")
                         .HasForeignKey("LearnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -272,20 +313,29 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Learner");
                 });
 
+            modelBuilder.Entity("ProjTest2.Shared.Models.Video", b =>
+                {
+                    b.HasOne("ProjTest2.Shared.Models.RawVideo", "RawVideo")
+                        .WithMany()
+                        .HasForeignKey("RawVideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RawVideo");
+                });
+
             modelBuilder.Entity("Content", b =>
                 {
-                    b.Navigation("ProgrammingLanguages");
-
                     b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Learner", b =>
                 {
-                    b.Navigation("favorites");
+                    b.Navigation("Favorites");
 
-                    b.Navigation("history");
+                    b.Navigation("History");
 
-                    b.Navigation("ratings");
+                    b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Moderator", b =>

@@ -16,55 +16,43 @@ public class ContentRepository : IContentRepository
 
     public async Task<ContentDetailsDTO> CreateAsync(ContentCreateDTO content)
     {
-        /* Content entity = null;
+        Content entity = null;
         if (content.Type == "Article")
         {
-            entity = new Article(content.Title)
+            entity = new Article(content.Title, "")
             {
                 Description = content.Description,
-                Language = content.Language,
+                ProgrammingLanguages = content.ProgrammingLanguages,
                 Difficulty = content.Difficulty,
-                Rating = content.Rating
+                AvgRating = content.AvgRating
             };
 
             _context.Content.Add((Article)entity);
         }
-        else if (content.Type == "Video")
+        else
         {
-            entity = new Video(content.Title)
+            entity = new Video(content.Title, new RawVideo(new byte[1]))
             {
                 Description = content.Description,
-                Language = content.Language,
+                ProgrammingLanguages = content.ProgrammingLanguages,
                 Difficulty = content.Difficulty,
-                Rating = content.Rating
+                AvgRating = content.AvgRating
             };
 
             _context.Content.Add((Video)entity);
         }
-        else
-        {
-            entity = new Article(content.Title)
-            {
-                Description = content.Description,
-                Language = content.Language,
-                Difficulty = content.Difficulty,
-                Rating = content.Rating
-            };
-        }
-
+        
         await _context.SaveChangesAsync();
 
         return new ContentDetailsDTO(
                 entity.Id,
                 entity.Title,
                 entity.Description,
-                entity.Language,
+                entity.ProgrammingLanguages,
                 entity.Difficulty,
-                entity.Rating,
+                entity.AvgRating,
                 content.Type
-            ); */
-
-        return new ContentDetailsDTO(1, ",", "",new List<ProgrammingLanguage>(), DifficultyLevel.Novice, 1.2f, "article");
+            ); 
     }
 
     public Task<Status> DeleteAsync(int contentId)

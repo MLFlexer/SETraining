@@ -17,13 +17,14 @@ public static class SeedExtensions
         {
             var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
 
+            SeedProgrammingLanguage(context);
             SeedContent(context);
             SeedHistoryEntries(context);
             SeedModerator(context);
             SeedLearner(context);
             SeedImage(context);
             SeedRating(context);
-            SeedProgrammingLanguage(context);
+            
         }
         return host;
     }

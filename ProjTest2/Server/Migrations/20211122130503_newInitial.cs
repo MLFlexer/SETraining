@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ProjTest2.Server.Migrations
 {
-    public partial class test6 : Migration
+    public partial class newInitial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -30,7 +30,7 @@ namespace ProjTest2.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    level = table.Column<int>(type: "integer", nullable: true)
+                    Level = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,6 +51,30 @@ namespace ProjTest2.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProgrammingLanguage",
+                columns: table => new
+                {
+                    Language = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Language);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RawVideo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Video = table.Column<byte[]>(type: "bytea", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RawVideo", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Content",
                 columns: table => new
                 {
@@ -59,13 +83,13 @@ namespace ProjTest2.Server.Migrations
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Difficulty = table.Column<int>(type: "integer", nullable: true),
-                    CreatorId = table.Column<int>(type: "integer", nullable: false),
-                    AvgRating = table.Column<float>(type: "real", nullable: false),
+                    CreatorId = table.Column<int>(type: "integer", nullable: true),
+                    AvgRating = table.Column<float>(type: "real", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: false),
                     LearnerId = table.Column<int>(type: "integer", nullable: true),
                     TextBody = table.Column<string>(type: "text", nullable: true),
                     Length = table.Column<int>(type: "integer", nullable: true),
-                    RawVideo = table.Column<byte[]>(type: "bytea", nullable: true)
+                    RawVideoId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,7 +103,36 @@ namespace ProjTest2.Server.Migrations
                         name: "FK_Content_Moderator_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Moderator",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Content_RawVideo_RawVideoId",
+                        column: x => x.RawVideoId,
+                        principalTable: "RawVideo",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ContentProgrammingLanguage",
+                columns: table => new
+                {
+                    ContentsId = table.Column<int>(type: "integer", nullable: false),
+                    ProgrammingLanguagesLanguage = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContentProgrammingLanguage", x => new { x.ContentsId, x.ProgrammingLanguagesLanguage });
+                    table.ForeignKey(
+                        name: "FK_ContentProgrammingLanguage_Content_ContentsId",
+                        column: x => x.ContentsId,
+                        principalTable: "Content",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContentProgrammingLanguage_ProgrammingLanguage_ProgrammingL~",
+                        column: x => x.ProgrammingLanguagesLanguage,
+                        principalTable: "ProgrammingLanguage",
+                        principalColumn: "Language",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -108,23 +161,6 @@ namespace ProjTest2.Server.Migrations
                         principalTable: "Learner",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProgrammingLanguage",
-                columns: table => new
-                {
-                    Language = table.Column<string>(type: "text", nullable: false),
-                    ContentId = table.Column<int>(type: "integer", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Language);
-                    table.ForeignKey(
-                        name: "FK_ProgrammingLanguage_Content_ContentId",
-                        column: x => x.ContentId,
-                        principalTable: "Content",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -165,6 +201,16 @@ namespace ProjTest2.Server.Migrations
                 column: "LearnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Content_RawVideoId",
+                table: "Content",
+                column: "RawVideoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContentProgrammingLanguage_ProgrammingLanguagesLanguage",
+                table: "ContentProgrammingLanguage",
+                column: "ProgrammingLanguagesLanguage");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HistoryEntry_ContentId",
                 table: "HistoryEntry",
                 column: "ContentId");
@@ -173,11 +219,6 @@ namespace ProjTest2.Server.Migrations
                 name: "IX_HistoryEntry_LearnerId",
                 table: "HistoryEntry",
                 column: "LearnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProgrammingLanguage_ContentId",
-                table: "ProgrammingLanguage",
-                column: "ContentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rating_ContentId",
@@ -193,16 +234,19 @@ namespace ProjTest2.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ContentProgrammingLanguage");
+
+            migrationBuilder.DropTable(
                 name: "HistoryEntry");
 
             migrationBuilder.DropTable(
                 name: "Image");
 
             migrationBuilder.DropTable(
-                name: "ProgrammingLanguage");
+                name: "Rating");
 
             migrationBuilder.DropTable(
-                name: "Rating");
+                name: "ProgrammingLanguage");
 
             migrationBuilder.DropTable(
                 name: "Content");
@@ -212,6 +256,9 @@ namespace ProjTest2.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Moderator");
+
+            migrationBuilder.DropTable(
+                name: "RawVideo");
         }
     }
 }

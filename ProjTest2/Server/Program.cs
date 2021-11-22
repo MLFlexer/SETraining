@@ -20,6 +20,8 @@ Console.WriteLine(connS);
 builder.Services.AddDbContext<KhanContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Khan")));
 builder.Services.AddScoped<IKhanContext, KhanContext>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -27,6 +29,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
