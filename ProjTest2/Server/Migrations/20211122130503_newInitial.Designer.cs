@@ -12,8 +12,8 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211122093818_Monday3")]
-    partial class Monday3
+    [Migration("20211122130503_newInitial")]
+    partial class newInitial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -64,6 +64,21 @@ namespace ProjTest2.Server.Migrations
                     b.ToTable("Content");
 
                     b.HasDiscriminator<string>("Type").HasValue("Content");
+                });
+
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.Property<int>("ContentsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProgrammingLanguagesLanguage")
+                        .HasColumnType("text");
+
+                    b.HasKey("ContentsId", "ProgrammingLanguagesLanguage");
+
+                    b.HasIndex("ProgrammingLanguagesLanguage");
+
+                    b.ToTable("ContentProgrammingLanguage");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -151,12 +166,7 @@ namespace ProjTest2.Server.Migrations
                     b.Property<string>("Language")
                         .HasColumnType("text");
 
-                    b.Property<int?>("ContentId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Language");
-
-                    b.HasIndex("ContentId");
 
                     b.ToTable("ProgrammingLanguage");
                 });
@@ -169,10 +179,10 @@ namespace ProjTest2.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ContentId")
+                    b.Property<int>("ContentId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("LearnerId")
+                    b.Property<int>("LearnerId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Value")
@@ -185,6 +195,23 @@ namespace ProjTest2.Server.Migrations
                     b.HasIndex("LearnerId");
 
                     b.ToTable("Rating");
+                });
+
+            modelBuilder.Entity("ProjTest2.Shared.Models.RawVideo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("Video")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RawVideo");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Article", b =>
@@ -205,9 +232,10 @@ namespace ProjTest2.Server.Migrations
                     b.Property<int?>("Length")
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("RawVideo")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<int>("RawVideoId")
+                        .HasColumnType("integer");
+
+                    b.HasIndex("RawVideoId");
 
                     b.HasDiscriminator().HasValue("Video");
                 });
@@ -223,6 +251,21 @@ namespace ProjTest2.Server.Migrations
                         .HasForeignKey("LearnerId");
 
                     b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.HasOne("Content", null)
+                        .WithMany()
+                        .HasForeignKey("ContentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjTest2.Shared.Models.ProgrammingLanguage", null)
+                        .WithMany()
+                        .HasForeignKey("ProgrammingLanguagesLanguage")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -244,32 +287,38 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Learner");
                 });
 
-            modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
-                {
-                    b.HasOne("Content", null)
-                        .WithMany("ProgrammingLanguages")
-                        .HasForeignKey("ContentId");
-                });
-
             modelBuilder.Entity("ProjTest2.Shared.Models.Rating", b =>
                 {
                     b.HasOne("Content", "Content")
                         .WithMany("Ratings")
-                        .HasForeignKey("ContentId");
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ProjTest2.Shared.Models.Learner", "Learner")
                         .WithMany("Ratings")
-                        .HasForeignKey("LearnerId");
+                        .HasForeignKey("LearnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
                 });
 
+            modelBuilder.Entity("ProjTest2.Shared.Models.Video", b =>
+                {
+                    b.HasOne("ProjTest2.Shared.Models.RawVideo", "RawVideo")
+                        .WithMany()
+                        .HasForeignKey("RawVideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RawVideo");
+                });
+
             modelBuilder.Entity("Content", b =>
                 {
-                    b.Navigation("ProgrammingLanguages");
-
                     b.Navigation("Ratings");
                 });
 

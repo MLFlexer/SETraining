@@ -12,6 +12,7 @@ public class KhanContext : DbContext, IKhanContext
     public DbSet<ProgrammingLanguage> ProgrammingLanguage => Set<ProgrammingLanguage>();
     public DbSet<HistoryEntry> HistoryEntry => Set<HistoryEntry>();
     public DbSet<Image> Image => Set<Image>();
+    public DbSet<RawVideo> RawVideo => Set<RawVideo>();
 
 
     public KhanContext(DbContextOptions<KhanContext> options) : base(options) { }

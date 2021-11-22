@@ -7,13 +7,13 @@ namespace ProjTest2.Server.MockData
     public static class PreBuildSeedData
     {
         //Raw classes
-        public static ProgrammingLanguage Java = new ProgrammingLanguage("java");
-        public static ProgrammingLanguage CSharp = new ProgrammingLanguage("csharp");
-        public static ProgrammingLanguage JavaScript = new ProgrammingLanguage("javascript");
+        public static ProgrammingLanguage Java = new ProgrammingLanguage("Java");
+        public static ProgrammingLanguage CSharp = new ProgrammingLanguage("Csharp");
+        public static ProgrammingLanguage JavaScript = new ProgrammingLanguage("Javascript");
 
         public static RawVideo RawVideo = new RawVideo(new byte[0]);
 
-        public static Video EmptyVideo = new Video("Empty video", RawVideo);
+        public static Video EmptyVideo = new Video("Empty video", RawVideo) { ProgrammingLanguages = AllLangsList };
         public static Video JavaVideo = new Video("Java video", RawVideo);
         public static Video CSharpVideo = new Video("CSharp video", RawVideo);
         public static Video JavascriptVideo = new Video("JavaScript video", RawVideo);
