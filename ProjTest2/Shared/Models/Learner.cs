@@ -4,6 +4,8 @@ namespace ProjTest2.Shared.Models
 {
     public class Learner
     {
+       
+
         public Learner(string name)
         {
             Name = name;
@@ -11,10 +13,10 @@ namespace ProjTest2.Shared.Models
 
         public string Name { get; set; }
         public int Id { get; set; }
-        public DifficultyLevel? level { get; set; }
-        public ICollection<HistoryEntry>? history { get; set; }
-        public ICollection<Content>? favorites { get; set; }
-        public ICollection<Rating>? ratings { get; set; }
+        public DifficultyLevel? Level { get; set; }
+        public ICollection<HistoryEntry>? History { get; set; }
+        public ICollection<Content>? Favorites { get; set; }
+        public ICollection<Rating>? Ratings { get; set; }
 
     }
 }

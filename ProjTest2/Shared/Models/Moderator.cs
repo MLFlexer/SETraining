@@ -5,6 +5,8 @@ namespace ProjTest2.Shared.Models
 {
     public class Moderator
     {
+       
+
         public Moderator(string name)
         {
             Name = name;

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjTest2.Shared.Models;
+using ProjTest2.Server.MockData;
 
 namespace ProjTest2.Server;
 
@@ -16,31 +17,36 @@ public static class SeedExtensions
         {
             var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
 
-            SeedContents(context);
+            SeedContent(context);
+            SeedHistoryEntries(context);
+            SeedModerator(context);
+            SeedLearner(context);
+            SeedImage(context);
+            SeedRating(context);
+            SeedProgrammingLanguage(context);
         }
         return host;
     }
 
-    private static void SeedContents(KhanContext context)
+
+    private static void SeedContent(KhanContext context)
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any()) {
-            var Java = new ProgrammingLanguage("java");
-            var JavaList = new List<ProgrammingLanguage>();
-            JavaList.Add(Java);
-            var creator = new Moderator("Jens");
-
+        if(!context.Content.Any())
+        {
             context.Content.AddRange(
-                new Video("Boring Video", new byte[0]/* , creator */) {Creator = creator },
-                new Article("TestArticle1", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Description for Article 1",  Difficulty = DifficultyLevel.Novice, AvgRating = 4.8f },
-                new Video("Java Tutorial", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Quick Java tutorial",  Difficulty = DifficultyLevel.Novice, AvgRating = 2.5f, Length = 1069 },
-                new Video("Great Video", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "This is an even better video!",  Difficulty = DifficultyLevel.Novice, AvgRating = 3.2f, Length = 724 },
-                new Article("Better Article", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "This is a better article",  Difficulty = DifficultyLevel.Novice, AvgRating = 5.0f },
-                new Article("Article 2", "textbody"/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Difficulty = DifficultyLevel.Novice, AvgRating = 2.5f },
-                new Article("Boring Article", "textbody"/* , creator */) {Creator = creator },
-                new Video("TestVideo1", new byte[0]/* , creator */) {Creator = creator, ProgrammingLanguages = JavaList, Description = "Description for Video 1",  Difficulty = DifficultyLevel.Novice, AvgRating = 4.9f, Length = 253 }
-            );
+
+                PreBuildSeedData.EmptyVideo,
+                PreBuildSeedData.JavaVideo,
+                PreBuildSeedData.CSharpVideo,
+                PreBuildSeedData.JavascriptVideo,
+                PreBuildSeedData.EmptyArticle,
+                PreBuildSeedData.JavaArticle,
+                PreBuildSeedData.CSharpArticle,
+                PreBuildSeedData.JavascriptArticle
+
+                );
 
             context.SaveChanges();
         }
@@ -53,10 +59,85 @@ public static class SeedExtensions
         if(!context.HistoryEntry.Any())
         {
             context.HistoryEntry.AddRange(
-                
+                PreBuildSeedData.History
             );
 
             context.SaveChanges();
         }
     }
+
+    private static void SeedModerator(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Moderator.Any())
+        {
+            context.Moderator.AddRange(
+                PreBuildSeedData.Moderator
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedLearner(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Learner.Any())
+        {
+            context.Learner.AddRange(
+                PreBuildSeedData.Learner
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedImage(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Image.Any())
+        {
+            context.Image.AddRange(
+                PreBuildSeedData.Image
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedRating(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Rating.Any())
+        {
+            context.Rating.AddRange(
+                PreBuildSeedData.Rating
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+
+    private static void SeedProgrammingLanguage(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.ProgrammingLanguage.Any())
+        {
+            context.ProgrammingLanguage.AddRange(
+                PreBuildSeedData.Java,
+                PreBuildSeedData.CSharp,
+                PreBuildSeedData.JavaScript
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+
 }
