@@ -11,10 +11,12 @@ namespace ProjTest2.Server.MockData
         public static ProgrammingLanguage CSharp = new ProgrammingLanguage("csharp");
         public static ProgrammingLanguage JavaScript = new ProgrammingLanguage("javascript");
 
-        public static Video EmptyVideo = new Video("Empty video", new byte[0]);
-        public static Video JavaVideo = new Video("Java video", new byte[0]);
-        public static Video CSharpVideo = new Video("CSharp video", new byte[0]);
-        public static Video JavascriptVideo = new Video("JavaScript video", new byte[0]);
+        public static RawVideo RawVideo = new RawVideo(new byte[0]);
+
+        public static Video EmptyVideo = new Video("Empty video", RawVideo);
+        public static Video JavaVideo = new Video("Java video", RawVideo);
+        public static Video CSharpVideo = new Video("CSharp video", RawVideo);
+        public static Video JavascriptVideo = new Video("JavaScript video", RawVideo);
 
         public static Article EmptyArticle = new Article("Empty Article", "");
         public static Article JavaArticle = new Article("Java Article", "An Article about Java");
@@ -26,7 +28,7 @@ namespace ProjTest2.Server.MockData
 
         public static Learner Learner = new Learner("Bob the Builder");
 
-        public static Rating Rating = new Rating(10);
+        public static Rating Rating = new Rating(10, CSharpVideo, Learner);
 
         public static DifficultyLevel DifficultyLevelNovice = DifficultyLevel.Novice;
         public static DifficultyLevel DifficultyLevelIntermediate = DifficultyLevel.Intermediate;
@@ -34,7 +36,7 @@ namespace ProjTest2.Server.MockData
 
         public static Image Image = new Image(new byte[0]);
 
-        public static HistoryEntry History = new HistoryEntry(new DateTime());
+        public static HistoryEntry History = new HistoryEntry(new DateTime(), JavaVideo, Learner);
 
         //Collections of Data
 
