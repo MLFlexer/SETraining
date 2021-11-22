@@ -29,6 +29,12 @@ ________
 _____
 
 ## Troubleshooting
+
+## Clear the Database and create it again empty (when doing migrations)
+- Open query tool in PGAdmin
+- Run `DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;`
+
 ### The password for PostGreSQL is incorrect
 Run the following commands:
 - `docker compose down`
