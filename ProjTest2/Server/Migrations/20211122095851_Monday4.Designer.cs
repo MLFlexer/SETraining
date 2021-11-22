@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjTest2.Server;
@@ -11,9 +12,10 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    partial class KhanContextModelSnapshot : ModelSnapshot
+    [Migration("20211122095851_Monday4")]
+    partial class Monday4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,10 +169,10 @@ namespace ProjTest2.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContentId")
+                    b.Property<int?>("ContentId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("LearnerId")
+                    b.Property<int?>("LearnerId")
                         .HasColumnType("integer");
 
                     b.Property<int>("Value")
@@ -183,23 +185,6 @@ namespace ProjTest2.Server.Migrations
                     b.HasIndex("LearnerId");
 
                     b.ToTable("Rating");
-                });
-
-            modelBuilder.Entity("ProjTest2.Shared.Models.RawVideo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("Video")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RawVideo");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Article", b =>
@@ -220,10 +205,9 @@ namespace ProjTest2.Server.Migrations
                     b.Property<int?>("Length")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RawVideoId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("RawVideoId");
+                    b.Property<byte[]>("RawVideo")
+                        .IsRequired()
+                        .HasColumnType("bytea");
 
                     b.HasDiscriminator().HasValue("Video");
                 });
@@ -271,30 +255,15 @@ namespace ProjTest2.Server.Migrations
                 {
                     b.HasOne("Content", "Content")
                         .WithMany("Ratings")
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContentId");
 
                     b.HasOne("ProjTest2.Shared.Models.Learner", "Learner")
                         .WithMany("Ratings")
-                        .HasForeignKey("LearnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LearnerId");
 
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
-                });
-
-            modelBuilder.Entity("ProjTest2.Shared.Models.Video", b =>
-                {
-                    b.HasOne("ProjTest2.Shared.Models.RawVideo", "RawVideo")
-                        .WithMany()
-                        .HasForeignKey("RawVideoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RawVideo");
                 });
 
             modelBuilder.Entity("Content", b =>
