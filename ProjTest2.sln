@@ -12,6 +12,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Models.Test", "ProjTest2\Shared.Models.Test\Shared.Models.Test.csproj", "{BE9338BE-4431-446A-AFC9-C54E829548EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Repositories.Test", "ProjTest2\Server.Repositories.Test\Server.Repositories.Test.csproj", "{00306484-F059-40F8-949C-CC147B481363}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjTest2", "ProjTest2", "{E7C8C305-794F-4E2B-BBDF-019B8F4D42D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Controller.Test", "ProjTest2\Server.Controller.Test\Server.Controller.Test.csproj", "{979DCBA9-91D5-4A97-8D30-A28A5839FB08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,11 +42,18 @@ Global
 		{00306484-F059-40F8-949C-CC147B481363}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00306484-F059-40F8-949C-CC147B481363}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00306484-F059-40F8-949C-CC147B481363}.Release|Any CPU.Build.0 = Release|Any CPU
+		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2FBEFF10-7175-45E0-8C9B-3A0745A45221}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{979DCBA9-91D5-4A97-8D30-A28A5839FB08} = {E7C8C305-794F-4E2B-BBDF-019B8F4D42D8}
 	EndGlobalSection
 EndGlobal
