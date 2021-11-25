@@ -9,6 +9,7 @@ namespace ProjTest2.Server;
 public interface IKhanContext :IDisposable
 {
     DbSet<Content> Content { get; }
+    DbSet<ProgrammingLanguage> ProgrammingLanguages { get; }
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

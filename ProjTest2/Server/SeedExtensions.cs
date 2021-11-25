@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjTest2.Shared.Models;
-using ProjTest2.Server.MockData;
 
 namespace ProjTest2.Server;
 
@@ -37,18 +36,9 @@ public static class SeedExtensions
         if(!context.Content.Any())
         {
             context.Content.AddRange(
-
-                PreBuiltData.EmptyVideo,
-                PreBuiltData.JavaVideo,
-                PreBuiltData.CSharpVideo,
-                PreBuiltData.JavascriptVideo,
-                PreBuiltData.EmptyArticle,
-                PreBuiltData.JavaArticle,
-                PreBuiltData.CSharpArticle,
-                PreBuiltData.JavascriptArticle
+                
 
                 );
-
             context.SaveChanges();
         }
     }
@@ -60,7 +50,7 @@ public static class SeedExtensions
         if(!context.HistoryEntry.Any())
         {
             context.HistoryEntry.AddRange(
-                PreBuiltData.History
+                
             );
 
             context.SaveChanges();
@@ -74,7 +64,7 @@ public static class SeedExtensions
         if (!context.Moderator.Any())
         {
             context.Moderator.AddRange(
-                PreBuiltData.Moderator
+                
             );
 
             context.SaveChanges();
@@ -88,7 +78,7 @@ public static class SeedExtensions
         if (!context.Learner.Any())
         {
             context.Learner.AddRange(
-                PreBuiltData.Learner
+                
             );
 
             context.SaveChanges();
@@ -102,7 +92,7 @@ public static class SeedExtensions
         if (!context.Image.Any())
         {
             context.Image.AddRange(
-                PreBuiltData.Image
+                
             );
 
             context.SaveChanges();
@@ -116,7 +106,7 @@ public static class SeedExtensions
         if (!context.Rating.Any())
         {
             context.Rating.AddRange(
-                PreBuiltData.Rating
+                
             );
 
             context.SaveChanges();
@@ -131,9 +121,8 @@ public static class SeedExtensions
         if (!context.ProgrammingLanguage.Any())
         {
             context.ProgrammingLanguage.AddRange(
-                PreBuiltData.Java,
-                PreBuiltData.CSharp,
-                PreBuiltData.JavaScript
+          
+                
             );
 
             context.SaveChanges();

@@ -90,8 +90,36 @@ public class ContentRepository : IContentRepository
         return all;
     }
 
-    public Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
+    public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
-        throw new NotImplementedException();
+        var entity = await _context.Content.Include(c => c.ProgrammingLanguages).FirstOrDefaultAsync(c => c.Id == content.Id);
+
+        if (entity == null)
+        {
+            return Status.NotFound;
+        }
+
+        entity.Description = content.Description;
+        entity.Difficulty = content.Difficulty;
+        entity.Title = content.Title;
+        entity.Type = content.Type;
+        entity.AvgRating = content.AvgRating;
+        
+        //TODO: hvorfor virker dette ikke?
+        //entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(content.ProgrammingLanguages).ToListAsync();;
+
+        await _context.SaveChangesAsync();
+
+        return Status.Updated;
+    }
+    private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
+    {
+        //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
+        var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Language)).ToDictionaryAsync(p => p.Language);
+
+        foreach (var language in languages)
+        {
+            yield return existing.TryGetValue(language, out var p) ? p : new ProgrammingLanguage(language);
+        }
     }
 }

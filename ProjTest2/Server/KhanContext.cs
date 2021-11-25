@@ -25,5 +25,8 @@ public class KhanContext : DbContext, IKhanContext
             .HasDiscriminator<string>("Type")
             .HasValue<Article>("Article")
             .HasValue<Video>("Video");
+
+        modelBuilder.Entity<ProgrammingLanguage>();
+
     }
 }
