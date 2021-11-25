@@ -5,7 +5,6 @@ namespace ProjTest2.Shared.Models
     public class ProgrammingLanguage
     {
       
-
         public ProgrammingLanguage(string language)
         {
             Language = language;

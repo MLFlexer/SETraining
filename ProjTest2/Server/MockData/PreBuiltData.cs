@@ -1,10 +1,11 @@
 ﻿using System;
+using ProjTest2.Shared.DTOs;
 using ProjTest2.Shared.Models;
 
 namespace ProjTest2.Server.MockData
 {
 
-    public static class PreBuildSeedData
+    public static class PreBuiltData
     {
         //Raw classes
         public static ProgrammingLanguage Java = new ProgrammingLanguage("Java");
@@ -43,6 +44,12 @@ namespace ProjTest2.Server.MockData
         public static ICollection<ProgrammingLanguage> JavaList = new List<ProgrammingLanguage> { Java };
         public static ICollection<ProgrammingLanguage> AllLangsList = new List<ProgrammingLanguage> { Java, CSharp, JavaScript };
  
+        
+        //ContentCreateDTO's
+        public static ContentCreateDTO GOArticleCreateDTO = new ArticleCreateDTO("Go", "Article");
+        public static ContentCreateDTO GOVideoCreateDTO = new ArticleCreateDTO("Go", "Video");
+        
+        
     };
 }
 

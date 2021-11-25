@@ -38,14 +38,14 @@ public static class SeedExtensions
         {
             context.Content.AddRange(
 
-                PreBuildSeedData.EmptyVideo,
-                PreBuildSeedData.JavaVideo,
-                PreBuildSeedData.CSharpVideo,
-                PreBuildSeedData.JavascriptVideo,
-                PreBuildSeedData.EmptyArticle,
-                PreBuildSeedData.JavaArticle,
-                PreBuildSeedData.CSharpArticle,
-                PreBuildSeedData.JavascriptArticle
+                PreBuiltData.EmptyVideo,
+                PreBuiltData.JavaVideo,
+                PreBuiltData.CSharpVideo,
+                PreBuiltData.JavascriptVideo,
+                PreBuiltData.EmptyArticle,
+                PreBuiltData.JavaArticle,
+                PreBuiltData.CSharpArticle,
+                PreBuiltData.JavascriptArticle
 
                 );
 
@@ -60,7 +60,7 @@ public static class SeedExtensions
         if(!context.HistoryEntry.Any())
         {
             context.HistoryEntry.AddRange(
-                PreBuildSeedData.History
+                PreBuiltData.History
             );
 
             context.SaveChanges();
@@ -74,7 +74,7 @@ public static class SeedExtensions
         if (!context.Moderator.Any())
         {
             context.Moderator.AddRange(
-                PreBuildSeedData.Moderator
+                PreBuiltData.Moderator
             );
 
             context.SaveChanges();
@@ -88,7 +88,7 @@ public static class SeedExtensions
         if (!context.Learner.Any())
         {
             context.Learner.AddRange(
-                PreBuildSeedData.Learner
+                PreBuiltData.Learner
             );
 
             context.SaveChanges();
@@ -102,7 +102,7 @@ public static class SeedExtensions
         if (!context.Image.Any())
         {
             context.Image.AddRange(
-                PreBuildSeedData.Image
+                PreBuiltData.Image
             );
 
             context.SaveChanges();
@@ -116,7 +116,7 @@ public static class SeedExtensions
         if (!context.Rating.Any())
         {
             context.Rating.AddRange(
-                PreBuildSeedData.Rating
+                PreBuiltData.Rating
             );
 
             context.SaveChanges();
@@ -131,9 +131,9 @@ public static class SeedExtensions
         if (!context.ProgrammingLanguage.Any())
         {
             context.ProgrammingLanguage.AddRange(
-                PreBuildSeedData.Java,
-                PreBuildSeedData.CSharp,
-                PreBuildSeedData.JavaScript
+                PreBuiltData.Java,
+                PreBuiltData.CSharp,
+                PreBuiltData.JavaScript
             );
 
             context.SaveChanges();
