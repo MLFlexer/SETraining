@@ -33,9 +33,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any())
+        if(!context.Contents.Any())
         {
-            context.Content.AddRange(
+            context.Contents.AddRange(
                 
 
                 );
@@ -47,9 +47,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.HistoryEntry.Any())
+        if(!context.HistoryEntries.Any())
         {
-            context.HistoryEntry.AddRange(
+            context.HistoryEntries.AddRange(
                 
             );
 
@@ -61,9 +61,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Moderator.Any())
+        if (!context.Moderators.Any())
         {
-            context.Moderator.AddRange(
+            context.Moderators.AddRange(
                 
             );
 
@@ -75,9 +75,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Learner.Any())
+        if (!context.Learners.Any())
         {
-            context.Learner.AddRange(
+            context.Learners.AddRange(
                 
             );
 
@@ -89,9 +89,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Image.Any())
+        if (!context.Images.Any())
         {
-            context.Image.AddRange(
+            context.Images.AddRange(
                 
             );
 
@@ -103,9 +103,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Rating.Any())
+        if (!context.Ratings.Any())
         {
-            context.Rating.AddRange(
+            context.Ratings.AddRange(
                 
             );
 
@@ -118,9 +118,9 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.ProgrammingLanguage.Any())
+        if (!context.ProgrammingLanguages.Any())
         {
-            context.ProgrammingLanguage.AddRange(
+            context.ProgrammingLanguages.AddRange(
           
                 
             );

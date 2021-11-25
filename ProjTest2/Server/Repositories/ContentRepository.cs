@@ -27,7 +27,7 @@ public class ContentRepository : IContentRepository
                 AvgRating = content.AvgRating
             };
 
-            _context.Content.Add(entity);
+            _context.Contents.Add(entity);
         }
         else
         {
@@ -39,7 +39,7 @@ public class ContentRepository : IContentRepository
                 AvgRating = content.AvgRating
             };
 
-            _context.Content.Add(entity);
+            _context.Contents.Add(entity);
         }
         
         await _context.SaveChangesAsync();
@@ -62,7 +62,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
     {
-        return await _context.Content.Where(c => c.Id == contentId)
+        return await _context.Contents.Where(c => c.Id == contentId)
             .Select(c => new ContentDetailsDTO(
                 c.Id,
                 c.Title,
@@ -76,7 +76,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<IEnumerable<ContentDetailsDTO>> ReadAsync()
     {
-        var all = await _context.Content.Select(content =>
+        var all = await _context.Contents.Select(content =>
             new ContentDetailsDTO(
                     content.Id,
                     content.Title,
@@ -92,7 +92,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
-        var entity = await _context.Content.Include(c => c.ProgrammingLanguages).FirstOrDefaultAsync(c => c.Id == content.Id);
+        var entity = await _context.Contents.Include(c => c.ProgrammingLanguages).FirstOrDefaultAsync(c => c.Id == content.Id);
 
         if (entity == null)
         {

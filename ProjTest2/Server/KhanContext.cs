@@ -5,13 +5,13 @@ namespace ProjTest2.Server;
 
 public class KhanContext : DbContext, IKhanContext
 {
-    public DbSet<Content> Content => Set<Content>();
-    public DbSet<Learner> Learner => Set<Learner>();
-    public DbSet<Moderator> Moderator => Set<Moderator>();
-    public DbSet<Rating> Rating => Set<Rating>();
-    public DbSet<ProgrammingLanguage> ProgrammingLanguage => Set<ProgrammingLanguage>();
-    public DbSet<HistoryEntry> HistoryEntry => Set<HistoryEntry>();
-    public DbSet<Image> Image => Set<Image>();
+    public DbSet<Content> Contents => Set<Content>();
+    public DbSet<Learner> Learners => Set<Learner>();
+    public DbSet<Moderator> Moderators => Set<Moderator>();
+    public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<ProgrammingLanguage> ProgrammingLanguages => Set<ProgrammingLanguage>();
+    public DbSet<HistoryEntry> HistoryEntries => Set<HistoryEntry>();
+    public DbSet<Image> Images => Set<Image>();
     public DbSet<RawVideo> RawVideo => Set<RawVideo>();
 
 
@@ -25,8 +25,6 @@ public class KhanContext : DbContext, IKhanContext
             .HasDiscriminator<string>("Type")
             .HasValue<Article>("Article")
             .HasValue<Video>("Video");
-
-        modelBuilder.Entity<ProgrammingLanguage>();
-
+        
     }
 }
