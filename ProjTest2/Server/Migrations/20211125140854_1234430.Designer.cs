@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using ProjTest2.Server;
@@ -11,9 +12,10 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    partial class KhanContextModelSnapshot : ModelSnapshot
+    [Migration("20211125140854_1234430")]
+    partial class _1234430
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,9 +41,8 @@ namespace ProjTest2.Server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Difficulty")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<int?>("Difficulty")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("LearnerId")
                         .HasColumnType("integer");
@@ -63,21 +64,6 @@ namespace ProjTest2.Server.Migrations
                     b.ToTable("Content");
 
                     b.HasDiscriminator<string>("Type").HasValue("Content");
-                });
-
-            modelBuilder.Entity("ContentProgrammingLanguage", b =>
-                {
-                    b.Property<int>("ContentsId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ProgrammingLanguagesLanguage")
-                        .HasColumnType("text");
-
-                    b.HasKey("ContentsId", "ProgrammingLanguagesLanguage");
-
-                    b.HasIndex("ProgrammingLanguagesLanguage");
-
-                    b.ToTable("ContentProgrammingLanguage");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -104,6 +90,23 @@ namespace ProjTest2.Server.Migrations
                     b.HasIndex("LearnerId");
 
                     b.ToTable("HistoryEntry");
+                });
+
+            modelBuilder.Entity("ProjTest2.Shared.Models.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("RawImage")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Learner", b =>
@@ -151,7 +154,6 @@ namespace ProjTest2.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.HasKey("Language");
                     b.Property<int?>("ContentId")
                         .HasColumnType("integer");
 
@@ -160,6 +162,8 @@ namespace ProjTest2.Server.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContentId");
 
                     b.ToTable("ProgrammingLanguage");
                 });
@@ -225,10 +229,10 @@ namespace ProjTest2.Server.Migrations
                     b.Property<int?>("Length")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RawDataId")
+                    b.Property<int>("RawVideoId")
                         .HasColumnType("integer");
 
-                    b.HasIndex("RawDataId");
+                    b.HasIndex("RawVideoId");
 
                     b.HasDiscriminator().HasValue("Video");
                 });
@@ -244,21 +248,6 @@ namespace ProjTest2.Server.Migrations
                         .HasForeignKey("LearnerId");
 
                     b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("ContentProgrammingLanguage", b =>
-                {
-                    b.HasOne("Content", null)
-                        .WithMany()
-                        .HasForeignKey("ContentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjTest2.Shared.Models.ProgrammingLanguage", null)
-                        .WithMany()
-                        .HasForeignKey("ProgrammingLanguagesLanguage")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
@@ -278,6 +267,13 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
+                });
+
+            modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
+                {
+                    b.HasOne("Content", null)
+                        .WithMany("ProgrammingLanguages")
+                        .HasForeignKey("ContentId");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Rating", b =>
@@ -301,17 +297,19 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Video", b =>
                 {
-                    b.HasOne("ProjTest2.Shared.Models.RawVideo", "RawData")
+                    b.HasOne("ProjTest2.Shared.Models.RawVideo", "RawVideo")
                         .WithMany()
-                        .HasForeignKey("RawDataId")
+                        .HasForeignKey("RawVideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RawData");
+                    b.Navigation("RawVideo");
                 });
 
             modelBuilder.Entity("Content", b =>
                 {
+                    b.Navigation("ProgrammingLanguages");
+
                     b.Navigation("Ratings");
                 });
 

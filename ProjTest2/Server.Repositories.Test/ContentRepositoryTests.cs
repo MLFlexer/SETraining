@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ProjTest2.Server;
 using ProjTest2.Server.Repositories;
+using ProjTest2.Shared;
 using ProjTest2.Shared.DTOs;
+using ProjTest2.Shared.Models;
 using Xunit;
 
 namespace Server.Repositories.Test;
@@ -26,11 +29,12 @@ public class ContentRepositoryTests : IDisposable
         
         //Add existing test data 
         
+        //TODO: ADD ALL FIELDS TO ENDITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-            PreBuiltData.CSharpArticle,
-            PreBuiltData.EmptyVideo,
-            PreBuiltData.JavascriptArticle,
-            PreBuiltData.JavaVideo
+                new Video("Introduction to Java", new RawVideo(new byte[1])) {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
+                new Video("Introduction to CSharp", new RawVideo(new byte[1])),
+                new Article("Introduction to Java", "Text body Java Article"),
+                new Article("Introduction to CSharp", "Text Body CSharp Article")
             );
 
         context.SaveChanges();
@@ -45,22 +49,24 @@ public class ContentRepositoryTests : IDisposable
     public async void Create_new_Video_with_generated_id()
     {
         //Arrange 
-        var toCreate = PreBuiltData.GOVideoCreateDTO;
+        var programmingLangs = new List<string>() {"Java", "Go"};
+        var toCreate = new VideoCreateDTO("Introduction to Go", "Video") {ProgrammingLanguages = programmingLangs};
         //Act
         var created = await _repository.CreateAsync(toCreate);
         
         //Assert
         Assert.Equal(5, created.Id);
         Assert.Equal("Video", created.Type);
-        Assert.Equal("Go", created.Title);
-        Assert.Equal(toCreate.ProgrammingLanguages,created.ProgrammingLanguages);
+        Assert.Equal("Introduction to Go", created.Title);
+        Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
     
-    //[Fact]
+    [Fact]
     public async void Create_new_Article_with_generated_id()
     {
         //Arrange 
-        var toCreate = PreBuiltData.GOArticleCreateDTO;
+        var programmingLangs = new List<string>() {"Java", "Go"};
+        var toCreate = new ArticleCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
         
         //Act
         var created = await _repository.CreateAsync(toCreate);
@@ -68,45 +74,74 @@ public class ContentRepositoryTests : IDisposable
         //Assert
         Assert.Equal(5, created.Id);
         Assert.Equal("Article", created.Type);
-        Assert.Equal("Go", created.Title);
-        Assert.Equal(toCreate.ProgrammingLanguages,created.ProgrammingLanguages);
+        Assert.Equal("Introduction to Go", created.Title);
+        Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
     
-    //[Fact]
+    [Fact]
     public async void Read_returns_all()
     {
-        var contents = await _repository.ReadAsync();
-        
-        Assert.Collection(contents,
-            c => Assert.Equal(PreBuiltData.CSharpArticleDetailsDTO, c),
-            c => Assert.Equal(PreBuiltData.EmptyVideoDetailsDTO, c),
-            c => Assert.Equal(PreBuiltData.JavascriptArticleDetailsDTO, c),
-            c => Assert.Equal(PreBuiltData.JavaVideoDetailsDTO, c)
+        //TODO: Hvorfor bliver der sorteret på Article her?
+        var contentsFromDB = await _repository.ReadAsync();
+        var expected_1 = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
+        var expected_2 = new ContentDetailsDTO(2,"Introduction to CSharp", null, null, null, null, "Article");
+        var expected_3 = new ContentDetailsDTO(3, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Video");
+        var expected_4 = new ContentDetailsDTO(4, "Introduction to CSharp", null, null, null, null, "Video");
+  
+        Assert.Collection(contentsFromDB,
+                c => Assert.Equal(expected_1, c),
+            c => Assert.Equal(expected_2, c),
+                //TODO: Hvordan tester man c og ikke kun c.ProgrammingLanguages
+            c => Assert.Equal(expected_3.ProgrammingLanguages, c.ProgrammingLanguages),
+            c => Assert.Equal(expected_4, c)
         );
+        
     }
     
     [Fact]
-    public void Read_given_id_does_not_exist_returns_null()
+    public async void Read_given_id_does_not_exist_returns_null()
     {
-        //throw new NotImplementedException();
+        var contentsFromDB = await _repository.ReadAsync(99);
+        Assert.True(contentsFromDB.IsNone);
     }
     
     [Fact]
-    public void Read_given_id_exists_returns_Content()
+    public async void Read_given_id_exists_returns_Content()
     {
-        //throw new NotImplementedException();
+        //Arrange
+        var expected = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
+        
+        //Act
+        var contentFromDB = await _repository.ReadAsync(1);
+        var actual = contentFromDB.Value;
+        
+        //Assert
+        Assert.Equal(expected.Id, actual.Id);
+        Assert.Equal(expected.Title, actual.Title);
+        Assert.Equal(expected.Type, actual.Type);
     }
     
     [Fact]
     public void  Update_updates_existing_Content()
     {
         //throw new NotImplementedException();
+        //Arrange 
+        
+        //Act
+        //var contentFromDB = _repository.UpdateAsync(1, new ContentUpdateDTO())
+        
+        //Delete
     }
     
-    [Fact]
+    //[Fact]
     public void  Delete_given_non_existing_id_returns_NotFound()
     {
         //throw new NotImplementedException();
+        
+        //TODO: Edit ContentUpdateDTO()!
+        //var content = new ContentUpdateDTO();
+        // var updated = await _repository.UpdateAsync(42, content);
+        // Assert.Equal(Status.NotFound, updated);
     }
     
     [Fact]

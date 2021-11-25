@@ -23,12 +23,43 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any())
+        if(!context.Contents.Any())
         {
             var java = new ProgrammingLanguage("Java");
             var csharp = new ProgrammingLanguage("C#");
             var javascript = new ProgrammingLanguage("Javascript");
             var fsharp = new ProgrammingLanguage("F#");
+            context.Contents.AddRange(
+                
+
+                );
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedHistoryEntries(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if(!context.HistoryEntries.Any())
+        {
+            context.HistoryEntries.AddRange(
+                
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedModerator(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Moderators.Any())
+        {
+            context.Moderators.AddRange(
+                
+            );
 
             // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
             var javaArticleText1 = "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture.";
@@ -64,6 +95,55 @@ public static class SeedExtensions
                     ProgrammingLanguages = new[] { fsharp }
                 },
                 new Video("Another video", new RawVideo(new byte[1]))
+              
+        if (!context.Learners.Any())
+        {
+            context.Learners.AddRange(
+                
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedImage(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Images.Any())
+        {
+            context.Images.AddRange(
+                
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedRating(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Ratings.Any())
+        {
+            context.Ratings.AddRange(
+                
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+
+    private static void SeedProgrammingLanguage(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.ProgrammingLanguages.Any())
+        {
+            context.ProgrammingLanguages.AddRange(
+          
+             
             );
 
             context.SaveChanges();
