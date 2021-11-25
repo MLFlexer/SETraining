@@ -1,17 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProjTest2.Shared.Models
+namespace ProjTest2.Shared.Models;
+
+public class ProgrammingLanguage
 {
-    public class ProgrammingLanguage
+    public ProgrammingLanguage(string language)
     {
-        public ProgrammingLanguage(string language)
-        {
-            Language = language;
-        }
-
-        [Key]        
-        public string Language { get; set; }
-
-        public ICollection<Content> Contents { get; set; } = null!;
+        Language = language;
     }
+
+    [Key]        
+    public string Language { get; set; }
+
+    public ICollection<Content> Contents { get; set; } = null!;
 }

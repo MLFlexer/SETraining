@@ -12,8 +12,8 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211124144724_testing")]
-    partial class testing
+    [Migration("20211125192934_testmigra1")]
+    partial class testmigra1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,6 +66,21 @@ namespace ProjTest2.Server.Migrations
                     b.HasDiscriminator<string>("Type").HasValue("Content");
                 });
 
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.Property<int>("ContentsId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProgrammingLanguagesLanguage")
+                        .HasColumnType("text");
+
+                    b.HasKey("ContentsId", "ProgrammingLanguagesLanguage");
+
+                    b.HasIndex("ProgrammingLanguagesLanguage");
+
+                    b.ToTable("ContentProgrammingLanguage");
+                });
+
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -90,23 +105,6 @@ namespace ProjTest2.Server.Migrations
                     b.HasIndex("LearnerId");
 
                     b.ToTable("HistoryEntry");
-                });
-
-            modelBuilder.Entity("ProjTest2.Shared.Models.Image", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("RawImage")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Image");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Learner", b =>
@@ -151,12 +149,7 @@ namespace ProjTest2.Server.Migrations
                     b.Property<string>("Language")
                         .HasColumnType("text");
 
-                    b.Property<int?>("ContentId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Language");
-
-                    b.HasIndex("ContentId");
 
                     b.ToTable("ProgrammingLanguage");
                 });
@@ -243,6 +236,21 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Creator");
                 });
 
+            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+                {
+                    b.HasOne("Content", null)
+                        .WithMany()
+                        .HasForeignKey("ContentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ProjTest2.Shared.Models.ProgrammingLanguage", null)
+                        .WithMany()
+                        .HasForeignKey("ProgrammingLanguagesLanguage")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ProjTest2.Shared.Models.HistoryEntry", b =>
                 {
                     b.HasOne("Content", "Content")
@@ -260,13 +268,6 @@ namespace ProjTest2.Server.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
-                });
-
-            modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
-                {
-                    b.HasOne("Content", null)
-                        .WithMany("ProgrammingLanguages")
-                        .HasForeignKey("ContentId");
                 });
 
             modelBuilder.Entity("ProjTest2.Shared.Models.Rating", b =>
@@ -301,8 +302,6 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("Content", b =>
                 {
-                    b.Navigation("ProgrammingLanguages");
-
                     b.Navigation("Ratings");
                 });
 

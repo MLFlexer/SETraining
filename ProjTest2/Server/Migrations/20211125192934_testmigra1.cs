@@ -6,23 +6,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ProjTest2.Server.Migrations
 {
-    public partial class newInitial : Migration
+    public partial class testmigra1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Image",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RawImage = table.Column<byte[]>(type: "bytea", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Image", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Learner",
                 columns: table => new
@@ -238,9 +225,6 @@ namespace ProjTest2.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "HistoryEntry");
-
-            migrationBuilder.DropTable(
-                name: "Image");
 
             migrationBuilder.DropTable(
                 name: "Rating");

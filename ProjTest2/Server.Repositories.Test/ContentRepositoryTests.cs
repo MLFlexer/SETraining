@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using ProjTest2.Server;
-using ProjTest2.Server.MockData;
 using ProjTest2.Server.Repositories;
 using ProjTest2.Shared.DTOs;
 using Xunit;
@@ -16,7 +15,7 @@ public class ContentRepositoryTests : IDisposable
     private readonly ContentRepository _repository;
     //private bool disposedValue;
     
-    public ContentRepositoryTests()
+    /* public ContentRepositoryTests()
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
@@ -114,10 +113,10 @@ public class ContentRepositoryTests : IDisposable
     public void  Delete_given_existing_id_deletes()
     {
         //throw new NotImplementedException();
-    }
+    }*/
     
     public void Dispose()
     {
         _context.Dispose();
-    }
+    } 
 }

@@ -1,29 +1,25 @@
 ﻿using ProjTest2.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProjTest2.Server;
 
 public class KhanContext : DbContext, IKhanContext
 {
     public DbSet<Content> Content => Set<Content>();
-    public DbSet<Learner> Learner => Set<Learner>();
-    public DbSet<Moderator> Moderator => Set<Moderator>();
-    public DbSet<Rating> Rating => Set<Rating>();
-    public DbSet<ProgrammingLanguage> ProgrammingLanguage => Set<ProgrammingLanguage>();
-    public DbSet<HistoryEntry> HistoryEntry => Set<HistoryEntry>();
-    public DbSet<Image> Image => Set<Image>();
-    public DbSet<RawVideo> RawVideo => Set<RawVideo>();
-
 
     public KhanContext(DbContextOptions<KhanContext> options) : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Content>().HasDiscriminator(c => c.Type);
-        
+    {   
         modelBuilder.Entity<Content>()
-            .HasDiscriminator<string>("Type")
+            .HasDiscriminator(c => c.Type)
             .HasValue<Article>("Article")
             .HasValue<Video>("Video");
+
+        modelBuilder.Entity<Content>()
+            .Property(c => c.Difficulty)
+            .HasMaxLength(50)
+            .HasConversion(new EnumToStringConverter<DifficultyLevel>());
     }
 }
