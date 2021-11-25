@@ -12,8 +12,8 @@ using ProjTest2.Server;
 namespace ProjTest2.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211124144724_testing")]
-    partial class testing
+    [Migration("20211125140854_1234430")]
+    partial class _1234430
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -148,13 +148,20 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
                 {
-                    b.Property<string>("Language")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("ContentId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Language");
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ContentId");
 

@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ProjTest2.Shared.Models;
-using ProjTest2.Server.MockData;
 
 namespace ProjTest2.Server;
 
@@ -34,21 +33,12 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any())
+        if(!context.Contents.Any())
         {
-            context.Content.AddRange(
-
-                PreBuiltData.EmptyVideo,
-                PreBuiltData.JavaVideo,
-                PreBuiltData.CSharpVideo,
-                PreBuiltData.JavascriptVideo,
-                PreBuiltData.EmptyArticle,
-                PreBuiltData.JavaArticle,
-                PreBuiltData.CSharpArticle,
-                PreBuiltData.JavascriptArticle
+            context.Contents.AddRange(
+                
 
                 );
-
             context.SaveChanges();
         }
     }
@@ -57,10 +47,10 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.HistoryEntry.Any())
+        if(!context.HistoryEntries.Any())
         {
-            context.HistoryEntry.AddRange(
-                PreBuiltData.History
+            context.HistoryEntries.AddRange(
+                
             );
 
             context.SaveChanges();
@@ -71,10 +61,10 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Moderator.Any())
+        if (!context.Moderators.Any())
         {
-            context.Moderator.AddRange(
-                PreBuiltData.Moderator
+            context.Moderators.AddRange(
+                
             );
 
             context.SaveChanges();
@@ -85,10 +75,10 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Learner.Any())
+        if (!context.Learners.Any())
         {
-            context.Learner.AddRange(
-                PreBuiltData.Learner
+            context.Learners.AddRange(
+                
             );
 
             context.SaveChanges();
@@ -99,10 +89,10 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Image.Any())
+        if (!context.Images.Any())
         {
-            context.Image.AddRange(
-                PreBuiltData.Image
+            context.Images.AddRange(
+                
             );
 
             context.SaveChanges();
@@ -113,10 +103,10 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.Rating.Any())
+        if (!context.Ratings.Any())
         {
-            context.Rating.AddRange(
-                PreBuiltData.Rating
+            context.Ratings.AddRange(
+                
             );
 
             context.SaveChanges();
@@ -128,12 +118,11 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if (!context.ProgrammingLanguage.Any())
+        if (!context.ProgrammingLanguages.Any())
         {
-            context.ProgrammingLanguage.AddRange(
-                PreBuiltData.Java,
-                PreBuiltData.CSharp,
-                PreBuiltData.JavaScript
+            context.ProgrammingLanguages.AddRange(
+          
+                
             );
 
             context.SaveChanges();

@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace ProjTest2.Server.Migrations
 {
-    public partial class newInitial : Migration
+    public partial class _1234430 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,17 +48,6 @@ namespace ProjTest2.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Moderator", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ProgrammingLanguage",
-                columns: table => new
-                {
-                    Language = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Language);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,30 +102,6 @@ namespace ProjTest2.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContentProgrammingLanguage",
-                columns: table => new
-                {
-                    ContentsId = table.Column<int>(type: "integer", nullable: false),
-                    ProgrammingLanguagesLanguage = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContentProgrammingLanguage", x => new { x.ContentsId, x.ProgrammingLanguagesLanguage });
-                    table.ForeignKey(
-                        name: "FK_ContentProgrammingLanguage_Content_ContentsId",
-                        column: x => x.ContentsId,
-                        principalTable: "Content",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ContentProgrammingLanguage_ProgrammingLanguage_ProgrammingL~",
-                        column: x => x.ProgrammingLanguagesLanguage,
-                        principalTable: "ProgrammingLanguage",
-                        principalColumn: "Language",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "HistoryEntry",
                 columns: table => new
                 {
@@ -161,6 +126,25 @@ namespace ProjTest2.Server.Migrations
                         principalTable: "Learner",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProgrammingLanguage",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Language = table.Column<string>(type: "text", nullable: false),
+                    ContentId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgrammingLanguage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProgrammingLanguage_Content_ContentId",
+                        column: x => x.ContentId,
+                        principalTable: "Content",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -206,11 +190,6 @@ namespace ProjTest2.Server.Migrations
                 column: "RawVideoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentProgrammingLanguage_ProgrammingLanguagesLanguage",
-                table: "ContentProgrammingLanguage",
-                column: "ProgrammingLanguagesLanguage");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_HistoryEntry_ContentId",
                 table: "HistoryEntry",
                 column: "ContentId");
@@ -219,6 +198,11 @@ namespace ProjTest2.Server.Migrations
                 name: "IX_HistoryEntry_LearnerId",
                 table: "HistoryEntry",
                 column: "LearnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProgrammingLanguage_ContentId",
+                table: "ProgrammingLanguage",
+                column: "ContentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rating_ContentId",
@@ -234,19 +218,16 @@ namespace ProjTest2.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ContentProgrammingLanguage");
-
-            migrationBuilder.DropTable(
                 name: "HistoryEntry");
 
             migrationBuilder.DropTable(
                 name: "Image");
 
             migrationBuilder.DropTable(
-                name: "Rating");
+                name: "ProgrammingLanguage");
 
             migrationBuilder.DropTable(
-                name: "ProgrammingLanguage");
+                name: "Rating");
 
             migrationBuilder.DropTable(
                 name: "Content");

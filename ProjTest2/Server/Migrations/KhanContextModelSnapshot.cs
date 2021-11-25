@@ -146,13 +146,20 @@ namespace ProjTest2.Server.Migrations
 
             modelBuilder.Entity("ProjTest2.Shared.Models.ProgrammingLanguage", b =>
                 {
-                    b.Property<string>("Language")
-                        .HasColumnType("text");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("ContentId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Language");
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ContentId");
 

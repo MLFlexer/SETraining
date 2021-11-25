@@ -17,7 +17,7 @@ public record ContentCreateDTO
 
     public string Title { get; init; }
     public string? Description { get; init; }
-    public IReadOnlyList<string>? ProgrammingLanguages { get; init; }
+    public ICollection<string>? ProgrammingLanguages { get; init; }
     public DifficultyLevel? Difficulty { get; init; }
 
     public float? AvgRating { get; init; }

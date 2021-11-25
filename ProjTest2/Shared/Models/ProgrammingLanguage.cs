@@ -10,7 +10,9 @@ namespace ProjTest2.Shared.Models
             Language = language;
         }
         //Skal være unik
-        [Key]        
+
+        public int Id { get; set; }
         public string Language { get; set; }
+        
     }
 }

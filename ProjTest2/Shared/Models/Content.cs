@@ -7,7 +7,6 @@ public abstract class Content
     {
         Title = title;
         Type = type;
-        ProgrammingLanguages = new List<ProgrammingLanguage>();
     }
 
     public int Id { get; set; }
@@ -16,7 +15,7 @@ public abstract class Content
     public DifficultyLevel? Difficulty { get; set; }
     public Moderator? Creator { get; set; }
 
-    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; }
+    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
     public ICollection<Rating>? Ratings { get; set; }
     public float? AvgRating { get; set; }
 
