@@ -1,9 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using ProjTest2.Shared.Models;
 using ProjTest2.Server.MockData;
+using ProjTest2.Shared.Models;
 
 namespace ProjTest2.Server;
 
@@ -17,18 +15,46 @@ public static class SeedExtensions
         {
             var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
 
-            SeedProgrammingLanguage(context);
+            TestSeed(context);
+
+            /* SeedProgrammingLanguage(context);
             SeedContent(context);
             SeedHistoryEntries(context);
             SeedModerator(context);
             SeedLearner(context);
             SeedImage(context);
-            SeedRating(context);
+            SeedRating(context); */
             
         }
         return host;
     }
 
+    private static void TestSeed(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if(!context.Content.Any())
+        {
+            var java = new ProgrammingLanguage("Java");
+            var csharp = new ProgrammingLanguage("C#");
+
+            context.Content.AddRange(
+                new Article("Java Article", "An Article about Java") { 
+                    ProgrammingLanguages = new List<ProgrammingLanguage>(){ java } 
+                },
+                new Article("C# Article", "An Article about C#") { 
+                    ProgrammingLanguages = new List<ProgrammingLanguage>(){ csharp }
+                },
+                new Article("Better Article", "An Article about Java and C#") {
+                    ProgrammingLanguages = new List<ProgrammingLanguage>() { java, csharp }
+                },
+                new Video("Some Video", new RawVideo(new byte[1])),
+                new Video("Another video", new RawVideo(new byte[1]))
+            );
+
+            context.SaveChanges();
+        }
+    }
 
     private static void SeedContent(KhanContext context)
     {
@@ -123,7 +149,6 @@ public static class SeedExtensions
         }
     }
 
-
     private static void SeedProgrammingLanguage(KhanContext context)
     {
         context.Database.Migrate();
@@ -139,6 +164,4 @@ public static class SeedExtensions
             context.SaveChanges();
         }
     }
-
-
 }

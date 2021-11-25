@@ -7,7 +7,6 @@ public abstract class Content
     {
         Title = title;
         Type = type;
-        ProgrammingLanguages = new List<ProgrammingLanguage>();
     }
 
     public int Id { get; set; }
