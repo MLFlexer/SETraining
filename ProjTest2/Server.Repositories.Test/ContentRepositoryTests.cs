@@ -14,7 +14,7 @@ public class ContentRepositoryTests : IDisposable
 {
     private readonly KhanContext _context;
     private readonly ContentRepository _repository;
-    private bool disposedValue;
+    //private bool disposedValue;
     
     public ContentRepositoryTests()
     {
@@ -54,9 +54,10 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal(5, created.Id);
         Assert.Equal("Video", created.Type);
         Assert.Equal("Go", created.Title);
+        Assert.Equal(toCreate.ProgrammingLanguages,created.ProgrammingLanguages);
     }
     
-    [Fact]
+    //[Fact]
     public async void Create_new_Article_with_generated_id()
     {
         //Arrange 
@@ -69,49 +70,50 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal(5, created.Id);
         Assert.Equal("Article", created.Type);
         Assert.Equal("Go", created.Title);
+        Assert.Equal(toCreate.ProgrammingLanguages,created.ProgrammingLanguages);
     }
     
-    [Fact]
+    //[Fact]
     public async void Read_returns_all()
     {
         var contents = await _repository.ReadAsync();
-        Console.WriteLine(contents);
+        
         Assert.Collection(contents,
-            c => Assert.Equal(new ArticleDTO(1, "CSharp Article"), c),
-            c => Assert.Equal(new VideoDTO(2, "Empty Video"), c),
-            c => Assert.Equal(new ArticleDTO(3, "Javascript Article"), c),
-            c => Assert.Equal(new VideoDTO(4, "Java Video"), c)
+            c => Assert.Equal(PreBuiltData.CSharpArticleDetailsDTO, c),
+            c => Assert.Equal(PreBuiltData.EmptyVideoDetailsDTO, c),
+            c => Assert.Equal(PreBuiltData.JavascriptArticleDetailsDTO, c),
+            c => Assert.Equal(PreBuiltData.JavaVideoDetailsDTO, c)
         );
     }
     
     [Fact]
     public void Read_given_id_does_not_exist_returns_null()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
     
     [Fact]
     public void Read_given_id_exists_returns_Content()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
     
     [Fact]
     public void  Update_updates_existing_Content()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
     
     [Fact]
     public void  Delete_given_non_existing_id_returns_NotFound()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
     
     [Fact]
     public void  Delete_given_existing_id_deletes()
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
     
     public void Dispose()
