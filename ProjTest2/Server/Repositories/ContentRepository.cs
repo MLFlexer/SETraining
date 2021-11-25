@@ -22,24 +22,24 @@ public class ContentRepository : IContentRepository
             entity = new Article(content.Title, "")
             {
                 Description = content.Description,
-                ProgrammingLanguages = content.ProgrammingLanguages,
+                ProgrammingLanguages = content.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),
                 Difficulty = content.Difficulty,
                 AvgRating = content.AvgRating
             };
 
-            _context.Content.Add((Article)entity);
+            _context.Content.Add(entity);
         }
         else
         {
             entity = new Video(content.Title, new RawVideo(new byte[1]))
             {
                 Description = content.Description,
-                ProgrammingLanguages = content.ProgrammingLanguages,
+                ProgrammingLanguages = content.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),
                 Difficulty = content.Difficulty,
                 AvgRating = content.AvgRating
             };
 
-            _context.Content.Add((Video)entity);
+            _context.Content.Add(entity);
         }
         
         await _context.SaveChangesAsync();
@@ -48,7 +48,7 @@ public class ContentRepository : IContentRepository
                 entity.Id,
                 entity.Title,
                 entity.Description,
-                entity.ProgrammingLanguages,
+                entity.ProgrammingLanguages.Select(p => p.Language).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
                 content.Type
@@ -67,7 +67,7 @@ public class ContentRepository : IContentRepository
                 c.Id,
                 c.Title,
                 c.Description,
-                c.ProgrammingLanguages,
+                c.ProgrammingLanguages.Count > 0 ? c.ProgrammingLanguages.Select(p => p.Language).ToList() : null,
                 c.Difficulty,
                 c.AvgRating,
                 c.Type))
@@ -81,7 +81,7 @@ public class ContentRepository : IContentRepository
                     content.Id,
                     content.Title,
                     content.Description,
-                    content.ProgrammingLanguages,
+                    content.ProgrammingLanguages.Count > 0 ? content.ProgrammingLanguages.Select(p => p.Language).ToList() : null,
                     content.Difficulty,
                     content.AvgRating,
                     content.Type)

@@ -1,10 +1,11 @@
 ﻿using System;
+using ProjTest2.Shared.DTOs;
 using ProjTest2.Shared.Models;
 
 namespace ProjTest2.Server.MockData
 {
 
-    public static class PreBuildSeedData
+    public static class PreBuiltData
     {
         //Raw classes
         public static ProgrammingLanguage Java = new ProgrammingLanguage("Java");
@@ -13,7 +14,7 @@ namespace ProjTest2.Server.MockData
 
         public static RawVideo RawVideo = new RawVideo(new byte[0]);
 
-        public static Video EmptyVideo = new Video("Empty video", RawVideo) { ProgrammingLanguages = AllLangsList };
+        public static Video EmptyVideo = new Video("Empty video", RawVideo) {ProgrammingLanguages = AllLangsList};
         public static Video JavaVideo = new Video("Java video", RawVideo);
         public static Video CSharpVideo = new Video("CSharp video", RawVideo);
         public static Video JavascriptVideo = new Video("JavaScript video", RawVideo);
@@ -40,9 +41,24 @@ namespace ProjTest2.Server.MockData
 
         //Collections of Data
 
-        public static ICollection<ProgrammingLanguage> JavaList = new List<ProgrammingLanguage> { Java };
-        public static ICollection<ProgrammingLanguage> AllLangsList = new List<ProgrammingLanguage> { Java, CSharp, JavaScript };
- 
+        public static ICollection<ProgrammingLanguage> JavaList = new List<ProgrammingLanguage> {Java};
+
+        public static ICollection<ProgrammingLanguage> AllLangsList = new List<ProgrammingLanguage>
+            {Java, CSharp, JavaScript};
+
+
+        //ContentCreateDTO's
+        public static ContentCreateDTO GOArticleCreateDTO = new("Go", "Article") {ProgrammingLanguages = AllLangsList.Select(l => l.Language).ToList()};
+
+        public static ContentCreateDTO GOVideoCreateDTO = new ("Go", "Video") {ProgrammingLanguages = AllLangsList.Select(l => l.Language).ToList()};
+        
+        public static ContentDetailsDTO EmptyVideoDetailsDTO = new (2, "Empty video", null, AllLangsList.Select(p => p.Language).ToList(), null, null, "Video");
+        public static ContentDetailsDTO JavaVideoDetailsDTO = new (4, "Java Video", null, null, null, null, "Video");
+
+        public static ContentDetailsDTO CSharpArticleDetailsDTO = new (1, "CSharp Article", null, null, null, null, "Article");
+        public static ContentDetailsDTO JavascriptArticleDetailsDTO = new (3, "Javascript Article", null, null, null, null, "Article");
+
+        
     };
 }
 

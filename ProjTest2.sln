@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjTest2.Client", "ProjTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjTest2.Shared", "ProjTest2\Shared\ProjTest2.Shared.csproj", "{1F6070A7-F895-474A-B6D2-1783BCC6E6EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Repositories.Test", "ProjTest2\Server.Repositories.Test\Server.Repositories.Test.csproj", "{00306484-F059-40F8-949C-CC147B481363}"
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjTest2", "ProjTest2", "{E7C8C305-794F-4E2B-BBDF-019B8F4D42D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Controller.Test", "ProjTest2\Server.Controller.Test\Server.Controller.Test.csproj", "{979DCBA9-91D5-4A97-8D30-A28A5839FB08}"
@@ -31,6 +32,10 @@ Global
 		{1F6070A7-F895-474A-B6D2-1783BCC6E6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F6070A7-F895-474A-B6D2-1783BCC6E6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F6070A7-F895-474A-B6D2-1783BCC6E6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00306484-F059-40F8-949C-CC147B481363}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00306484-F059-40F8-949C-CC147B481363}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00306484-F059-40F8-949C-CC147B481363}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00306484-F059-40F8-949C-CC147B481363}.Release|Any CPU.Build.0 = Release|Any CPU
 		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{979DCBA9-91D5-4A97-8D30-A28A5839FB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
