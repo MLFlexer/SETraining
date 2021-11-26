@@ -364,3 +364,9 @@ FodyWeavers.xsd
 
 #Env variables
 .env
+
+#Rider
+.idea
+
+#VS COde
+.vscode

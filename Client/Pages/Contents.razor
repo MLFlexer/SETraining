@@ -1,0 +1,66 @@
+﻿@page "/contents"
+@using SETraining.Shared.DTOs
+@using SETraining.Shared.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SETraining.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+
+
+
+<PageTitle>content</PageTitle>
+<h3>Content</h3>
+<p>This component fetches content from the server's database using a REST API.</p>
+
+@if (contents == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Desc.</th>
+                <th>Difficulty</th>
+                <th>Language</th>
+                <th>Rating</th>
+                <th>Type</th>
+                <th>Extra</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in contents)
+            {
+                <tr>
+                    <td>@c.Title</td>
+                    <td>@c.Description</td>
+                    <td>@c.Difficulty</td>
+                    <td>@c.ProgrammingLanguages</td>
+                    <td>@c.AvgRating</td>
+                    <td>@c.Type</td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => OnContentClicked(c.Id)">@(c.Type == "Article" ? "Læs artikel" : "Se video")</button>                        
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private ContentDetailsDTO[]? contents;
+    private ContentDetailsDTO? content;
+
+    protected override async Task OnInitializedAsync()
+    {
+        contents = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+    }
+
+    private async void OnContentClicked(int id)
+    {
+        content = await Http.GetFromJsonAsync<ContentDetailsDTO>($"api/Content/{id}");
+    }
+}
