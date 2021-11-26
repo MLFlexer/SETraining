@@ -1,11 +1,9 @@
-using System.Threading;
 
 namespace ProjTest2.Shared.Models
 {
     public class Rating
     {
-
-        private Rating() { }
+        private Rating() { } //Constructor for EF Core.
 
         public Rating(int value, Content content, Learner learner)
         {

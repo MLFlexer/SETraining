@@ -5,7 +5,7 @@ namespace ProjTest2.Shared.DTOs;
 
 public record ContentDTO(int Id, string Title, string Type);
 
-public record ContentDetailsDTO(int Id, string Title, string? Description, List<string>? ProgrammingLanguages, DifficultyLevel? Difficulty, float? AvgRating, string Type) : ContentDTO(Id, Title, Type);
+public record ContentDetailsDTO(int Id, string Title, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel? Difficulty, float? AvgRating, string Type) : ContentDTO(Id, Title, Type);
 
 public record ContentCreateDTO
 {
@@ -29,7 +29,7 @@ public record ContentUpdateDTO : ContentCreateDTO
 {
     protected ContentUpdateDTO(ContentCreateDTO original) : base(original)
     {
-        // Det her er auto-genereret kode. Skal det laves om?
+        // TODO: Det her er auto-genereret kode. Skal det laves om?
     }
 
     public int Id { get; init; }

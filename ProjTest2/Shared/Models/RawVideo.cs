@@ -1,17 +1,14 @@
-﻿using System;
-namespace ProjTest2.Shared.Models
+﻿
+namespace ProjTest2.Shared.Models;
+
+public class RawVideo
 {
-    public class RawVideo
-    {
-
-        private RawVideo() { }
-        public RawVideo(byte[] rawVideo)
-        {
-            Video = rawVideo;
-        }
-        public int Id { get; set; }
-        public byte[] Video { get; set; }
-    }
+    private RawVideo() { } //Constructor for EF Core.
     
+    public RawVideo(byte[] rawVideo)
+    {
+        Video = rawVideo;
+    }
+    public int Id { get; set; }
+    public byte[] Video { get; set; }
 }
-

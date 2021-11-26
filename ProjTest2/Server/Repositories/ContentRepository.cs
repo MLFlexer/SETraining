@@ -16,7 +16,7 @@ public class ContentRepository : IContentRepository
 
     public async Task<ContentDetailsDTO> CreateAsync(ContentCreateDTO content)
     {
-        Content entity = null;
+        Content entity;
         if (content.Type == "Article")
         {
             entity = new Article(content.Title, "")
@@ -67,7 +67,7 @@ public class ContentRepository : IContentRepository
                 c.Id,
                 c.Title,
                 c.Description,
-                c.ProgrammingLanguages.Count > 0 ? c.ProgrammingLanguages.Select(p => p.Language).ToList() : null,
+                c.ProgrammingLanguages.Select(p => p.Language).ToList(),
                 c.Difficulty,
                 c.AvgRating,
                 c.Type))
@@ -81,7 +81,7 @@ public class ContentRepository : IContentRepository
                     content.Id,
                     content.Title,
                     content.Description,
-                    content.ProgrammingLanguages.Count > 0 ? content.ProgrammingLanguages.Select(p => p.Language).ToList() : null,
+                    content.ProgrammingLanguages.Select(p => p.Language).ToList(),
                     content.Difficulty,
                     content.AvgRating,
                     content.Type)

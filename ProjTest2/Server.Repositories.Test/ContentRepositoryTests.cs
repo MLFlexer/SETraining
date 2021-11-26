@@ -16,7 +16,7 @@ public class ContentRepositoryTests : IDisposable
 {
     private readonly KhanContext _context;
     private readonly ContentRepository _repository;
-    //private bool disposedValue;
+    private bool disposedValue;
     
     public ContentRepositoryTests()
     {
@@ -31,9 +31,9 @@ public class ContentRepositoryTests : IDisposable
         
         //TODO: ADD ALL FIELDS TO ENDITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-                new Video("Introduction to Java", new RawVideo(new byte[1])) {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
+                new Video("Introduction to Java", new RawVideo(new byte[1])),
                 new Video("Introduction to CSharp", new RawVideo(new byte[1])),
-                new Article("Introduction to Java", "Text body Java Article"),
+                new Article("Introduction to Java", "Text body Java Article") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
                 new Article("Introduction to CSharp", "Text Body CSharp Article")
             );
 
@@ -50,7 +50,7 @@ public class ContentRepositoryTests : IDisposable
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new VideoCreateDTO("Introduction to Go", "Video") {ProgrammingLanguages = programmingLangs};
+        var toCreate = new ContentCreateDTO("Introduction to Go", "Video") {ProgrammingLanguages = programmingLangs};
         //Act
         var created = await _repository.CreateAsync(toCreate);
         
@@ -66,7 +66,7 @@ public class ContentRepositoryTests : IDisposable
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new ArticleCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
+        var toCreate = new ContentCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
         
         //Act
         var created = await _repository.CreateAsync(toCreate);
@@ -78,21 +78,21 @@ public class ContentRepositoryTests : IDisposable
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
     
-    [Fact]
+    //[Fact]
     public async void Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAsync();
-        var expected_1 = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
-        var expected_2 = new ContentDetailsDTO(2,"Introduction to CSharp", null, null, null, null, "Article");
-        var expected_3 = new ContentDetailsDTO(3, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Video");
-        var expected_4 = new ContentDetailsDTO(4, "Introduction to CSharp", null, null, null, null, "Video");
+        var expected_1 = new ContentDetailsDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
+        var expected_2 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_3 = new ContentDetailsDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Video");
+        var expected_4 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
   
         Assert.Collection(contentsFromDB,
-                c => Assert.Equal(expected_1, c),
+                c => Assert.Equal(expected_1.ProgrammingLanguages, c.ProgrammingLanguages),
             c => Assert.Equal(expected_2, c),
                 //TODO: Hvordan tester man c og ikke kun c.ProgrammingLanguages
-            c => Assert.Equal(expected_3.ProgrammingLanguages, c.ProgrammingLanguages),
+            c => Assert.Equal(expected_3, c),
             c => Assert.Equal(expected_4, c)
         );
         
@@ -153,5 +153,5 @@ public class ContentRepositoryTests : IDisposable
     public void Dispose()
     {
         _context.Dispose();
-    }
+    } 
 }

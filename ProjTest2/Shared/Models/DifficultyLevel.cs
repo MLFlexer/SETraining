@@ -1,9 +1,8 @@
-namespace ProjTest2.Shared.Models
+namespace ProjTest2.Shared.Models;
+
+public enum DifficultyLevel
 {
-    public enum DifficultyLevel
-    {
-        Novice,
-        Intermediate,
-        Expert
-    }
+    Novice,
+    Intermediate,
+    Expert
 }
