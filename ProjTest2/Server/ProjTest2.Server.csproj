@@ -30,7 +30,4 @@
   <ItemGroup>
     <None Remove="MockData\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MockData\" />
-  </ItemGroup>
 </Project>

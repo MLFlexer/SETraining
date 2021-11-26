@@ -23,7 +23,7 @@ public static class SeedExtensions
     {
         context.Database.Migrate();
 
-        if(!context.Content.Any())
+        if(!context.Contents.Any())
         {
             var java = new ProgrammingLanguage("Java");
             var csharp = new ProgrammingLanguage("C#");
@@ -38,7 +38,7 @@ public static class SeedExtensions
 
             var joachim = new Learner("Joachim");
 
-            context.Content.AddRange(
+            context.Contents.AddRange(
                 new Article("Java", javaArticleText1) {
                     Description = "The Wikipedia page about the programming language Java",
                     Difficulty = DifficultyLevel.Novice,
