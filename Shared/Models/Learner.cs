@@ -1,5 +1,6 @@
 
 namespace SETraining.Shared.Models;
+
 public class Learner
 {
     public Learner(string name)

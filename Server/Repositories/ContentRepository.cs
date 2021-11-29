@@ -32,7 +32,7 @@ public class ContentRepository : IContentRepository
         }
         else
         {
-            entity = new Video(content.Title, new RawVideo(new byte[1]))
+            entity = new Video(content.Title, "*invalid filepath, used for testing*")
             {
                 Description = content.Description,
                 ProgrammingLanguages = content.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),

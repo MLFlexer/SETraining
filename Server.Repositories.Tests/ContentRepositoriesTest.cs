@@ -32,8 +32,8 @@ public class ContentRepositoriesTest : IDisposable
         
         //TODO: ADD ALL FIELDS TO ENTITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-                new Video("Introduction to Java", new RawVideo(new byte[1])),
-                new Video("Introduction to CSharp", new RawVideo(new byte[1])),
+                new Video("Introduction to Java", "no file"),
+                new Video("Introduction to CSharp", "no file"),
                 new Article("Introduction to Java", "Text body Java Article") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
                 new Article("Introduction to CSharp", "Text Body CSharp Article")
             );
