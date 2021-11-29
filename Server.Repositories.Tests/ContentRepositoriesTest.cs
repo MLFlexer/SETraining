@@ -126,7 +126,8 @@ public class ContentRepositoriesTest : IDisposable
     [Fact]
     public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
-        var content = new ContentUpdateDTO()
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
         {
             Title ="Introduction to Java", 
             Description = null, 
@@ -146,8 +147,8 @@ public class ContentRepositoriesTest : IDisposable
     public async Task  Update_updates_existing_Content()
     {
         //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-
-        var content = new ContentUpdateDTO()
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
         {
             Title ="Introduction to Java2", 
             Description = "This is updated", 

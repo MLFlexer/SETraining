@@ -9,11 +9,11 @@ public record ContentDetailsDTO(int Id, string Title, string? Description, IColl
 
 public record ContentCreateDTO
 {
-    /*public ContentCreateDTO(string title, string type)
+    public ContentCreateDTO(string title, string type)
     {
         Title = title;
         Type = type;
-    }*/
+    }
 
     public string Title { get; init; }
     public string? Description { get; init; }
@@ -27,10 +27,10 @@ public record ContentCreateDTO
 
 public record ContentUpdateDTO : ContentCreateDTO
 {
-    /*public ContentUpdateDTO(ContentCreateDTO original) : base(original)
+    public ContentUpdateDTO(ContentCreateDTO original) : base(original)
     {
         // TODO: Det her er auto-genereret kode. Skal det laves om?
-    }*/
+    }
 
     public int Id { get; init; }
 }

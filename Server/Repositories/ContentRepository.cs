@@ -92,9 +92,7 @@ public class ContentRepository : IContentRepository
     }
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
-       //var entity = _context.Contents.Select(c => c.Id == id);
-       //var entity = await _context.Contents.Include(c => c.Description).FirstOrDefaultAsync(c => c.Id == content.Id);
-       var entity = _context.Contents.ToList().Find(c => c.Id == id);
+        var entity = _context.Contents.ToList().Find(c => c.Id == id);
 
        if (entity == null)
         {
