@@ -14,8 +14,6 @@ public abstract class Content
     public string? Description { get; set; }
     public DifficultyLevel? Difficulty { get; set; }
     public Moderator? Creator { get; set; }
-  
-  
     public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
     public ICollection<Rating>? Ratings { get; set; }
     public float? AvgRating { get; set; }

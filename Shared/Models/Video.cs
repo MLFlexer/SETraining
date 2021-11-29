@@ -1,4 +1,5 @@
 ﻿namespace SETraining.Shared.Models;
+
 public class Video : Content
 {
     private Video(string Title) : base(Title, "Video")
@@ -6,11 +7,12 @@ public class Video : Content
         //Constructor for EF Core.
     }
 
-    public Video(string Title, RawVideo rawData) : base(Title, "Video")
+    public Video(string Title, string filePath) : base(Title, "Video")
     {
-        RawData = rawData;
+        FilePath = filePath;
     }
 
+    public string FilePath { get; set; }
+
     public int? Length { get; set; }
-    public RawVideo RawData { get; set; }
 }
