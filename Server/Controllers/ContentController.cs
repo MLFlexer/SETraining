@@ -7,7 +7,7 @@ using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using SETraining.Shared;
 
-namespace ProjTest2.Server.Controllers
+namespace SETraining.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,14 +1,7 @@
-using Microsoft.AspNetCore.Authentication;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Identity.Web;
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using SETraining.Server;
 using SETraining.Server.Contexts;
 using SETraining.Server.Repositories;
@@ -27,6 +20,7 @@ Console.WriteLine(connS);
 builder.Services.AddDbContext<KhanContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Khan")));
 builder.Services.AddScoped<IKhanContext, KhanContext>();
 builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguagesRepository>();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
