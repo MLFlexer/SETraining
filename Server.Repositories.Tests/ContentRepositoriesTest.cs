@@ -45,8 +45,7 @@ public class ContentRepositoriesTest : IDisposable
         
     }
 
-
-    /*[Fact]
+    [Fact]
     public async void Create_new_Video_with_generated_id()
     {
         //Arrange 
@@ -77,7 +76,7 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal("Article", created.Type);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
-    }*/
+    }
     
     //[Fact]
     public async Task Read_returns_all()
