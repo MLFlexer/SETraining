@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
+using SETraining.Shared;
 
 namespace Server.Repositories.Tests;
 
@@ -44,7 +46,7 @@ public class ContentRepositoriesTest : IDisposable
     }
 
 
-    [Fact]
+    /*[Fact]
     public async void Create_new_Video_with_generated_id()
     {
         //Arrange 
@@ -75,7 +77,7 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal("Article", created.Type);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
-    }
+    }*/
     
     //[Fact]
     public async void Read_returns_all()
@@ -119,17 +121,54 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal(expected.Title, actual.Title);
         Assert.Equal(expected.Type, actual.Type);
     }
-    
+
+
     [Fact]
-    public void  Update_updates_existing_Content()
+    public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
-        //throw new NotImplementedException();
-        //Arrange 
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
+        {
+            Title ="Introduction to Java", 
+            Description = null, 
+            ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
+            Difficulty = null, 
+            AvgRating = null, 
+            Type= "Article"
+        };
         
-        //Act
-        //var contentFromDB = _repository.UpdateAsync(1, new ContentUpdateDTO())
+        var updated = await _repository.UpdateAsync(42, content);
         
-        //Delete
+        Assert.Equal(Status.NotFound, updated);
+        
+    }
+
+    [Fact]
+    public async Task  Update_updates_existing_Content()
+    {
+        //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
+        {
+            Title ="Introduction to Java2", 
+            Description = "This is updated", 
+            ProgrammingLanguages = new List<string>(){}, 
+            Difficulty = null, 
+            AvgRating = 20, 
+            Type= "Article"
+        };
+        
+        var updated = await _repository.UpdateAsync(1, content);
+        
+        Assert.Equal(Status.Updated, updated);
+        
+        var option = await _repository.ReadAsync(1);
+        var UpdatedContent = option.Value;
+        
+        Assert.Equal("This is updated", UpdatedContent.Description);
+        Assert.Equal(20, UpdatedContent.AvgRating);
+        Assert.Equal("Introduction to Java2", UpdatedContent.Title);
+        Assert.Empty(UpdatedContent.ProgrammingLanguages);
     }
     
     //[Fact]

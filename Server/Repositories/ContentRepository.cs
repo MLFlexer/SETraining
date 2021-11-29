@@ -90,12 +90,11 @@ public class ContentRepository : IContentRepository
 
         return all;
     }
-
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
-        var entity = await _context.Contents.Include(c => c.ProgrammingLanguages).FirstOrDefaultAsync(c => c.Id == content.Id);
+        var entity = _context.Contents.ToList().Find(c => c.Id == id);
 
-        if (entity == null)
+       if (entity == null)
         {
             return Status.NotFound;
         }
@@ -105,10 +104,9 @@ public class ContentRepository : IContentRepository
         entity.Title = content.Title;
         entity.Type = content.Type;
         entity.AvgRating = content.AvgRating;
-        
-        //TODO: hvorfor virker dette ikke?
-        //entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(content.ProgrammingLanguages).ToListAsync();;
 
+        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(content.ProgrammingLanguages).ToListAsync();
+        
         await _context.SaveChangesAsync();
 
         return Status.Updated;
