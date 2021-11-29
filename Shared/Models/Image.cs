@@ -1,11 +1,12 @@
 namespace SETraining.Shared.Models;
+
 public class Image
 {
-    public Image(byte[] rawData)
+    public Image(string path)
     {
-        RawData = rawData;
+        Path = path;
     }
 
     public int Id {get; set; }
-    public byte[] RawData { get; set; }
+    public string Path { get; set; }
 }
