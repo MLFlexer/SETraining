@@ -49,7 +49,7 @@ public class ContentRepository : IContentRepository
                 entity.Id,
                 entity.Title,
                 entity.Description,
-                entity.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
                 content.Type
@@ -77,7 +77,7 @@ public class ContentRepository : IContentRepository
                 c.Id,
                 c.Title,
                 c.Description,
-                c.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
                 c.Type))
@@ -91,7 +91,7 @@ public class ContentRepository : IContentRepository
                     content.Id,
                     content.Title,
                     content.Description,
-                    content.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                    content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                     content.Difficulty,
                     content.AvgRating,
                     content.Type)
@@ -123,7 +123,7 @@ public class ContentRepository : IContentRepository
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
-        var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Language)).ToDictionaryAsync(p => p.Language);
+        var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);
 
         foreach (var language in languages)
         {

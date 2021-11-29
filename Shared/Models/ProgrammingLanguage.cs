@@ -4,13 +4,13 @@ namespace SETraining.Shared.Models;
 
 public class ProgrammingLanguage
 {
-    public ProgrammingLanguage(string language)
+    public ProgrammingLanguage(string name)
     {
-        Language = language;
+        Name = name;
     }
 
     [Key]        
-    public string Language { get; set; }
+    public string Name { get; set; }
 
     public ICollection<Content> Contents { get; set; } = null!;
 }

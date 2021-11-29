@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using SETraining.Shared;
+﻿using SETraining.Shared;
 using SETraining.Shared.DTOs;
 
 namespace SETraining.Server.Repositories;

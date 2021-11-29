@@ -1,7 +1,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ProjTest2.Server.Controllers;
+using SETraining.Server.Controllers;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using Xunit;
