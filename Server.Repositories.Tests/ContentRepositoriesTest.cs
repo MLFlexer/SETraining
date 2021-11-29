@@ -45,8 +45,7 @@ public class ContentRepositoriesTest : IDisposable
         
     }
 
-
-    /*[Fact]
+    [Fact]
     public async void Create_new_Video_with_generated_id()
     {
         //Arrange 
@@ -77,10 +76,10 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal("Article", created.Type);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
-    }*/
+    }
     
     //[Fact]
-    public async void Read_returns_all()
+    public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAsync();
@@ -100,14 +99,14 @@ public class ContentRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public async void Read_given_id_does_not_exist_returns_null()
+    public async Task Read_given_id_does_not_exist_returns_null()
     {
         var contentsFromDB = await _repository.ReadAsync(99);
         Assert.True(contentsFromDB.IsNone);
     }
     
     [Fact]
-    public async void Read_given_id_exists_returns_Content()
+    public async Task Read_given_id_exists_returns_Content()
     {
         //Arrange
         var expected = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
@@ -171,21 +170,20 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Empty(UpdatedContent.ProgrammingLanguages);
     }
     
-    //[Fact]
-    public void  Delete_given_non_existing_id_returns_NotFound()
+    [Fact]
+    public async Task  Delete_given_non_existing_id_returns_NotFound()
     {
-        //throw new NotImplementedException();
-        
-        //TODO: Edit ContentUpdateDTO()!
-        //var content = new ContentUpdateDTO();
-        // var updated = await _repository.UpdateAsync(42, content);
-        // Assert.Equal(Status.NotFound, updated);
+        var actual = await _repository.DeleteAsync(44);
+        Assert.Equal(Status.NotFound, actual);
     }
     
     [Fact]
-    public void  Delete_given_existing_id_deletes()
+    public async Task Delete_given_existing_id_deletes()
     {
-        //throw new NotImplementedException();
+        var actual = await _repository.DeleteAsync(2);
+
+        Assert.Equal(Status.Deleted, actual);
+        Assert.Null(await _context.Contents.FindAsync(2));
     }
     
     public void Dispose()
