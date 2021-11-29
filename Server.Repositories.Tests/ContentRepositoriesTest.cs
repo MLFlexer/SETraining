@@ -103,6 +103,15 @@ public class ContentRepositoriesTest : IDisposable
         var contentsFromDB = await _repository.ReadAsync(99);
         Assert.True(contentsFromDB.IsNone);
     }
+
+    //Todo: er lidt usikker på om denne test er okay??
+     [Fact]
+    public async void Read_given_title_does_not_exist_returns_emptyList()
+    {
+        var contentsFromDB = await _repository.ReadAsync("THISISNOTWORKING");
+
+        Assert.Empty(contentsFromDB.Value);
+    }
     
     [Fact]
     public async void Read_given_id_exists_returns_Content()
@@ -118,6 +127,40 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.Title, actual.Title);
         Assert.Equal(expected.Type, actual.Type);
+    }
+
+
+   
+     [Fact]
+    public async void Read_given_title_exists_returns_ContentList()
+    {
+        //Arrange
+        var expected_1 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_2 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+  
+
+        //Act
+        var actual = await _repository.ReadAsync("CSharp");
+        IEnumerable<ContentDetailsDTO> actualValue = actual.Value; 
+
+        //Assert
+        // Assert.Collection(dd,
+        //     actual => Assert.Equal(expected_1, actual),
+        //     actual => Assert.Equal(expected_2, actual)
+        // );
+        
+        foreach (var item in actualValue)
+        {
+            Assert.Collection(actualValue, 
+                actualValue => Assert.Equal(expected_1, actualValue),
+                actualValue => Assert.Equal(expected_2, actualValue)
+            );
+        }
+        
+
+        // Assert.Equal(expected.Id, actual.Id);
+        // Assert.Equal(expected.Title, actual.Title);
+        // Assert.Equal(expected.Type, actual.Type);
     }
     
     [Fact]
