@@ -1,14 +1,9 @@
 
 namespace SETraining.Shared.Models;
 
-public class Moderator
+public class Moderator: User
 {
-    public Moderator(string name)
-    {
-        Name = name;
-    }
+    public Moderator(string name) : base(name)
+    {     }
     
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public ICollection<Content>? Contents { get; set; } = null!;
 }
