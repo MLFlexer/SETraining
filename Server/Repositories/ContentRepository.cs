@@ -56,9 +56,18 @@ public class ContentRepository : IContentRepository
             ); 
     }
 
-    public Task<Status> DeleteAsync(int contentId)
+    public async Task<Status> DeleteAsync(int contentId)
     {
-        throw new NotImplementedException();
+        var entity = await _context.Contents.FindAsync(contentId);
+
+        if (entity == null)
+        {
+            return Status.NotFound;
+        }
+
+        _context.Contents.Remove(entity);
+        await _context.SaveChangesAsync();
+        return Status.Deleted;
     }
 
     public async Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
