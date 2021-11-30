@@ -1,7 +1,11 @@
 
 
 # SETraining 🏃
+[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml)
+---------
+
 A repository to help users navigate the confusing web of ever emerging technologies.
+
 ________
 ## Get started
 
