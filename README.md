@@ -1,7 +1,7 @@
 
 
 # SETraining 🏃
-[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml) [![Coverage Status](https://coveralls.io/repos/github/MLFlexer/SETraining/badge.svg?branch=new_ui)](https://coveralls.io/github/MLFlexer/SETraining?branch=new_ui)
 ---------
 
 A repository to help users navigate the confusing web of ever emerging technologies.
