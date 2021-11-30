@@ -6,16 +6,22 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity?.Name!
-        <button class="nav-link btn btn-link" @onclick="BeginLogout">Log out</button>
+        <div style="margin-right: 10px;">
+            @context.User.Identity?.Name
+        </div> 
+        @* <button class="nav-link btn btn-link" @onclick="BeginLogout">Log out</button> *@
+        <RadzenButton Text="Log out" Click=@(BeginLogout) ButtonStyle="ButtonStyle.Secondary"></RadzenButton>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
+       
+        <a href="authentication/login">
+             <RadzenButton Text="Log in" ButtonStyle="ButtonStyle.Secondary"></RadzenButton>
+        </a>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
-    private async Task BeginLogout(MouseEventArgs args)
+    private async Task BeginLogout()
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");

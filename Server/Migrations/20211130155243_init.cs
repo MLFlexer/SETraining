@@ -16,7 +16,7 @@ namespace SETraining.Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RawData = table.Column<byte[]>(type: "bytea", nullable: false)
+                    Path = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,24 +54,11 @@ namespace SETraining.Server.Migrations
                 name: "ProgrammingLanguages",
                 columns: table => new
                 {
-                    Language = table.Column<string>(type: "text", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProgrammingLanguages", x => x.Language);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RawVideo",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Video = table.Column<byte[]>(type: "bytea", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RawVideo", x => x.Id);
+                    table.PrimaryKey("PK_ProgrammingLanguages", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -82,14 +69,14 @@ namespace SETraining.Server.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Difficulty = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    Difficulty = table.Column<string>(type: "text", nullable: true),
                     CreatorId = table.Column<int>(type: "integer", nullable: true),
-                    AvgRating = table.Column<float>(type: "real", nullable: true),
+                    AvgRating = table.Column<int>(type: "integer", nullable: true),
                     Type = table.Column<string>(type: "text", nullable: false),
                     LearnerId = table.Column<int>(type: "integer", nullable: true),
                     TextBody = table.Column<string>(type: "text", nullable: true),
-                    Length = table.Column<int>(type: "integer", nullable: true),
-                    RawDataId = table.Column<int>(type: "integer", nullable: true)
+                    FilePath = table.Column<string>(type: "text", nullable: true),
+                    Length = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -104,12 +91,6 @@ namespace SETraining.Server.Migrations
                         column: x => x.CreatorId,
                         principalTable: "Moderators",
                         principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Contents_RawVideo_RawDataId",
-                        column: x => x.RawDataId,
-                        principalTable: "RawVideo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,11 +98,11 @@ namespace SETraining.Server.Migrations
                 columns: table => new
                 {
                     ContentsId = table.Column<int>(type: "integer", nullable: false),
-                    ProgrammingLanguagesLanguage = table.Column<string>(type: "text", nullable: false)
+                    ProgrammingLanguagesName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContentProgrammingLanguage", x => new { x.ContentsId, x.ProgrammingLanguagesLanguage });
+                    table.PrimaryKey("PK_ContentProgrammingLanguage", x => new { x.ContentsId, x.ProgrammingLanguagesName });
                     table.ForeignKey(
                         name: "FK_ContentProgrammingLanguage_Contents_ContentsId",
                         column: x => x.ContentsId,
@@ -130,9 +111,9 @@ namespace SETraining.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ContentProgrammingLanguage_ProgrammingLanguages_Programming~",
-                        column: x => x.ProgrammingLanguagesLanguage,
+                        column: x => x.ProgrammingLanguagesName,
                         principalTable: "ProgrammingLanguages",
-                        principalColumn: "Language",
+                        principalColumn: "Name",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -191,9 +172,9 @@ namespace SETraining.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentProgrammingLanguage_ProgrammingLanguagesLanguage",
+                name: "IX_ContentProgrammingLanguage_ProgrammingLanguagesName",
                 table: "ContentProgrammingLanguage",
-                column: "ProgrammingLanguagesLanguage");
+                column: "ProgrammingLanguagesName");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contents_CreatorId",
@@ -204,11 +185,6 @@ namespace SETraining.Server.Migrations
                 name: "IX_Contents_LearnerId",
                 table: "Contents",
                 column: "LearnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contents_RawDataId",
-                table: "Contents",
-                column: "RawDataId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HistoryEntries_ContentId",
@@ -256,9 +232,6 @@ namespace SETraining.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Moderators");
-
-            migrationBuilder.DropTable(
-                name: "RawVideo");
         }
     }
 }

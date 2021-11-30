@@ -23,7 +23,7 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ContentDTO>> Get()
+        public async Task<IEnumerable<ContentDetailsDTO>> Get()
         {
             return await _repository.ReadAsync();
         }

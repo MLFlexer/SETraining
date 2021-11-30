@@ -16,6 +16,6 @@ public abstract class Content
     public Moderator? Creator { get; set; }
     public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
     public ICollection<Rating>? Ratings { get; set; }
-    public float? AvgRating { get; set; }
+    public int? AvgRating { get; set; }
     public string Type { get; set; }
 }
