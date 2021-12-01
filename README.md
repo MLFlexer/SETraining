@@ -1,7 +1,7 @@
 
 
 # SETraining 🏃
-[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml) [![Coverage Status](https://coveralls.io/repos/github/MLFlexer/SETraining/badge.svg?branch=new_ui)](https://coveralls.io/github/MLFlexer/SETraining?branch=new_ui)
 ---------
 
 A repository to help users navigate the confusing web of ever emerging technologies.
@@ -48,6 +48,14 @@ Run the following commands:
 After that you should 
 - Restart the containers with step `2. Run database with docker 🐳`
 
+
+## Testing
+
+Make sure to install Coverlet and XUnit in test projects with dotnet CLI
+- `dotnet add package xunit --version 2.4.2-pre.12`
+- `dotnet add package coverlet.msbuild --version 3.1.0`
+
+A badge with code coverage is automatically built upon each push to main via `coverall.oi`
 
 ## Extra 
 Find total line count in whole project from bash:
