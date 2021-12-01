@@ -3,9 +3,9 @@ using SETraining.Shared.Models;
 
 namespace SETraining.Shared.DTOs;
 
-public record ContentDTO(int Id, string Title, string Type);
 
-public record ContentDetailsDTO(int Id, string Title, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel? Difficulty, int? AvgRating, string Type) : ContentDTO(Id, Title, Type);
+
+public record ContentDTO(int Id, string Title, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel? Difficulty, int? AvgRating, string Type);
 
 public record ContentCreateDTO
 {

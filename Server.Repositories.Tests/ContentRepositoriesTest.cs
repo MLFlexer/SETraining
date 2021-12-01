@@ -83,10 +83,10 @@ public class ContentRepositoriesTest : IDisposable
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAsync();
-        var expected_1 = new ContentDetailsDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        var expected_2 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
-        var expected_3 = new ContentDetailsDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Video");
-        var expected_4 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+        var expected_1 = new ContentDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
+        var expected_2 = new ContentDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_3 = new ContentDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Video");
+        var expected_4 = new ContentDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
   
         Assert.Collection(contentsFromDB,
                 c => Assert.Equal(expected_1.ProgrammingLanguages, c.ProgrammingLanguages),
@@ -109,7 +109,7 @@ public class ContentRepositoriesTest : IDisposable
     public async Task Read_given_id_exists_returns_Content()
     {
         //Arrange
-        var expected = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
+        var expected = new ContentDTO(1, "Introduction to Java", null, null, null, null, "Article");
         
         //Act
         var contentFromDB = await _repository.ReadAsync(1);

@@ -24,7 +24,7 @@
 } else {
     <div style="margin-left: 20px; margin-top: 20px; ">Results: @Contents.Length @(Contents.Length > 0 ? "items" : "item")</div>
                                                              
-    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@Contents" TItem="ContentDetailsDTO">
+    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@Contents" TItem="ContentDTO">
         <Template Context="content">
             <RadzenCard Style="width:300px;">
                             <div class="d-flex flex-row align-items-center">
@@ -72,10 +72,10 @@
 
     async void ClearResult()
     {
-        Contents = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+        Contents = await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
     }
 
-    public ContentDetailsDTO[]? Contents;
+    public ContentDTO[]? Contents;
 
     async Task searchTitle(string title)
     {
@@ -85,7 +85,7 @@
             return;
         }
             
-            Contents = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+            Contents = await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
         
     }
 
@@ -96,7 +96,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        Contents =  await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+        Contents =  await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
     }
     
 }
