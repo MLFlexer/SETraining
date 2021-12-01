@@ -49,6 +49,14 @@ After that you should
 - Restart the containers with step `2. Run database with docker 🐳`
 
 
+## Testing
+
+Make sure to install Coverlet and XUnit in test projects with dotnet CLI
+- `dotnet add package xunit --version 2.4.2-pre.12`
+- `dotnet add package coverlet.msbuild --version 3.1.0`
+
+A badge with code coverage is automatically built upon each push to main via `coverall.oi`
+
 ## Extra 
 Find total line count in whole project from bash:
 - cd to root directory 
