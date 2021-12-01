@@ -28,29 +28,6 @@ public static class SeedExtensions
         return host;
     }
 
-    private static void SeedHistoryEntries(KhanContext context)
-    {
-        context.Database.Migrate();
-
-        if (!context.HistoryEntries.Any())
-        {
-            var contents = context.Contents.ToList();
-
-            var learners = context.Learners.ToList();
-
-            for (var i = 0; i < contents.Count; i++)
-            {
-                context.HistoryEntries.Add(new HistoryEntry(
-                    DateTime.UtcNow,
-                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
-                ));
-            }
-
-            context.SaveChanges();
-        }
-    }
-
     private static void SeedContent(KhanContext context)
     {
         context.Database.Migrate();
@@ -67,6 +44,8 @@ public static class SeedExtensions
 
             var wikipedia = new Moderator("Wikipedia");
             var jkof = new Moderator("jkof");
+
+            var invalidFilePath = "*invalid filepath, used for testing*";
 
             context.Contents.AddRange(
                 new Article("Java", javaArticleText1) {
@@ -87,13 +66,13 @@ public static class SeedExtensions
                 new Article("Javascript Introduction", "An introduction to the Javascript language") {
                     ProgrammingLanguages = new[] { javascript }
                 },
-                new Video("Some Video", "*invalid filepath, used for testing*") {
+                new Video("Some Video", invalidFilePath) {
                     Description = "This is content of type video",
                     Difficulty = DifficultyLevel.Expert,
                     Creator = jkof,
                     ProgrammingLanguages = new[] { fsharp }
                 },
-                new Video("Another video", "*invalid filepath, used for testing*")
+                new Video("Another video", invalidFilePath)
             );
 
             context.SaveChanges();
@@ -134,10 +113,36 @@ public static class SeedExtensions
 
             for (var i = 0; i < contents.Count; i++)
             {
+                var rand = new Random();
+                int randomRating = rand.Next(1, 6);
+
                 context.Ratings.Add(new Rating(
-                    i, 
+                    randomRating, 
                     contents.ElementAtOrDefault(i) ?? new Article("", ""),
                     learners.ElementAtOrDefault(Math.Min(i, learners.Count-1)) ?? new Learner("")
+                ));
+            }
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedHistoryEntries(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.HistoryEntries.Any())
+        {
+            var contents = context.Contents.ToList();
+
+            var learners = context.Learners.ToList();
+
+            for (var i = 0; i < contents.Count; i++)
+            {
+                context.HistoryEntries.Add(new HistoryEntry(
+                    DateTime.UtcNow,
+                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
                 ));
             }
 

@@ -99,6 +99,7 @@ public class ContentRepository : IContentRepository
 
         return all;
     }
+
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
         var entity = _context.Contents.ToList().Find(c => c.Id == id);
@@ -120,6 +121,7 @@ public class ContentRepository : IContentRepository
 
         return Status.Updated;
     }
+
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
