@@ -44,9 +44,9 @@ namespace SETraining.Server.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ContentDetailsDTO), 200)]
         [HttpGet("{title}")]
-        public async Task<Option<IEnumerable<ContentDetailsDTO>>> Get(string title)
+        public async Task<ActionResult<IEnumerable<ContentDetailsDTO>>> Get(string title)
         {
-            return await _repository.ReadAsync(title);
+            return (await _repository.ReadAsync(title)).ToActionResult();
         }
 
 
@@ -60,18 +60,20 @@ namespace SETraining.Server.Controllers
         }
 
         //put = update
-        // [Authorize]
-        // [HttpPut ("{id}")]
-        // [ProducesResponseType(204)]
-        // [ProducesResponseType(404)]
-        // public async Task <IActionResult> Put(int id, [FromBody] ContentUpdateDTO content)
-        //     => (await _repository.UpdateAsync(id, content)).ToActionResult();
+        [Authorize]
+        [HttpPut ("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task <IActionResult> Put(int id, [FromBody] ContentUpdateDTO content)
+            => (await _repository.UpdateAsync(id, content)).ToActionResult();
         
-            
-        
-
-
 
         //delete
+        [Authorize]
+        [HttpPut ("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public async Task <IActionResult> Delete(int id)
+            => (await _repository.DeleteAsync(id)).ToActionResult();
     }
 }
