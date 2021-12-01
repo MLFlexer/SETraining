@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ main, new_ui ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, new_ui ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -22,9 +22,5 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: TestReports
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutput=./TestResults/ /p:CoverletOutputFormat=lcov --no-build --verbosity normal
-    - name: Publish coverage report to coveralls.io
-      uses: coverallsapp/github-action@v1.0.1
-      with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: [ Server.Repositories.Tests/TestResults/coverage.info, Server.Controllers.Tests/TestResults/coverage.info ]
+      run: dotnet test --no-build --verbosity normal
+    

@@ -1,7 +1,7 @@
 
 
 # SETraining 🏃
-[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml) [![Coverage Status](https://coveralls.io/repos/github/MLFlexer/SETraining/badge.svg?branch=new_ui)](https://coveralls.io/github/MLFlexer/SETraining?branch=new_ui)
+[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml)
 ---------
 
 A repository to help users navigate the confusing web of ever emerging technologies.
@@ -51,6 +51,7 @@ After that you should
 
 ## Testing
 
+Note: only looks at one project for the badge. TODO: need to aggregate test percentages.
 Make sure to install Coverlet and XUnit in test projects with dotnet CLI
 - `dotnet add package xunit --version 2.4.2-pre.12`
 - `dotnet add package coverlet.msbuild --version 3.1.0`
