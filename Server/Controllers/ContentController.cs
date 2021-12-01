@@ -7,6 +7,7 @@ using Microsoft.Identity.Web.Resource;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using SETraining.Shared;
+using BDSAProject.Server;
 
 
 namespace SETraining.Server.Controllers
@@ -32,14 +33,27 @@ namespace SETraining.Server.Controllers
             return await _repository.ReadAsync();
         }
 
+        
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ContentDTO), 200)]
         [HttpGet("{id}")]
-        public async Task<Option<ContentDTO>> Get(int id)
+        public async Task<ActionResult<ContentDTO>> Get(int id)
+            => (await _repository.ReadAsync(id)).ToActionResult();
+        // public async Task<Option<ContentDTO>> Get(int id)
+        // {
+        //     return await _repository.ReadAsync(id);
+        // }
+
+         //Get from a string
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ContentDTO), 200)]
+        [HttpGet("{title}")]
+        public async Task<Option<IEnumerable<ContentDTO>>> Get(string title)
         {
-            
-            return await _repository.ReadAsync(id);
+            return await _repository.ReadAsync(title);
+
         }
+
 
         [HttpPost]
         [ProducesResponseType(typeof(ContentDTO), 201)]
@@ -49,5 +63,20 @@ namespace SETraining.Server.Controllers
 
             return CreatedAtRoute(nameof(Get), new { created.Id }, created);
         }
+
+        //put = update
+        // [Authorize]
+        // [HttpPut ("{id}")]
+        // [ProducesResponseType(204)]
+        // [ProducesResponseType(404)]
+        // public async Task <IActionResult> Put(int id, [FromBody] ContentUpdateDTO content)
+        //     => (await _repository.UpdateAsync(id, content)).ToActionResult();
+        
+            
+        
+
+
+
+        //delete
     }
 }

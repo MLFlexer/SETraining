@@ -87,7 +87,25 @@ public class ContentRepository : IContentRepository
         
     }
 
+
+   
+
+      //ReadAsync on a string
+    public async Task<Option<IEnumerable<ContentDTO>>> ReadAsync(string contentTitle)
+    {
+        return await _context.Contents.Where(c => c.Title.Contains(contentTitle))
+            .Select(c => new ContentDTO(
+                c.Id,
+                c.Title,
+                c.Description,
+                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                c.Difficulty,
+                c.AvgRating,
+                c.Type)).ToListAsync();
+    }
+
     public async Task<IEnumerable<ContentDTO>> ReadAsync()
+
     {
         var all = await _context.Contents.Select(content =>
             new ContentDTO(
@@ -102,6 +120,7 @@ public class ContentRepository : IContentRepository
 
         return all;
     }
+
     
     
     //TODO: Vi beholder nedarvning. Dette udvides med 1) videorepository + videocontroller 2) article repository + article controller.
@@ -126,6 +145,8 @@ public class ContentRepository : IContentRepository
     // }
     
     
+
+
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
         var entity = _context.Contents.ToList().Find(c => c.Id == id);
@@ -147,6 +168,7 @@ public class ContentRepository : IContentRepository
 
         return Status.Updated;
     }
+
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.

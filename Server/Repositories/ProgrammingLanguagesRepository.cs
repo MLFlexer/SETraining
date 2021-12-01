@@ -28,6 +28,7 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 
     public async Task<Option<ProgrammingLanguageDTO>> ReadAsync(string name)
     {
+        Console.WriteLine("Test");
         return await _context.ProgrammingLanguages
             .Where(c => c.Name == name)
             .Select(c => new ProgrammingLanguageDTO(name))

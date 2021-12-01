@@ -31,7 +31,7 @@ namespace SETraining.Server.Controllers
         [HttpGet("{name}")]
         public async Task<Option<ProgrammingLanguageDTO>> Get(string name)
         {
-            return await _repository.ReadAsync(name);
+            return await _repository.ReadAsync(@name);
         }
 
         [HttpPost]

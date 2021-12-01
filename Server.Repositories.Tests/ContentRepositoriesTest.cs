@@ -10,6 +10,7 @@ using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
 using SETraining.Shared;
+using System.Linq;
 
 namespace Server.Repositories.Tests;
 
@@ -104,6 +105,15 @@ public class ContentRepositoriesTest : IDisposable
         var contentsFromDB = await _repository.ReadAsync(99);
         Assert.True(contentsFromDB.IsNone);
     }
+
+    //Todo: er lidt usikker på om denne test er okay??
+     [Fact]
+    public async void Read_given_title_does_not_exist_returns_emptyList()
+    {
+        var contentsFromDB = await _repository.ReadAsync("THISISNOTWORKING");
+
+        Assert.Empty(contentsFromDB.Value);
+    }
     
     [Fact]
     public async Task Read_given_id_exists_returns_Content()
@@ -122,6 +132,39 @@ public class ContentRepositoriesTest : IDisposable
     }
 
 
+   
+     [Fact]
+    public async void Read_given_title_exists_returns_ContentList()
+    {
+        //Arrange
+        var expected_1 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_2 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+  
+        //Act
+        var actual = await _repository.ReadAsync("CSharp");
+        IEnumerable<ContentDetailsDTO> actualValue = actual.Value; 
+        var actual1 = actualValue.First();
+        var actual2 = actualValue.Last();
+
+
+        Assert.Equal(expected_1.Id, actual1.Id);
+        Assert.Equal(expected_1.Title, actual1.Title);
+        Assert.Equal(expected_1.Description, actual1.Description);
+        Assert.Equal(expected_1.ProgrammingLanguages, actual1.ProgrammingLanguages);
+        Assert.Equal(expected_1.Difficulty, actual1.Difficulty);
+        Assert.Equal(expected_1.AvgRating, actual1.AvgRating);
+        Assert.Equal(expected_1.Type, actual1.Type);
+
+
+        Assert.Equal(expected_2.Id, actual2.Id);
+        Assert.Equal(expected_2.Title, actual2.Title);
+        Assert.Equal(expected_2.Description, actual2.Description);
+        Assert.Equal(expected_2.ProgrammingLanguages, actual2.ProgrammingLanguages);
+        Assert.Equal(expected_2.Difficulty, actual2.Difficulty);
+        Assert.Equal(expected_2.AvgRating, actual2.AvgRating);
+        Assert.Equal(expected_2.Type, actual2.Type);
+    }
+    
     [Fact]
     public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
