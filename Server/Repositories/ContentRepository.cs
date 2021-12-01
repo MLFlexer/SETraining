@@ -92,7 +92,7 @@ public class ContentRepository : IContentRepository
                 c.Id,
                 c.Title,
                 c.Description,
-                c.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
                 c.Type)).ToListAsync();
