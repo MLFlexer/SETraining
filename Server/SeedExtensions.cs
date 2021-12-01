@@ -2,21 +2,53 @@
 using Microsoft.EntityFrameworkCore;
 using SETraining.Shared.Models;
 using SETraining.Server.Contexts;
+using SETraining.Server.Repositories;
+
 namespace SETraining.Server;
 
 // Most of this class was written by our lecturer Rasmus Lystrøm
 
 public static class SeedExtensions
 {
+
+    private static IContentRepository _repository;
+
     public static IHost Seed(this IHost host)
     {
         using (var scope = host.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
+            _repository = new ContentRepository(context);
 
             SeedContent(context);
+            SeedLearners(context);
+            SeedRatings(context);
+            SeedHistoryEntries(context);
         }
         return host;
+    }
+
+    private static void SeedHistoryEntries(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.HistoryEntries.Any())
+        {
+            var contents = context.Contents.ToList();
+
+            var learners = context.Learners.ToList();
+
+            for (var i = 0; i < contents.Count; i++)
+            {
+                context.HistoryEntries.Add(new HistoryEntry(
+                    DateTime.UtcNow,
+                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
+                ));
+            }
+
+            context.SaveChanges();
+        }
     }
 
     private static void SeedContent(KhanContext context)
@@ -35,8 +67,6 @@ public static class SeedExtensions
 
             var wikipedia = new Moderator("Wikipedia");
             var jkof = new Moderator("jkof");
-
-            var joachim = new Learner("Joachim");
 
             context.Contents.AddRange(
                 new Article("Java", javaArticleText1) {
@@ -57,14 +87,59 @@ public static class SeedExtensions
                 new Article("Javascript Introduction", "An introduction to the Javascript language") {
                     ProgrammingLanguages = new[] { javascript }
                 },
-                new Video("Some Video", new RawVideo(new byte[1])) {
+                new Video("Some Video", "*invalid filepath, used for testing*") {
                     Description = "This is content of type video",
                     Difficulty = DifficultyLevel.Expert,
                     Creator = jkof,
                     ProgrammingLanguages = new[] { fsharp }
                 },
-                new Video("Another video", new RawVideo(new byte[1]))
+                new Video("Another video", "*invalid filepath, used for testing*")
             );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedLearners(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Learners.Any())
+        {
+            var joachimak = new Learner("Joachim Alexander Kofoed") { Level = DifficultyLevel.Expert };
+            var joachimdf = new Learner("Joachim de Fries") { Level = DifficultyLevel.Novice };
+            var testLearner = new Learner("Test Learner") { Level = DifficultyLevel.Intermediate };
+            var testLearner2 = new Learner("Another Test Learner");
+
+            context.Learners.AddRange(
+                testLearner,
+                testLearner2,
+                joachimdf,
+                joachimak
+            );
+
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedRatings(KhanContext context)
+    {
+        context.Database.Migrate();
+
+        if (!context.Ratings.Any())
+        {
+            var contents = context.Contents.ToList();
+
+            var learners = context.Learners.ToList();
+
+            for (var i = 0; i < contents.Count; i++)
+            {
+                context.Ratings.Add(new Rating(
+                    i, 
+                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count-1)) ?? new Learner("")
+                ));
+            }
 
             context.SaveChanges();
         }

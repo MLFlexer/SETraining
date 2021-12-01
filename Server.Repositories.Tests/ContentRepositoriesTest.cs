@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
+using SETraining.Shared;
 
 namespace Server.Repositories.Tests;
 
@@ -30,8 +32,8 @@ public class ContentRepositoriesTest : IDisposable
         
         //TODO: ADD ALL FIELDS TO ENTITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-                new Video("Introduction to Java", new RawVideo(new byte[1])),
-                new Video("Introduction to CSharp", new RawVideo(new byte[1])),
+                new Video("Introduction to Java", "no file"),
+                new Video("Introduction to CSharp", "no file"),
                 new Article("Introduction to Java", "Text body Java Article") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
                 new Article("Introduction to CSharp", "Text Body CSharp Article")
             );
@@ -42,7 +44,6 @@ public class ContentRepositoriesTest : IDisposable
         _repository = new ContentRepository(_context);
         
     }
-
 
     [Fact]
     public async void Create_new_Video_with_generated_id()
@@ -78,7 +79,7 @@ public class ContentRepositoriesTest : IDisposable
     }
     
     //[Fact]
-    public async void Read_returns_all()
+    public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAsync();
@@ -98,7 +99,7 @@ public class ContentRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public async void Read_given_id_does_not_exist_returns_null()
+    public async Task Read_given_id_does_not_exist_returns_null()
     {
         var contentsFromDB = await _repository.ReadAsync(99);
         Assert.True(contentsFromDB.IsNone);
@@ -114,7 +115,7 @@ public class ContentRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public async void Read_given_id_exists_returns_Content()
+    public async Task Read_given_id_exists_returns_Content()
     {
         //Arrange
         var expected = new ContentDetailsDTO(1, "Introduction to Java", null, null, null, null, "Article");
@@ -164,32 +165,67 @@ public class ContentRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public void  Update_updates_existing_Content()
+    public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
-        //throw new NotImplementedException();
-        //Arrange 
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
+        {
+            Title ="Introduction to Java", 
+            Description = null, 
+            ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
+            Difficulty = null, 
+            AvgRating = null, 
+            Type= "Article"
+        };
         
-        //Act
-        //var contentFromDB = _repository.UpdateAsync(1, new ContentUpdateDTO())
+        var updated = await _repository.UpdateAsync(42, content);
         
-        //Delete
+        Assert.Equal(Status.NotFound, updated);
+        
     }
-    
-    //[Fact]
-    public void  Delete_given_non_existing_id_returns_NotFound()
+
+    [Fact]
+    public async Task  Update_updates_existing_Content()
     {
-        //throw new NotImplementedException();
+        //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
+        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
+        var content = new ContentUpdateDTO(contentCreate)
+        {
+            Title ="Introduction to Java2", 
+            Description = "This is updated", 
+            ProgrammingLanguages = new List<string>(){}, 
+            Difficulty = null, 
+            AvgRating = 20, 
+            Type= "Article"
+        };
         
-        //TODO: Edit ContentUpdateDTO()!
-        //var content = new ContentUpdateDTO();
-        // var updated = await _repository.UpdateAsync(42, content);
-        // Assert.Equal(Status.NotFound, updated);
+        var updated = await _repository.UpdateAsync(1, content);
+        
+        Assert.Equal(Status.Updated, updated);
+        
+        var option = await _repository.ReadAsync(1);
+        var UpdatedContent = option.Value;
+        
+        Assert.Equal("This is updated", UpdatedContent.Description);
+        Assert.Equal(20, UpdatedContent.AvgRating);
+        Assert.Equal("Introduction to Java2", UpdatedContent.Title);
+        Assert.Empty(UpdatedContent.ProgrammingLanguages);
     }
     
     [Fact]
-    public void  Delete_given_existing_id_deletes()
+    public async Task  Delete_given_non_existing_id_returns_NotFound()
     {
-        //throw new NotImplementedException();
+        var actual = await _repository.DeleteAsync(44);
+        Assert.Equal(Status.NotFound, actual);
+    }
+    
+    [Fact]
+    public async Task Delete_given_existing_id_deletes()
+    {
+        var actual = await _repository.DeleteAsync(2);
+
+        Assert.Equal(Status.Deleted, actual);
+        Assert.Null(await _context.Contents.FindAsync(2));
     }
     
     public void Dispose()

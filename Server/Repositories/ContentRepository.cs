@@ -32,7 +32,7 @@ public class ContentRepository : IContentRepository
         }
         else
         {
-            entity = new Video(content.Title, new RawVideo(new byte[1]))
+            entity = new Video(content.Title, "*invalid filepath, used for testing*")
             {
                 Description = content.Description,
                 ProgrammingLanguages = content.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),
@@ -49,16 +49,25 @@ public class ContentRepository : IContentRepository
                 entity.Id,
                 entity.Title,
                 entity.Description,
-                entity.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
                 content.Type
             ); 
     }
 
-    public Task<Status> DeleteAsync(int contentId)
+    public async Task<Status> DeleteAsync(int contentId)
     {
-        throw new NotImplementedException();
+        var entity = await _context.Contents.FindAsync(contentId);
+
+        if (entity == null)
+        {
+            return Status.NotFound;
+        }
+
+        _context.Contents.Remove(entity);
+        await _context.SaveChangesAsync();
+        return Status.Deleted;
     }
 
     public async Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
@@ -68,7 +77,7 @@ public class ContentRepository : IContentRepository
                 c.Id,
                 c.Title,
                 c.Description,
-                c.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
                 c.Type))
@@ -96,7 +105,7 @@ public class ContentRepository : IContentRepository
                     content.Id,
                     content.Title,
                     content.Description,
-                    content.ProgrammingLanguages.Select(p => p.Language).ToList(),
+                    content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                     content.Difficulty,
                     content.AvgRating,
                     content.Type)
@@ -104,12 +113,11 @@ public class ContentRepository : IContentRepository
 
         return all;
     }
-
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {
-        var entity = await _context.Contents.Include(c => c.ProgrammingLanguages).FirstOrDefaultAsync(c => c.Id == content.Id);
+        var entity = _context.Contents.ToList().Find(c => c.Id == id);
 
-        if (entity == null)
+       if (entity == null)
         {
             return Status.NotFound;
         }
@@ -119,10 +127,9 @@ public class ContentRepository : IContentRepository
         entity.Title = content.Title;
         entity.Type = content.Type;
         entity.AvgRating = content.AvgRating;
-        
-        //TODO: hvorfor virker dette ikke?
-        //entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(content.ProgrammingLanguages).ToListAsync();;
 
+        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(content.ProgrammingLanguages).ToListAsync();
+        
         await _context.SaveChangesAsync();
 
         return Status.Updated;
@@ -130,7 +137,7 @@ public class ContentRepository : IContentRepository
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
-        var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Language)).ToDictionaryAsync(p => p.Language);
+        var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);
 
         foreach (var language in languages)
         {

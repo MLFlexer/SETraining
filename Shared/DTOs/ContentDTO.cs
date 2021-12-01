@@ -27,7 +27,7 @@ public record ContentCreateDTO
 
 public record ContentUpdateDTO : ContentCreateDTO
 {
-    protected ContentUpdateDTO(ContentCreateDTO original) : base(original)
+    public ContentUpdateDTO(ContentCreateDTO original) : base(original)
     {
         // TODO: Det her er auto-genereret kode. Skal det laves om?
     }

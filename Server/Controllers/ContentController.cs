@@ -8,7 +8,7 @@ using SETraining.Shared.DTOs;
 using SETraining.Shared;
 using BDSAProject.Server;
 
-namespace ProjTest2.Server.Controllers
+namespace SETraining.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
