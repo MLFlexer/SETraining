@@ -84,6 +84,20 @@ public class ContentRepository : IContentRepository
             .FirstOrDefaultAsync();
     }
 
+      //ReadAsync on a string
+    public async Task<Option<IEnumerable<ContentDetailsDTO>>> ReadAsync(string contentTitle)
+    {
+        return await _context.Contents.Where(c => c.Title.Contains(contentTitle))
+            .Select(c => new ContentDetailsDTO(
+                c.Id,
+                c.Title,
+                c.Description,
+                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                c.Difficulty,
+                c.AvgRating,
+                c.Type)).ToListAsync();
+    }
+
     public async Task<IEnumerable<ContentDetailsDTO>> ReadAsync()
     {
         var all = await _context.Contents.Select(content =>

@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using Azure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SETraining.Server.Controllers;
@@ -31,7 +34,8 @@ public class ContentControllerTest
 
 
 
-    /*//Denne test virker ikke!!!!
+    //Todo: denne test virker ikke
+   
     [Fact]
     public async void Get_given_non_existing_id_returns_null(){
         //Arrange
@@ -42,10 +46,10 @@ public class ContentControllerTest
         //Act
         var actual = await controller.Get(42);
         //Assert
-        //Assert.IsType<NotFoundResult>(response.Result);
+        Assert.IsType<NotFoundResult>(actual.Result);
         
         
-    }  */
+    }  
 
     
 
@@ -61,6 +65,22 @@ public class ContentControllerTest
         var actual = await controller.Get(1);
         //Assert
         Assert.Equal(expected, actual.Value);
+        
+    }
+
+
+     [Fact]
+       public async void Get_given_existing_title_returns_content(){
+        //Arrange
+        var logger = new Mock<ILogger<ContentController>>();
+        var expected = new List<ContentDetailsDTO> {new ContentDetailsDTO(1, "This is a title", null, null, null, null, "Article")};
+        var repository = new Mock <IContentRepository>();
+        repository.Setup(m => m.ReadAsync("title")).ReturnsAsync(expected);
+        var controller = new ContentController(logger.Object, repository.Object);
+        //Act
+        var actual = await controller.Get("title");
+        //Assert
+        Assert.Equal(expected, actual);
         
     }
 
