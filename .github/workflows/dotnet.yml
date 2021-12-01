@@ -2,9 +2,9 @@ name: .NET
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, new_ui ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, new_ui ]
 
 jobs:
   build:
@@ -27,4 +27,4 @@ jobs:
       uses: coverallsapp/github-action@v1.0.1
       with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: Server.Repositories.Tests/TestResults/coverage.info
+            path-to-lcov: [ Server.Repositories.Tests/TestResults/coverage.info, Server.Controllers.Tests/TestResults/coverage.info ]
