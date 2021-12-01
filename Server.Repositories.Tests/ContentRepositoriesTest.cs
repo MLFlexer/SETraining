@@ -10,6 +10,7 @@ using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
 using SETraining.Shared;
+using System.Linq;
 
 namespace Server.Repositories.Tests;
 
@@ -139,29 +140,29 @@ public class ContentRepositoriesTest : IDisposable
         var expected_1 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
         var expected_2 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
   
-
         //Act
         var actual = await _repository.ReadAsync("CSharp");
         IEnumerable<ContentDetailsDTO> actualValue = actual.Value; 
+        var actual1 = actualValue.First();
+        var actual2 = actualValue.Last();
 
-        //Assert
-        // Assert.Collection(dd,
-        //     actual => Assert.Equal(expected_1, actual),
-        //     actual => Assert.Equal(expected_2, actual)
-        // );
-        
-        foreach (var item in actualValue)
-        {
-            Assert.Collection(actualValue, 
-                actualValue => Assert.Equal(expected_1, actualValue),
-                actualValue => Assert.Equal(expected_2, actualValue)
-            );
-        }
-        
 
-        // Assert.Equal(expected.Id, actual.Id);
-        // Assert.Equal(expected.Title, actual.Title);
-        // Assert.Equal(expected.Type, actual.Type);
+        Assert.Equal(expected_1.Id, actual1.Id);
+        Assert.Equal(expected_1.Title, actual1.Title);
+        Assert.Equal(expected_1.Description, actual1.Description);
+        Assert.Equal(expected_1.ProgrammingLanguages, actual1.ProgrammingLanguages);
+        Assert.Equal(expected_1.Difficulty, actual1.Difficulty);
+        Assert.Equal(expected_1.AvgRating, actual1.AvgRating);
+        Assert.Equal(expected_1.Type, actual1.Type);
+
+
+        Assert.Equal(expected_2.Id, actual2.Id);
+        Assert.Equal(expected_2.Title, actual2.Title);
+        Assert.Equal(expected_2.Description, actual2.Description);
+        Assert.Equal(expected_2.ProgrammingLanguages, actual2.ProgrammingLanguages);
+        Assert.Equal(expected_2.Difficulty, actual2.Difficulty);
+        Assert.Equal(expected_2.AvgRating, actual2.AvgRating);
+        Assert.Equal(expected_2.Type, actual2.Type);
     }
     
     [Fact]
