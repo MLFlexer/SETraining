@@ -7,7 +7,7 @@ public interface IContentRepository
 {
 
 
-    Task<ContentsDTO> CreateAsync(ContentCreateDTO content);
+    Task<ContentDTO> CreateAsync(ContentCreateDTO content);
     Task<Option<ContentDTO>> ReadAsync(int contentId);
     Task<Option<IEnumerable<ContentDTO>>>ReadAsync(string title);
     Task<IEnumerable<ContentDTO>> ReadAsync();
