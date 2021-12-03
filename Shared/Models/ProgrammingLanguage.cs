@@ -11,6 +11,4 @@ public class ProgrammingLanguage
 
     [Key]        
     public string Name { get; set; }
-
-    public ICollection<Content> Contents { get; set; } = null!;
 }

@@ -14,16 +14,16 @@ namespace Server.Repositories.Tests;
 
 public class ProgrammingLanguagesRepositoryTests : IDisposable
 {
-    private readonly KhanContext _context;
+    private readonly SETrainingContext _context;
     private readonly ProgrammingLanguagesRepository _repository;
     
     public ProgrammingLanguagesRepositoryTests()
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
-        var builder = new DbContextOptionsBuilder<KhanContext>();
+        var builder = new DbContextOptionsBuilder<SETrainingContext>();
         builder.UseSqlite(connection);
-        var context = new KhanContext(builder.Options);
+        var context = new SETrainingContext(builder.Options);
         context.Database.EnsureCreated();
         
         context.AddRange(

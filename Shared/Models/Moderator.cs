@@ -10,5 +10,5 @@ public class Moderator
     
     public int Id { get; set; }
     public string Name { get; set; }
-    public ICollection<Content>? Contents { get; set; } = null!;
+    public ICollection<Article>? Contents { get; set; } = null!;
 }

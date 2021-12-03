@@ -1,18 +1,21 @@
-﻿namespace SETraining.Shared.Models;
+﻿
+using SETraining.Shared.Models;
 
-public class Video : Content
+public class Video
 {
-    private Video(string Title) : base(Title, "Video")
+    public Video(string title, string path)
     {
-        //Constructor for EF Core.
+        Title = title;
+        Path = path;
     }
 
-    public Video(string Title, string filePath) : base(Title, "Video")
-    {
-        FilePath = filePath;
-    }
-
-    public string FilePath { get; set; }
-
-    public int? Length { get; set; }
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string? Description { get; set; }
+    public DifficultyLevel? Difficulty { get; set; }
+    public Moderator? Creator { get; set; }
+    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
+    public ICollection<Rating>? Ratings { get; set; }
+    public int? AvgRating { get; set; }
+    public string Path { get; set; }
 }

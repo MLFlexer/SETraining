@@ -1,12 +1,22 @@
 ﻿
-namespace SETraining.Shared.Models;
+using SETraining.Shared.Models;
 
-public class Article : Content
+public class Article
 {
-    public Article(string Title, string textBody) : base(Title, "Article")
+    public Article(string title, string body)
     {
-        TextBody = textBody;
+        Title = title;
+        Body = body;
     }
+
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string? Description { get; set; }
+    public DifficultyLevel? Difficulty { get; set; }
+    public Moderator? Creator { get; set; }
+    public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
+    public ICollection<Rating>? Ratings { get; set; }
+    public int? AvgRating { get; set; }
     
-    public string TextBody { get; set; }
+    public string Body { get; set; }
 }

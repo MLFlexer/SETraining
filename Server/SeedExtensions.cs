@@ -11,28 +11,29 @@ namespace SETraining.Server;
 public static class SeedExtensions
 {
 
-    private static IContentRepository _repository;
+    private static IArticleRepository _repository;
 
     public static IHost Seed(this IHost host)
     {
         using (var scope = host.Services.CreateScope())
         {
-            var context = scope.ServiceProvider.GetRequiredService<KhanContext>();
-            _repository = new ContentRepository(context);
+            var context = scope.ServiceProvider.GetRequiredService<SETrainingContext>();
+            _repository = new ArticleRepository(context);
 
-            SeedContent(context);
+            SeedArticles(context);
             SeedLearners(context);
+            SeedVideos(context);
             SeedRatings(context);
             SeedHistoryEntries(context);
         }
         return host;
     }
 
-    private static void SeedContent(KhanContext context)
+    private static void SeedArticles(SETrainingContext context)
     {
         context.Database.Migrate();
 
-        if(!context.Contents.Any())
+        if(!context.Articles.Any())
         {
             var java = new ProgrammingLanguage("Java");
             var csharp = new ProgrammingLanguage("C#");
@@ -47,14 +48,14 @@ public static class SeedExtensions
 
             var invalidFilePath = "*invalid filepath, used for testing*";
 
-            context.Contents.AddRange(
+            context.Articles.AddRange(
                 new Article("Java", javaArticleText1) {
                     Description = "The Wikipedia page about the programming language Java",
                     Difficulty = DifficultyLevel.Novice,
                     Creator = wikipedia,
-                    ProgrammingLanguages = new[] { java } 
+                    ProgrammingLanguages = new[] { java }
                 },
-                new Article("C# Article", "") {
+                new Article("C# Article",  "<b>Test<b/>") {
                     Description = "An Article about C#",
                     Difficulty = DifficultyLevel.Intermediate,
                     Creator = jkof,
@@ -62,27 +63,70 @@ public static class SeedExtensions
                     AvgRating = 4
                     
                 },
-                new Article("Better Article", "An Article about Java and C#") {
-                    ProgrammingLanguages = new[] { java, csharp }
+                new Article("Better Article", "<b>Test<b/>") {
+                    ProgrammingLanguages = new[] { java, csharp },
+                    Description = "An Article about Java and C#"
                 },
-                new Article("Javascript Introduction", "An introduction to the Javascript language") {
+                new Article("Javascript Introduction", "<b>Test<b/>") {
                     ProgrammingLanguages = new[] { javascript },
-                    AvgRating = 1
+                    AvgRating = 1,
+                    Description = "An introduction to the Javascript language"
+                }
+            );
+
+            context.SaveChanges();
+        }
+    }
+    
+    private static void SeedVideos(SETrainingContext context)
+    {
+        context.Database.Migrate();
+
+        if(!context.Videos.Any())
+        {
+            var java = new ProgrammingLanguage("Java");
+            var csharp = new ProgrammingLanguage("C#");
+            var javascript = new ProgrammingLanguage("Javascript");
+            var fsharp = new ProgrammingLanguage("F#");
+
+            // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
+            var videolink = "https://www.youtube.com/watch?v=eIrMbAQSU34";
+            var wikipedia = new Moderator("Wikipedia");
+            var jkof = new Moderator("jkof");
+
+            var invalidFilePath = "*invalid filepath, used for testing*";
+
+            context.Videos.AddRange(
+                new Video("Java Video", videolink) {
+                    Description = "The Wikipedia page about the programming language Java",
+                    Difficulty = DifficultyLevel.Novice,
+                    Creator = wikipedia,
+                    ProgrammingLanguages = new[] { java }
                 },
-                new Video("Some Video", invalidFilePath) {
-                    Description = "This is content of type video",
-                    Difficulty = DifficultyLevel.Expert,
+                new Video("C# Video",  videolink) {
+                    Description = "An Video about C#",
+                    Difficulty = DifficultyLevel.Intermediate,
                     Creator = jkof,
-                    ProgrammingLanguages = new[] { fsharp }
+                    ProgrammingLanguages = new[] { csharp },
+                    AvgRating = 4
+                    
                 },
-                new Video("Another video", invalidFilePath)
+                new Video("Better Video", videolink) {
+                    ProgrammingLanguages = new[] { java, csharp },
+                    Description = "A Video about Java and C#"
+                },
+                new Video("Javascript Introduction Video", videolink) {
+                    ProgrammingLanguages = new[] { javascript, fsharp },
+                    AvgRating = 1,
+                    Description = "An introduction to the Javascript language"
+                }
             );
 
             context.SaveChanges();
         }
     }
 
-    private static void SeedLearners(KhanContext context)
+    private static void SeedLearners(SETrainingContext context)
     {
         context.Database.Migrate();
 
@@ -104,47 +148,70 @@ public static class SeedExtensions
         }
     }
 
-    private static void SeedRatings(KhanContext context)
+    private static void SeedRatings(SETrainingContext context)
+    {
+        context.Database.Migrate();
+    
+        if (!context.Ratings.Any())
+        {
+            var articles = context.Articles.ToList();
+            var videos = context.Videos.ToList();
+    
+            var learners = context.Learners.ToList();
+    
+            for (var i = 0; i < articles.Count/2; i++)
+            {
+                var rand = new Random();
+                int randomRating = rand.Next(1, 6);
+    
+                context.Ratings.Add(new Rating(
+                    randomRating,
+                    // articles.ElementAtOrDefault(i) ?? new Article("", "", ""),
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
+                ));
+                context.Ratings.Add(new Rating(
+                    randomRating,
+                    // videos.ElementAtOrDefault(i) ?? new Video("", ""),
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
+                ));
+            }
+    
+            context.SaveChanges();
+        }
+    }
+
+    private static void SeedHistoryEntries(SETrainingContext context)
     {
         context.Database.Migrate();
 
-        if (!context.Ratings.Any())
+        if (!context.ArticleHistoryEntries.Any())
         {
-            var contents = context.Contents.ToList();
+            var contents = context.Articles.ToList();
 
             var learners = context.Learners.ToList();
 
             for (var i = 0; i < contents.Count; i++)
             {
-                var rand = new Random();
-                int randomRating = rand.Next(1, 6);
-
-                context.Ratings.Add(new Rating(
-                    randomRating, 
+                context.ArticleHistoryEntries.Add(new ArticleHistoryEntry(
+                    DateTime.UtcNow,
                     contents.ElementAtOrDefault(i) ?? new Article("", ""),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count-1)) ?? new Learner("")
+                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
                 ));
             }
 
             context.SaveChanges();
         }
-    }
-
-    private static void SeedHistoryEntries(KhanContext context)
-    {
-        context.Database.Migrate();
-
-        if (!context.HistoryEntries.Any())
+        if (!context.VideoHistoryEntries.Any())
         {
-            var contents = context.Contents.ToList();
+            var contents = context.Videos.ToList();
 
             var learners = context.Learners.ToList();
 
             for (var i = 0; i < contents.Count; i++)
             {
-                context.HistoryEntries.Add(new HistoryEntry(
+                context.VideoHistoryEntries.Add(new VideoHistoryEntry(
                     DateTime.UtcNow,
-                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
+                    contents.ElementAtOrDefault(i) ?? new Video("", ""),
                     learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
                 ));
             }

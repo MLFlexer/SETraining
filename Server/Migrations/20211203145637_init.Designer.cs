@@ -11,8 +11,8 @@ using SETraining.Server.Contexts;
 
 namespace SETraining.Server.Migrations
 {
-    [DbContext(typeof(KhanContext))]
-    [Migration("20211130155243_init")]
+    [DbContext(typeof(SETrainingContext))]
+    [Migration("20211203145637_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace SETraining.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Content", b =>
+            modelBuilder.Entity("Article", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -34,6 +34,10 @@ namespace SETraining.Server.Migrations
 
                     b.Property<int?>("AvgRating")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int?>("CreatorId")
                         .HasColumnType("integer");
@@ -51,37 +55,16 @@ namespace SETraining.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("LearnerId");
 
-                    b.ToTable("Contents");
-
-                    b.HasDiscriminator<string>("Type").HasValue("Content");
+                    b.ToTable("Articles");
                 });
 
-            modelBuilder.Entity("ContentProgrammingLanguage", b =>
-                {
-                    b.Property<int>("ContentsId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("ProgrammingLanguagesName")
-                        .HasColumnType("text");
-
-                    b.HasKey("ContentsId", "ProgrammingLanguagesName");
-
-                    b.HasIndex("ProgrammingLanguagesName");
-
-                    b.ToTable("ContentProgrammingLanguage");
-                });
-
-            modelBuilder.Entity("SETraining.Shared.Models.HistoryEntry", b =>
+            modelBuilder.Entity("SETraining.Shared.Models.ArticleHistoryEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -89,7 +72,7 @@ namespace SETraining.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContentId")
+                    b.Property<int>("ArticleId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("Date")
@@ -100,11 +83,11 @@ namespace SETraining.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContentId");
+                    b.HasIndex("ArticleId");
 
                     b.HasIndex("LearnerId");
 
-                    b.ToTable("HistoryEntries");
+                    b.ToTable("ArticleHistoryEntries");
                 });
 
             modelBuilder.Entity("SETraining.Shared.Models.Image", b =>
@@ -166,7 +149,17 @@ namespace SETraining.Server.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ArticleId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("VideoId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Name");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("VideoId");
 
                     b.ToTable("ProgrammingLanguages");
                 });
@@ -179,7 +172,7 @@ namespace SETraining.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ContentId")
+                    b.Property<int?>("ArticleId")
                         .HasColumnType("integer");
 
                     b.Property<int>("LearnerId")
@@ -188,41 +181,82 @@ namespace SETraining.Server.Migrations
                     b.Property<int>("Value")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("VideoId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ContentId");
+                    b.HasIndex("ArticleId");
 
                     b.HasIndex("LearnerId");
+
+                    b.HasIndex("VideoId");
 
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("SETraining.Shared.Models.Article", b =>
+            modelBuilder.Entity("SETraining.Shared.Models.VideoHistoryEntry", b =>
                 {
-                    b.HasBaseType("Content");
-
-                    b.Property<string>("TextBody")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("Article");
-                });
-
-            modelBuilder.Entity("SETraining.Shared.Models.Video", b =>
-                {
-                    b.HasBaseType("Content");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int?>("Length")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    b.HasDiscriminator().HasValue("Video");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LearnerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VideoId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LearnerId");
+
+                    b.HasIndex("VideoId");
+
+                    b.ToTable("VideoHistoryEntries");
                 });
 
-            modelBuilder.Entity("Content", b =>
+            modelBuilder.Entity("Video", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AvgRating")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("Difficulty")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Videos");
+                });
+
+            modelBuilder.Entity("Article", b =>
                 {
                     b.HasOne("SETraining.Shared.Models.Moderator", "Creator")
                         .WithMany("Contents")
@@ -235,47 +269,41 @@ namespace SETraining.Server.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("ContentProgrammingLanguage", b =>
+            modelBuilder.Entity("SETraining.Shared.Models.ArticleHistoryEntry", b =>
                 {
-                    b.HasOne("Content", null)
+                    b.HasOne("Article", "Article")
                         .WithMany()
-                        .HasForeignKey("ContentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SETraining.Shared.Models.ProgrammingLanguage", null)
-                        .WithMany()
-                        .HasForeignKey("ProgrammingLanguagesName")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SETraining.Shared.Models.HistoryEntry", b =>
-                {
-                    b.HasOne("Content", "Content")
-                        .WithMany()
-                        .HasForeignKey("ContentId")
+                        .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SETraining.Shared.Models.Learner", "Learner")
-                        .WithMany("History")
+                        .WithMany("ArticleHistory")
                         .HasForeignKey("LearnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Content");
+                    b.Navigation("Article");
 
                     b.Navigation("Learner");
+                });
+
+            modelBuilder.Entity("SETraining.Shared.Models.ProgrammingLanguage", b =>
+                {
+                    b.HasOne("Article", null)
+                        .WithMany("ProgrammingLanguages")
+                        .HasForeignKey("ArticleId");
+
+                    b.HasOne("Video", null)
+                        .WithMany("ProgrammingLanguages")
+                        .HasForeignKey("VideoId");
                 });
 
             modelBuilder.Entity("SETraining.Shared.Models.Rating", b =>
                 {
-                    b.HasOne("Content", "Content")
+                    b.HasOne("Article", null)
                         .WithMany("Ratings")
-                        .HasForeignKey("ContentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ArticleId");
 
                     b.HasOne("SETraining.Shared.Models.Learner", "Learner")
                         .WithMany("Ratings")
@@ -283,28 +311,69 @@ namespace SETraining.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Content");
+                    b.HasOne("Video", null)
+                        .WithMany("Ratings")
+                        .HasForeignKey("VideoId");
 
                     b.Navigation("Learner");
                 });
 
-            modelBuilder.Entity("Content", b =>
+            modelBuilder.Entity("SETraining.Shared.Models.VideoHistoryEntry", b =>
                 {
+                    b.HasOne("SETraining.Shared.Models.Learner", "Learner")
+                        .WithMany("VideoHistory")
+                        .HasForeignKey("LearnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Video", "Video")
+                        .WithMany()
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Learner");
+
+                    b.Navigation("Video");
+                });
+
+            modelBuilder.Entity("Video", b =>
+                {
+                    b.HasOne("SETraining.Shared.Models.Moderator", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Article", b =>
+                {
+                    b.Navigation("ProgrammingLanguages");
+
                     b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("SETraining.Shared.Models.Learner", b =>
                 {
+                    b.Navigation("ArticleHistory");
+
                     b.Navigation("Favorites");
 
-                    b.Navigation("History");
-
                     b.Navigation("Ratings");
+
+                    b.Navigation("VideoHistory");
                 });
 
             modelBuilder.Entity("SETraining.Shared.Models.Moderator", b =>
                 {
                     b.Navigation("Contents");
+                });
+
+            modelBuilder.Entity("Video", b =>
+                {
+                    b.Navigation("ProgrammingLanguages");
+
+                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

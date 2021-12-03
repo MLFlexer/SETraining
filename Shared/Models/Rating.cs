@@ -5,15 +5,15 @@ namespace SETraining.Shared.Models
     {
         private Rating() { } //Constructor for EF Core.
 
-        public Rating(int value, Content content, Learner learner)
+        public Rating(int value, Learner learner) //Article article,
         {
             Value = value;
-            Content = content;
+            // Article = article;
             Learner = learner;
         }
         public int Id {get; set;}
         public int Value { get; set; }
-        public Content Content { get; set; }
+        // public Article Article { get; set; }
         public Learner Learner { get; set; }
     }
 }
