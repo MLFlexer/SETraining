@@ -31,27 +31,27 @@ namespace SETraining.Server.Controllers
 
         
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ContentDetailsDTO), 200)]
+        [ProducesResponseType(typeof(ContentDTO), 200)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<ContentDetailsDTO>> Get(int id)
+        public async Task<ActionResult<ContentDTO>> Get(int id)
             => (await _repository.ReadAsync(id)).ToActionResult();
-        // public async Task<Option<ContentDetailsDTO>> Get(int id)
+        // public async Task<Option<ContentDTO>> Get(int id)
         // {
         //     return await _repository.ReadAsync(id);
         // }
 
          //Get from a string
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ContentDetailsDTO), 200)]
+        [ProducesResponseType(typeof(ContentDTO), 200)]
         [HttpGet("{title}")]
-        public async Task<ActionResult<IEnumerable<ContentDetailsDTO>>> Get(string title)
+        public async Task<ActionResult<IEnumerable<ContentDTO>>> Get(string title)
         {
             return (await _repository.ReadAsync(title)).ToActionResult();
         }
 
 
         [HttpPost]
-        [ProducesResponseType(typeof(ContentDetailsDTO), 201)]
+        [ProducesResponseType(typeof(ContentDTO), 201)]
         public async Task<IActionResult> Post(ContentCreateDTO content)
         {
             var created = await _repository.CreateAsync(content);

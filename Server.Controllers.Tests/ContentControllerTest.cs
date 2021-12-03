@@ -21,7 +21,7 @@ public class ContentControllerTest
     {
         //Arrange 
         var logger = new Mock<ILogger<ContentController>>();
-        var expected = Array.Empty<ContentDetailsDTO>();
+        var expected = Array.Empty<ContentDTO>();
         var repository = new Mock<IContentRepository>();
         repository.Setup(m => m.ReadAsync()).ReturnsAsync(expected);
 
@@ -41,7 +41,7 @@ public class ContentControllerTest
 
         var logger = new Mock<ILogger<ContentController>>();
         var toCreate = new ContentCreateDTO("Dette er en title", "Article");  //should ContentCreateDTO have an empty constructor
-        var created = new ContentDetailsDTO(1, "Dette er en title", null, null, null, null, "Article");        
+        var created = new ContentDTO(1, "Dette er en title", null, null, null, null, "Article");        
         var repository = new Mock<IContentRepository>();
         repository.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(created);
         var controller = new ContentController(logger.Object, repository.Object);
@@ -61,7 +61,7 @@ public class ContentControllerTest
         //Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
-        repository.Setup(m => m.ReadAsync(42)).ReturnsAsync(default(ContentDetailsDTO));
+        repository.Setup(m => m.ReadAsync(42)).ReturnsAsync(default(ContentDTO));
         var controller = new ContentController(logger.Object, repository.Object);
         //Act
         var actual = await controller.Get(42);
@@ -73,7 +73,7 @@ public class ContentControllerTest
        public async void Get_given_existing_id_returns_content(){
         //Arrange
         var logger = new Mock<ILogger<ContentController>>();
-        var expected = new ContentDetailsDTO(1, "Dette er en title", null, null, null, null, "Article");
+        var expected = new ContentDTO(1, "Dette er en title", null, null, null, null, "Article");
         var repository = new Mock<IContentRepository>();
         repository.Setup(m => m.ReadAsync(1)).ReturnsAsync(expected);
         var controller = new ContentController(logger.Object, repository.Object);
@@ -90,7 +90,7 @@ public class ContentControllerTest
        //Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
-        var created = new List<ContentDetailsDTO> {new ContentDetailsDTO(1, "This is a title", null, null, null, null, "Article")};
+        var created = new List<ContentDTO> {new ContentDTO(1, "This is a title", null, null, null, null, "Article")};
         repository.Setup(m => m.ReadAsync("DOES_NOT_EXIST")).ReturnsAsync(created);
         var controller = new ContentController(logger.Object, repository.Object);
         //Act
@@ -104,7 +104,7 @@ public class ContentControllerTest
        public async void Get_given_existing_title_returns_content(){
         //Arrange
         var logger = new Mock<ILogger<ContentController>>();
-        var expected = new List<ContentDetailsDTO> {new ContentDetailsDTO(1, "This is a title", null, null, null, null, "Article")};
+        var expected = new List<ContentDTO> {new ContentDTO(1, "This is a title", null, null, null, null, "Article")};
         var repository = new Mock <IContentRepository>();
         repository.Setup(m => m.ReadAsync("title")).ReturnsAsync(expected);
         var controller = new ContentController(logger.Object, repository.Object);
@@ -156,7 +156,7 @@ public class ContentControllerTest
         //Arrange
         var logger = new Mock<ILogger<ContentController>>();
         var repository = new Mock<IContentRepository>();
-        var created = new ContentDetailsDTO(1, "Dette er en title", null, null, null, null, "Article");        
+        var created = new ContentDTO(1, "Dette er en title", null, null, null, null, "Article");        
         repository.Setup(m => m.DeleteAsync(created.Id)).ReturnsAsync(Status.Deleted);
         var controller = new ContentController(logger.Object, repository.Object);
 

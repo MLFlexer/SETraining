@@ -15,7 +15,7 @@ public class ContentRepository : IContentRepository
         _context = context;
     }
 
-    public async Task<ContentDetailsDTO> CreateAsync(ContentCreateDTO content)
+    public async Task<ContentDTO> CreateAsync(ContentCreateDTO content)
     {
         Content entity;
         if (content.Type == "Article")
@@ -27,8 +27,8 @@ public class ContentRepository : IContentRepository
                 Difficulty = content.Difficulty,
                 AvgRating = content.AvgRating
             };
-
             _context.Contents.Add(entity);
+            
         }
         else
         {
@@ -45,7 +45,7 @@ public class ContentRepository : IContentRepository
         
         await _context.SaveChangesAsync();
 
-        return new ContentDetailsDTO(
+        return new ContentDTO(
                 entity.Id,
                 entity.Title,
                 entity.Description,
@@ -70,25 +70,31 @@ public class ContentRepository : IContentRepository
         return Status.Deleted;
     }
 
-    public async Task<Option<ContentDetailsDTO>> ReadAsync(int contentId)
+    public async Task<Option<ContentDTO>> ReadAsync(int contentId)
     {
         return await _context.Contents.Where(c => c.Id == contentId)
-            .Select(c => new ContentDetailsDTO(
+            .Select(c => new ContentDTO(
                 c.Id,
                 c.Title,
                 c.Description,
                 c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
-                c.Type))
+                c.Type
+                
+            ))
             .FirstOrDefaultAsync();
+        
     }
 
+
+   
+
       //ReadAsync on a string
-    public async Task<Option<IEnumerable<ContentDetailsDTO>>> ReadAsync(string contentTitle)
+    public async Task<Option<IEnumerable<ContentDTO>>> ReadAsync(string contentTitle)
     {
         return await _context.Contents.Where(c => c.Title.Contains(contentTitle))
-            .Select(c => new ContentDetailsDTO(
+            .Select(c => new ContentDTO(
                 c.Id,
                 c.Title,
                 c.Description,
@@ -98,10 +104,11 @@ public class ContentRepository : IContentRepository
                 c.Type)).ToListAsync();
     }
 
-    public async Task<IEnumerable<ContentDetailsDTO>> ReadAsync()
+    public async Task<IEnumerable<ContentDTO>> ReadAsync()
+
     {
         var all = await _context.Contents.Select(content =>
-            new ContentDetailsDTO(
+            new ContentDTO(
                     content.Id,
                     content.Title,
                     content.Description,
@@ -113,6 +120,32 @@ public class ContentRepository : IContentRepository
 
         return all;
     }
+
+    
+    
+    //TODO: Vi beholder nedarvning. Dette udvides med 1) videorepository + videocontroller 2) article repository + article controller.
+    //Vi kalder content api hver gang vi skal sortere på deres fælles ting, ellers bruger vi de specifikke apis
+    
+    // public async Task<IEnumerable<ContentDTO>> ReadVideosAsync()
+    // {
+    //     var all = await _context.Articles.Select(article =>
+    //         new ArticleDTO(
+    //             article.Id,
+    //             article.Title,
+    //             article.Description,
+    //             article.ProgrammingLanguages.Select(p => p.Name).ToList(),
+    //             article.Difficulty,
+    //             article.AvgRating,
+    //             article.Type,
+    //             article.TextBody
+    //             )
+    //     ).ToListAsync();
+    //     
+    //     return all;
+    // }
+    
+    
+
 
     public async Task<Status> UpdateAsync(int id, ContentUpdateDTO content)
     {

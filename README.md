@@ -1,7 +1,11 @@
 
 
 # SETraining 🏃
+[![.NET](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/MLFlexer/SETraining/actions/workflows/dotnet.yml)
+---------
+
 A repository to help users navigate the confusing web of ever emerging technologies.
+
 ________
 ## Get started
 
@@ -45,6 +49,15 @@ After that you should
 - Restart the containers with step `2. Run database with docker 🐳`
 
 
+## Testing
+
+Note: only looks at one project for the badge. TODO: need to aggregate test percentages.
+Make sure to install Coverlet and XUnit in test projects with dotnet CLI
+- `dotnet add package xunit --version 2.4.2-pre.12`
+- `dotnet add package coverlet.msbuild --version 3.1.0`
+
+A badge with code coverage is automatically built upon each push to main via `coverall.oi`
+
 ## Extra 
 Find total line count in whole project from bash:
 - cd to root directory 
@@ -55,4 +68,4 @@ Find total line count in whole project from bash:
 - [Trello](https://trello.com/invite/b/C1tRzypF/1aef96c54dce7720d977a2b082b4ba0e/bdsa-project)
 - [Discord](https://discord.gg/vGYScYvGRj)
 - [Github](https://github.com/MLFlexer/BDSAProject)
-- https://www.figma.com/file/JwxyhxTZZtYT2hkQBury1o/UI-BDSA
+- [Figma](https://www.figma.com/file/JwxyhxTZZtYT2hkQBury1o/UI-BDSA)

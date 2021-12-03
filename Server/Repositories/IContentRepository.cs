@@ -5,11 +5,14 @@ namespace SETraining.Server.Repositories;
 
 public interface IContentRepository
 {
-    Task<ContentDetailsDTO> CreateAsync(ContentCreateDTO content);
-    Task<Option<ContentDetailsDTO>> ReadAsync(int contentId);
-    Task<Option<IEnumerable<ContentDetailsDTO>>>ReadAsync(string title);
-    Task<IEnumerable<ContentDetailsDTO>> ReadAsync();
+
+
+    Task<ContentDTO> CreateAsync(ContentCreateDTO content);
+    Task<Option<ContentDTO>> ReadAsync(int contentId);
+    Task<Option<IEnumerable<ContentDTO>>>ReadAsync(string title);
+    Task<IEnumerable<ContentDTO>> ReadAsync();
    
+  
     Task<Status> UpdateAsync(int id, ContentUpdateDTO content);
     Task<Status> DeleteAsync(int contentId);
 }

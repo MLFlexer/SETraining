@@ -8,7 +8,9 @@ namespace SETraining.Server.Contexts;
 
 public interface IKhanContext :IDisposable
 {
-    DbSet<Content> Contents { get; }
+     DbSet<Content> Contents { get; }
+     DbSet<Video> Videos { get; }
+     DbSet<Article> Articles { get; }
     DbSet<ProgrammingLanguage> ProgrammingLanguages { get; }
     DbSet<Learner> Learners { get; }
     DbSet<Moderator> Moderators { get; }

@@ -12,7 +12,7 @@ using SETraining.Server.Contexts;
 namespace SETraining.Server.Migrations
 {
     [DbContext(typeof(KhanContext))]
-    [Migration("20211126130230_init")]
+    [Migration("20211130155243_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,8 +32,8 @@ namespace SETraining.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<float?>("AvgRating")
-                        .HasColumnType("real");
+                    b.Property<int?>("AvgRating")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("CreatorId")
                         .HasColumnType("integer");
@@ -42,8 +42,7 @@ namespace SETraining.Server.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Difficulty")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<int?>("LearnerId")
                         .HasColumnType("integer");
@@ -72,12 +71,12 @@ namespace SETraining.Server.Migrations
                     b.Property<int>("ContentsId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ProgrammingLanguagesLanguage")
+                    b.Property<string>("ProgrammingLanguagesName")
                         .HasColumnType("text");
 
-                    b.HasKey("ContentsId", "ProgrammingLanguagesLanguage");
+                    b.HasKey("ContentsId", "ProgrammingLanguagesName");
 
-                    b.HasIndex("ProgrammingLanguagesLanguage");
+                    b.HasIndex("ProgrammingLanguagesName");
 
                     b.ToTable("ContentProgrammingLanguage");
                 });
@@ -116,9 +115,9 @@ namespace SETraining.Server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("RawData")
+                    b.Property<string>("Path")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -164,10 +163,10 @@ namespace SETraining.Server.Migrations
 
             modelBuilder.Entity("SETraining.Shared.Models.ProgrammingLanguage", b =>
                 {
-                    b.Property<string>("Language")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.HasKey("Language");
+                    b.HasKey("Name");
 
                     b.ToTable("ProgrammingLanguages");
                 });
@@ -198,23 +197,6 @@ namespace SETraining.Server.Migrations
                     b.ToTable("Ratings");
                 });
 
-            modelBuilder.Entity("SETraining.Shared.Models.RawVideo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("Video")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RawVideo");
-                });
-
             modelBuilder.Entity("SETraining.Shared.Models.Article", b =>
                 {
                     b.HasBaseType("Content");
@@ -230,13 +212,12 @@ namespace SETraining.Server.Migrations
                 {
                     b.HasBaseType("Content");
 
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("Length")
                         .HasColumnType("integer");
-
-                    b.Property<int>("RawDataId")
-                        .HasColumnType("integer");
-
-                    b.HasIndex("RawDataId");
 
                     b.HasDiscriminator().HasValue("Video");
                 });
@@ -264,7 +245,7 @@ namespace SETraining.Server.Migrations
 
                     b.HasOne("SETraining.Shared.Models.ProgrammingLanguage", null)
                         .WithMany()
-                        .HasForeignKey("ProgrammingLanguagesLanguage")
+                        .HasForeignKey("ProgrammingLanguagesName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -305,17 +286,6 @@ namespace SETraining.Server.Migrations
                     b.Navigation("Content");
 
                     b.Navigation("Learner");
-                });
-
-            modelBuilder.Entity("SETraining.Shared.Models.Video", b =>
-                {
-                    b.HasOne("SETraining.Shared.Models.RawVideo", "RawData")
-                        .WithMany()
-                        .HasForeignKey("RawDataId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("RawData");
                 });
 
             modelBuilder.Entity("Content", b =>

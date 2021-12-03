@@ -1,9 +1,102 @@
 ﻿@page "/"
+@using SETraining.Shared.DTOs
+@using SETraining.Shared.DTOs
+@using System.Net
+@using SETraining.Shared.DTOs
+@using System.Net
+@using SETraining.Shared.DTOs
+@using SETraining.Shared.Models
+@inject HttpClient Http
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @oninput=@(args => searchTitle(args.Value.ToString())) />
+<RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
-Welcome to your new app.
+<TopMenu/>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+@if (Contents == null)
+{
+    
+    <div style="text-align: center">Loading...</div>  
+   
+} else {
+    <div style="margin-left: 20px; margin-top: 20px; ">Results: @Contents.Length @(Contents.Length > 0 ? "items" : "item")</div>
+                                                             
+    <RadzenDataList WrapItems="true" AllowPaging="true" Data="@Contents" TItem="ContentDTO">
+        <Template Context="content">
+            <RadzenCard Style="width:300px;">
+                            <div class="d-flex flex-row align-items-center">
+                                <RadzenImage Path="placeholder_small.jpg" Class="rounded-circle float-left mr-3" Style="width: 80px; height: 80px;" />
+                                <div>
+                                    <h4 class="mb-0">@(content.Title)</h4>
+                                    <div>@content.Type</div>
+                                    <div style="font-size: .8em">@content.Description</div>
+                                    <RadzenRating ReadOnly="true" Stars="5" Value=@(content.AvgRating == null ? 0 : content.AvgRating.Value) />
+                                    
+                                </div>
+                            </div>
+                            <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
+                            <div class="row">
+                                <div class="col-md-8 text-truncate">
+                                    @foreach (var l in content.ProgrammingLanguages)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
+                                    }
+                                    @if (content.Difficulty != null)
+                                    {
+                                       <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", content.Difficulty.Value.ToString())}")/>
+                                    }
+                                    
+                                    
+                                    
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <RadzenButton Text=@(content.Type == "Article" ? "Read" : "Watch") ButtonStyle="ButtonStyle.Primary" />
+                                </div>
+                            </div>
+                        </RadzenCard>
+           
+        </Template>
+    </RadzenDataList>
+    
+}
+
+
+
+
+@code {
+
+
+
+    async void ClearResult()
+    {
+        Contents = await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
+    }
+
+    public ContentDTO[]? Contents;
+
+    async Task searchTitle(string title)
+    {
+        if (title == "")
+        {
+            ClearResult();
+            return;
+        }
+            
+            Contents = await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
+        
+    }
+
+    void OnChange(string value, string name)
+    {
+        Console.WriteLine($"{name} value changed to {value}");
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Contents =  await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
+    }
+    
+}

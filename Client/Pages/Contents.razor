@@ -51,16 +51,16 @@ else
 }
 
 @code {
-    private ContentDetailsDTO[]? contents;
-    private ContentDetailsDTO? content;
+    private ContentDTO[]? contents;
+    private ContentDTO? content;
 
     protected override async Task OnInitializedAsync()
     {
-        contents = await Http.GetFromJsonAsync<ContentDetailsDTO[]>("api/Content");
+        contents = await Http.GetFromJsonAsync<ContentDTO[]>("api/Content");
     }
 
     private async void OnContentClicked(int id)
     {
-        content = await Http.GetFromJsonAsync<ContentDetailsDTO>($"api/Content/{id}");
+        content = await Http.GetFromJsonAsync<ContentDTO>($"api/Content/{id}");
     }
 }

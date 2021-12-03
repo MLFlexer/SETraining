@@ -58,13 +58,16 @@ public static class SeedExtensions
                     Description = "An Article about C#",
                     Difficulty = DifficultyLevel.Intermediate,
                     Creator = jkof,
-                    ProgrammingLanguages = new[] { csharp }
+                    ProgrammingLanguages = new[] { csharp },
+                    AvgRating = 4
+                    
                 },
                 new Article("Better Article", "An Article about Java and C#") {
                     ProgrammingLanguages = new[] { java, csharp }
                 },
                 new Article("Javascript Introduction", "An introduction to the Javascript language") {
-                    ProgrammingLanguages = new[] { javascript }
+                    ProgrammingLanguages = new[] { javascript },
+                    AvgRating = 1
                 },
                 new Video("Some Video", invalidFilePath) {
                     Description = "This is content of type video",

@@ -7,6 +7,8 @@ namespace SETraining.Server.Contexts;
 public class KhanContext : DbContext, IKhanContext
 {
     public DbSet<Content> Contents => Set<Content>();
+    public DbSet<Video> Videos => Set<Video>();
+    public DbSet<Article> Articles => Set<Article>();
     public DbSet<Learner> Learners => Set<Learner>();
     public DbSet<Moderator> Moderators => Set<Moderator>();
     public DbSet<Rating> Ratings => Set<Rating>();

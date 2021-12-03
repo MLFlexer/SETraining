@@ -1,0 +1,44 @@
+@using SETraining.Shared.Models
+@using SETraining.Shared.DTOs
+@inject HttpClient Http
+
+<div style="height: 30px; width: 100%; margin-top: 10px; margin-bottom: 10px; margin-left: 15px; flex-direction: row">
+    <RadzenDropDown style="margin-top: 0px" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                        @bind-Value=@SelectedProgrammingLanguages Multiple="true" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
+                                        Change=@(args => OnSelect(args))  />
+    
+    <RadzenDropDown style="margin-top: 0px" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                                    @bind-Value=@SelectedProgrammingLanguages Multiple="true" Placeholder="Programming Languages..." Data=@ProgrammingLanguages TextProperty="Name" ValueProperty="Name"
+                                    Change=@(args => OnSelect(args))  />
+</div>
+ 
+
+@code {
+    int SelectedDiffculty = 0;
+    
+    ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    ProgrammingLanguageDTO[]? SelectedProgrammingLanguages; 
+    
+    
+    //Not implemented yet
+    void OnChange(object value, string name)
+    {
+        var str = value is IEnumerable<int> ? string.Join(", ", (IEnumerable<int>)value) : value;
+        
+    }
+    
+    void OnSelect(object value)
+    {
+        var str = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
+
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        SelectedProgrammingLanguages = new ProgrammingLanguageDTO[ProgrammingLanguages.Length];
+        
+        
+    }
+
+}
