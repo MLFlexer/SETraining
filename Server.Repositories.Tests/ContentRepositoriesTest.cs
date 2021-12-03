@@ -137,12 +137,12 @@ public class ContentRepositoriesTest : IDisposable
     public async void Read_given_title_exists_returns_ContentList()
     {
         //Arrange
-        var expected_1 = new ContentDetailsDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
-        var expected_2 = new ContentDetailsDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+        var expected_1 = new ContentDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_2 = new ContentDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
   
         //Act
         var actual = await _repository.ReadAsync("CSharp");
-        IEnumerable<ContentDetailsDTO> actualValue = actual.Value; 
+        IEnumerable<ContentDTO> actualValue = actual.Value; 
         var actual1 = actualValue.First();
         var actual2 = actualValue.Last();
 
