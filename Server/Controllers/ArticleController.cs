@@ -24,25 +24,25 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ArticleDTO>> Get(string? filter)
+        public async Task<IEnumerable<ArticleDTO>> Get([FromQuery] FilterSetting? filters)
         {
-            return await _repository.ReadAllAsync(filter);
+            return await _repository.ReadAllArticlesAsync(filters);
         }
 
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ArticleDTO>> Get(int id,  string? filter)
-            => (await _repository.ReadFromIdAsync(id, filter)).ToActionResult();
+        [HttpGet("id={id}")]
+        public async Task<ActionResult<ArticleDTO>> GetFromId(int id,  [FromQuery] FilterSetting? filters)
+            => (await _repository.ReadArticleFromIdAsync(id, filters)).ToActionResult();
 
          //Get from a string
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
-        [HttpGet("{title}")]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> Get(string title, string? filter)
+        [HttpGet("title={title}")]
+        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromTitle(string title, [FromQuery] FilterSetting? filters)
         {
-            return (await _repository.ReadFromTitleAsync(title, filter.)).ToActionResult();
+            return (await _repository.ReadArticlesFromTitleAsync(title, filters)).ToActionResult();
         }
 
 
@@ -50,9 +50,9 @@ namespace SETraining.Server.Controllers
         [ProducesResponseType(typeof(ArticleDTO), 201)]
         public async Task<IActionResult> Post(ArticleCreateDTO article)
         {
-            var created = await _repository.CreateAsync(article);
+            var created = await _repository.CreateArticleAsync(article);
 
-            return CreatedAtRoute(nameof(Get), new { created.Id }, created);
+            return CreatedAtRoute(nameof(GetFromTitle), new { created.Id }, created);
         }
 
         //put = update
@@ -61,15 +61,15 @@ namespace SETraining.Server.Controllers
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task <IActionResult> Put(int id, [FromBody] ArticleUpdateDTO article)
-            => (await _repository.UpdateAsync(id, article)).ToActionResult();
+            => (await _repository.UpdateArticleAsync(id, article)).ToActionResult();
         
 
         //delete
         [Authorize]
-        [HttpPut ("{id}")]
+        [HttpDelete ("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task <IActionResult> Delete(int id)
-            => (await _repository.DeleteAsync(id)).ToActionResult();
+            => (await _repository.DeleteArticleAsync(id)).ToActionResult();
     }
 }

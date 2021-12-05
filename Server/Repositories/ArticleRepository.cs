@@ -15,10 +15,10 @@ public class ArticleRepository : IArticleRepository
         _context = context;
     }
 
-    public async Task<ArticleDTO> CreateAsync(ArticleCreateDTO article)
+    public async Task<ArticleDTO> CreateArticleAsync(ArticleCreateDTO article)
     {
         
-           var entity = new Article(article.Title, "")
+           var entity = new Article(article.Title, article.Body)
             {
                 Description = article.Description,
                 ProgrammingLanguages = article.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),
@@ -41,7 +41,7 @@ public class ArticleRepository : IArticleRepository
             ); 
     }
 
-    public async Task<Status> DeleteAsync(int contentId)
+    public async Task<Status> DeleteArticleAsync(int contentId)
     {
         var entity = await _context.Articles.FindAsync(contentId);
 
@@ -55,7 +55,7 @@ public class ArticleRepository : IArticleRepository
         return Status.Deleted;
     }
 
-    public async Task<Option<ArticleDTO>> ReadFromIdAsync(int contentId)
+    public async Task<Option<ArticleDTO>> ReadArticleFromIdAsync(int contentId, FilterSetting? filters)
     {
         return await _context.Articles.Where(c => c.Id == contentId)
             .Select(c => new ArticleDTO(
@@ -76,9 +76,10 @@ public class ArticleRepository : IArticleRepository
    
 
       //ReadAsync on a string
-    public async Task<Option<IEnumerable<ArticleDTO>>> ReadFromTitleAsync(string contentTitle)
+    public async Task<Option<IEnumerable<ArticleDTO>>> ReadArticlesFromTitleAsync(string contentTitle, FilterSetting? filters)
     {
-        return await _context.Articles.Where(c => c.Title.Contains(contentTitle))
+        
+        return await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower()))
             .Select(c => new ArticleDTO(
                 c.Id,
                 c.Title,
@@ -89,7 +90,7 @@ public class ArticleRepository : IArticleRepository
                 c.Body)).ToListAsync();
     }
 
-    public async Task<IEnumerable<ArticleDTO>> ReadAllAsync()
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(FilterSetting? filters)
 
     {
         var all = await _context.Articles.Select(content =>
@@ -107,7 +108,7 @@ public class ArticleRepository : IArticleRepository
     }
     
 
-    public async Task<Status> UpdateAsync(int id, ArticleUpdateDTO article)
+    public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
     {
         var entity = _context.Articles.ToList().Find(c => c.Id == id);
 
@@ -122,7 +123,7 @@ public class ArticleRepository : IArticleRepository
         entity.Body = article.Body;
         entity.AvgRating = article.AvgRating;
 
-        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
+        //entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
         
         await _context.SaveChangesAsync();
 

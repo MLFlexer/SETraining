@@ -15,7 +15,7 @@
 <RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @oninput=@(args => searchTitle(args.Value.ToString())) />
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
-<TopMenu/>
+@* <TopMenu/> *@
 
 
 @if (Videos == null && Articles == null)
@@ -51,10 +51,10 @@
                             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
                             <div class="row">
                                 <div class="col-md-8 text-truncate">
-                                    @foreach (var l in video.ProgrammingLanguages)
-                                    {
-                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
-                                    }
+                                    @* @foreach (var l in video.ProgrammingLanguages) *@
+                                    @* { *@
+                                    @*     <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/> *@
+                                    @* } *@
                                     @if (video.Difficulty != null)
                                     {
                                        <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", video.Difficulty.Value.ToString())}")/>
@@ -95,10 +95,10 @@
                             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
                             <div class="row">
                                 <div class="col-md-8 text-truncate">
-                                    @foreach (var l in article.ProgrammingLanguages)
-                                    {
-                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
-                                    }
+                                    @* @foreach (var l in article.ProgrammingLanguages) *@
+                                    @* { *@
+                                    @*     <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/> *@
+                                    @* } *@
                                     
                                     @if (article.Difficulty != null)
                                     {
@@ -129,10 +129,11 @@
 
     async void ClearResult()
     {
-        Videos = await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
+        Videos =  await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
+        Articles =  await Http.GetFromJsonAsync<ArticleDTO[]>("api/Article");
     }
 
-    public FilterSetting? filter = new FilterSetting();
+    public FilterSetting? filters = new ();
     public VideoDTO[]? Videos;
     public ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
@@ -144,8 +145,8 @@
             ClearResult();
             return;
         }
-            
-            Videos = await Http.GetFromJsonAsync<VideoDTO[]>("api/Video", DifficultyLevel.Value.ToString(),  );
+
+        Articles = await Http.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
             
         
     }

@@ -53,7 +53,7 @@ public class ArticleRepositoriesTest : IDisposable
         var programmingLangs = new List<string>() {"Java", "Go"};
         var toCreate = new ArticleCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
         //Act
-        var created = await _repository.CreateAsync(toCreate);
+        var created = await _repository.CreateArticleAsync(toCreate);
         
         //Assert
         Assert.Equal(5, created.Id);
@@ -65,7 +65,7 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
-        var contentsFromDB = await _repository.ReadAsync();
+        var contentsFromDB = await _repository.ReadAllArticlesAsync(null);
         var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
         var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
         var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Article");
@@ -84,7 +84,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_id_does_not_exist_returns_null()
     {
-        var contentsFromDB = await _repository.ReadAsync(99);
+        var contentsFromDB = await _repository.ReadArticleFromIdAsync(99, null);
         Assert.True(contentsFromDB.IsNone);
     }
 
@@ -92,19 +92,19 @@ public class ArticleRepositoriesTest : IDisposable
      [Fact]
     public async void Read_given_title_does_not_exist_returns_emptyList()
     {
-        var contentsFromDB = await _repository.ReadAsync("THISISNOTWORKING");
+        var contentsFromDB = await _repository.ReadArticlesFromTitleAsync("THISISNOTWORKING", null);
 
         Assert.Empty(contentsFromDB.Value);
     }
     
     [Fact]
-    public async Task Read_given_id_exists_returns_Content()
+    public async Task Read_given_id_exists_returns_Article()
     {
         //Arrange
         var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article");
         
         //Act
-        var contentFromDB = await _repository.ReadAsync(1);
+        var contentFromDB = await _repository.ReadArticleFromIdAsync(1, null);
         var actual = contentFromDB.Value;
         
         //Assert
@@ -115,14 +115,14 @@ public class ArticleRepositoriesTest : IDisposable
 
    
      [Fact]
-    public async void Read_given_title_exists_returns_ContentList()
+    public async void Read_given_title_exists_returns_ArticleList()
     {
         //Arrange
         var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
         var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
   
         //Act
-        var actual = await _repository.ReadAsync("CSharp");
+        var actual = await _repository.ReadArticlesFromTitleAsync("CSharp", null);
         IEnumerable<ArticleDTO> actualValue = actual.Value; 
         var actual1 = actualValue.First();
         var actual2 = actualValue.Last();
@@ -157,7 +157,7 @@ public class ArticleRepositoriesTest : IDisposable
             AvgRating = null
         };
         
-        var updated = await _repository.UpdateAsync(42, content);
+        var updated = await _repository.UpdateArticleAsync(42, content);
         
         Assert.Equal(Status.NotFound, updated);
         
@@ -177,11 +177,11 @@ public class ArticleRepositoriesTest : IDisposable
             AvgRating = 20
         };
         
-        var updated = await _repository.UpdateAsync(1, content);
+        var updated = await _repository.UpdateArticleAsync(1, content);
         
         Assert.Equal(Status.Updated, updated);
         
-        var option = await _repository.ReadAsync(1);
+        var option = await _repository.ReadArticleFromIdAsync(1, null);
         var UpdatedContent = option.Value;
         
         Assert.Equal("This is updated", UpdatedContent.Description);
@@ -193,14 +193,14 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task  Delete_given_non_existing_id_returns_NotFound()
     {
-        var actual = await _repository.DeleteAsync(44);
+        var actual = await _repository.DeleteArticleAsync(44);
         Assert.Equal(Status.NotFound, actual);
     }
     
     [Fact]
     public async Task Delete_given_existing_id_deletes()
     {
-        var actual = await _repository.DeleteAsync(2);
+        var actual = await _repository.DeleteArticleAsync(2);
 
         Assert.Equal(Status.Deleted, actual);
         Assert.Null(await _context.Articles.FindAsync(2));

@@ -11,20 +11,22 @@ namespace SETraining.Server;
 public static class SeedExtensions
 {
 
-    private static IArticleRepository _repository;
+    private static IArticleRepository _articleRepository;
+    private static IVideoRepository _videoRepository;
 
     public static IHost Seed(this IHost host)
     {
         using (var scope = host.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<SETrainingContext>();
-            _repository = new ArticleRepository(context);
+            _articleRepository = new ArticleRepository(context);
+            _videoRepository = new VideoRepository(context);
 
             SeedArticles(context);
             SeedLearners(context);
-            SeedVideos(context);
-            SeedRatings(context);
-            SeedHistoryEntries(context);
+            //SeedVideos(context);
+            //SeedRatings(context);
+            //SeedHistoryEntries(context);
         }
         return host;
     }
@@ -32,99 +34,123 @@ public static class SeedExtensions
     private static void SeedArticles(SETrainingContext context)
     {
         context.Database.Migrate();
+        context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+        if (context.Articles.Any()) return;
+        var java = new ProgrammingLanguage("Java");
+        var csharp = new ProgrammingLanguage("C#");
+        var javascript = new ProgrammingLanguage("Javascript");
+        var fsharp = new ProgrammingLanguage("F#");
 
-        if(!context.Articles.Any())
-        {
-            var java = new ProgrammingLanguage("Java");
-            var csharp = new ProgrammingLanguage("C#");
-            var javascript = new ProgrammingLanguage("Javascript");
-            var fsharp = new ProgrammingLanguage("F#");
+        // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
+        var javaArticleText1 = "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture.";
+        var videolink = "https://www.youtube.com/watch?v=eIrMbAQSU34";
+        var wikipedia = new Moderator("Wikipedia");
+        var jkof = new Moderator("jkof");
 
-            // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
-            var javaArticleText1 = "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture.";
+        var invalidFilePath = "*invalid filepath, used for testing*";
 
-            var wikipedia = new Moderator("Wikipedia");
-            var jkof = new Moderator("jkof");
-
-            var invalidFilePath = "*invalid filepath, used for testing*";
-
-            context.Articles.AddRange(
-                new Article("Java", javaArticleText1) {
-                    Description = "The Wikipedia page about the programming language Java",
-                    Difficulty = DifficultyLevel.Novice,
-                    Creator = wikipedia,
-                    ProgrammingLanguages = new[] { java }
-                },
-                new Article("C# Article",  "<b>Test<b/>") {
-                    Description = "An Article about C#",
-                    Difficulty = DifficultyLevel.Intermediate,
-                    Creator = jkof,
-                    ProgrammingLanguages = new[] { csharp },
-                    AvgRating = 4
+        context.Articles.AddRange(
+            new Article("Java", javaArticleText1) {
+                Description = "The Wikipedia page about the programming language Java",
+                Difficulty = DifficultyLevel.Novice,
+                Creator = wikipedia,
+                ProgrammingLanguages = new[] { java }
+            },
+            new Article("C# Article",  "<b>Test<b/>") {
+                Description = "An Article about C#",
+                Difficulty = DifficultyLevel.Intermediate,
+                Creator = jkof,
+                ProgrammingLanguages = new[] { csharp },
+                AvgRating = 4
                     
-                },
-                new Article("Better Article", "<b>Test<b/>") {
-                    ProgrammingLanguages = new[] { java, csharp },
-                    Description = "An Article about Java and C#"
-                },
-                new Article("Javascript Introduction", "<b>Test<b/>") {
-                    ProgrammingLanguages = new[] { javascript },
-                    AvgRating = 1,
-                    Description = "An introduction to the Javascript language"
-                }
-            );
-
-            context.SaveChanges();
-        }
+            },
+            new Article("Better Article", "<b>Test<b/>") {
+                ProgrammingLanguages = new[] { java, csharp, fsharp },
+                Description = "An Article about Java and C#"
+            },
+            new Article("Javascript Introduction", "<b>Test<b/>") {
+                ProgrammingLanguages = new[] { javascript },
+                AvgRating = 1,
+                Description = "An introduction to the Javascript language"
+            }
+        );
+        
+        context.Videos.AddRange(
+            new Video("Java Video", videolink) {
+                Description = "The Wikipedia page about the programming language Java",
+                Difficulty = DifficultyLevel.Novice,
+                Creator = wikipedia,
+                ProgrammingLanguages = new[] { java }
+            },
+            new Video("C# Video",  videolink) {
+                Description = "An Video about C#",
+                Difficulty = DifficultyLevel.Intermediate,
+                Creator = jkof,
+                ProgrammingLanguages = new[] { csharp },
+                AvgRating = 4
+                    
+            },
+            new Video("Better Video", videolink) {
+                ProgrammingLanguages = new[] { java, csharp },
+                Description = "A Video about Java and C#"
+            },
+            new Video("Javascript Introduction Video", videolink) {
+                ProgrammingLanguages = new[] { javascript, fsharp },
+                AvgRating = 1,
+                Description = "An introduction to the Javascript language"
+            }
+        );
+        
+        
+        context.SaveChanges();
     }
     
-    private static void SeedVideos(SETrainingContext context)
-    {
-        context.Database.Migrate();
-
-        if(!context.Videos.Any())
-        {
-            var java = new ProgrammingLanguage("Java");
-            var csharp = new ProgrammingLanguage("C#");
-            var javascript = new ProgrammingLanguage("Javascript");
-            var fsharp = new ProgrammingLanguage("F#");
-
-            // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
-            var videolink = "https://www.youtube.com/watch?v=eIrMbAQSU34";
-            var wikipedia = new Moderator("Wikipedia");
-            var jkof = new Moderator("jkof");
-
-            var invalidFilePath = "*invalid filepath, used for testing*";
-
-            context.Videos.AddRange(
-                new Video("Java Video", videolink) {
-                    Description = "The Wikipedia page about the programming language Java",
-                    Difficulty = DifficultyLevel.Novice,
-                    Creator = wikipedia,
-                    ProgrammingLanguages = new[] { java }
-                },
-                new Video("C# Video",  videolink) {
-                    Description = "An Video about C#",
-                    Difficulty = DifficultyLevel.Intermediate,
-                    Creator = jkof,
-                    ProgrammingLanguages = new[] { csharp },
-                    AvgRating = 4
-                    
-                },
-                new Video("Better Video", videolink) {
-                    ProgrammingLanguages = new[] { java, csharp },
-                    Description = "A Video about Java and C#"
-                },
-                new Video("Javascript Introduction Video", videolink) {
-                    ProgrammingLanguages = new[] { javascript, fsharp },
-                    AvgRating = 1,
-                    Description = "An introduction to the Javascript language"
-                }
-            );
-
-            context.SaveChanges();
-        }
-    }
+    // private static void SeedVideos(SETrainingContext context)
+    // {
+    //     context.Database.Migrate();
+    //
+    //     if (context.Videos.Any()) return;
+    //     
+    //     var java = new ProgrammingLanguage("Java");
+    //     var csharp = new ProgrammingLanguage("C#");
+    //     var javascript = new ProgrammingLanguage("Javascript");
+    //     var fsharp = new ProgrammingLanguage("F#");
+    //
+    //     // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
+    //     var videolink = "https://www.youtube.com/watch?v=eIrMbAQSU34";
+    //     var wikipedia = new Moderator("Wikipedia");
+    //     var jkof = new Moderator("jkof");
+    //
+    //     var invalidFilePath = "*invalid filepath, used for testing*";
+    //
+    //     context.Videos.AddRange(
+    //         new Video("Java Video", videolink) {
+    //             Description = "The Wikipedia page about the programming language Java",
+    //             Difficulty = DifficultyLevel.Novice,
+    //             Creator = wikipedia,
+    //             ProgrammingLanguages = new[] { java }
+    //         },
+    //         new Video("C# Video",  videolink) {
+    //             Description = "An Video about C#",
+    //             Difficulty = DifficultyLevel.Intermediate,
+    //             Creator = jkof,
+    //             ProgrammingLanguages = new[] { csharp },
+    //             AvgRating = 4
+    //                 
+    //         },
+    //         new Video("Better Video", videolink) {
+    //             ProgrammingLanguages = new[] { java, csharp },
+    //             Description = "A Video about Java and C#"
+    //         },
+    //         new Video("Javascript Introduction Video", videolink) {
+    //             ProgrammingLanguages = new[] { javascript, fsharp },
+    //             AvgRating = 1,
+    //             Description = "An introduction to the Javascript language"
+    //         }
+    //     );
+    //
+    //     context.SaveChanges();
+    // }
 
     private static void SeedLearners(SETrainingContext context)
     {
@@ -148,37 +174,37 @@ public static class SeedExtensions
         }
     }
 
-    private static void SeedRatings(SETrainingContext context)
-    {
-        context.Database.Migrate();
-    
-        if (!context.Ratings.Any())
-        {
-            var articles = context.Articles.ToList();
-            var videos = context.Videos.ToList();
-    
-            var learners = context.Learners.ToList();
-    
-            for (var i = 0; i < articles.Count/2; i++)
-            {
-                var rand = new Random();
-                int randomRating = rand.Next(1, 6);
-    
-                context.Ratings.Add(new Rating(
-                    randomRating,
-                    // articles.ElementAtOrDefault(i) ?? new Article("", "", ""),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
-                ));
-                context.Ratings.Add(new Rating(
-                    randomRating,
-                    // videos.ElementAtOrDefault(i) ?? new Video("", ""),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
-                ));
-            }
-    
-            context.SaveChanges();
-        }
-    }
+    // private static void SeedRatings(SETrainingContext context)
+    // {
+    //     context.Database.Migrate();
+    //
+    //     if (!context.Ratings.Any())
+    //     {
+    //         var articles = context.Articles.ToList();
+    //         var videos = context.Videos.ToList();
+    //
+    //         var learners = context.Learners.ToList();
+    //
+    //         for (var i = 0; i < articles.Count/2; i++)
+    //         {
+    //             var rand = new Random();
+    //             int randomRating = rand.Next(1, 6);
+    //
+    //             context.Ratings.Add(new Rating(
+    //                 randomRating,
+    //                 //articles.ElementAtOrDefault(i) ?? new Article("", "", ""),
+    //                 learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
+    //             ));
+    //             context.Ratings.Add(new Rating(
+    //                 randomRating,
+    //                 // videos.ElementAtOrDefault(i) ?? new Video("", ""),
+    //                 learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
+    //             ));
+    //         }
+    //
+    //         context.SaveChanges();
+    //     }
+    // }
 
     private static void SeedHistoryEntries(SETrainingContext context)
     {

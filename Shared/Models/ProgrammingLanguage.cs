@@ -11,4 +11,7 @@ public class ProgrammingLanguage
 
     [Key]        
     public string Name { get; set; }
+
+    public ICollection<Video>? Videos { get; set; }
+    public ICollection<Article>? Articles { get; set; }
 }

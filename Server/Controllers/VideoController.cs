@@ -24,23 +24,23 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<VideoDTO>> Get(string? lang, string? difficulty)
+        public async Task<IEnumerable<VideoDTO>> Get([FromQuery] FilterSetting? filters)
         {
-            return await _repository.ReadAllAsync(string? lang, string? difficulty);
+            return await _repository.ReadAllAsync(filters);
         }
 
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<VideoDTO>> Get(int id, FilterSetting? filter)
+        public async Task<ActionResult<VideoDTO>> Get(int id,[FromQuery] FilterSetting? filter)
             => (await _repository.ReadFromIdAsync(id, filter)).ToActionResult();
 
          //Get from a string
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
         [HttpGet("{title}")]
-        public async Task<ActionResult<IEnumerable<VideoDTO>>> Get(string title, FilterSetting? filter)
+        public async Task<ActionResult<IEnumerable<VideoDTO>>> Get(string title, [FromQuery] FilterSetting? filter)
         {
             return (await _repository.ReadFromTitleAsync(title, filter)).ToActionResult();
         }
@@ -66,7 +66,7 @@ namespace SETraining.Server.Controllers
 
         //delete
         [Authorize]
-        [HttpPut ("{id}")]
+        [HttpDelete ("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
         public async Task <IActionResult> Delete(int id)

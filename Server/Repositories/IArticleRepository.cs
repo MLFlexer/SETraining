@@ -7,10 +7,10 @@ public interface IArticleRepository
 {
 
 
-    Task<ArticleDTO> CreateAsync(ArticleCreateDTO article);
-    Task<Option<ArticleDTO>> ReadFromIdAsync(int articleId, FilterSetting? filters);
-    Task<Option<IEnumerable<ArticleDTO>>>ReadFromTitleAsync(string title, FilterSetting? filters);
-    Task<IEnumerable<ArticleDTO>> ReadAllAsync(FilterSetting? filters);
-    Task<Status> UpdateAsync(int id, ArticleUpdateDTO article);
-    Task<Status> DeleteAsync(int articleId);
+    Task<ArticleDTO> CreateArticleAsync(ArticleCreateDTO article);
+    Task<Option<ArticleDTO>> ReadArticleFromIdAsync(int articleId, FilterSetting? filters);
+    Task<Option<IEnumerable<ArticleDTO>>>ReadArticlesFromTitleAsync(string title, FilterSetting? filters);
+    Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(FilterSetting? filters);
+    Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article);
+    Task<Status> DeleteArticleAsync(int articleId);
 }
