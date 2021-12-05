@@ -1,0 +1,39 @@
+@page "/ArticleDetails/{articleId:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using SETraining.Shared.DTOs
+
+<RadzenButton Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
+
+@if (article != null)
+{
+    
+    <div style="margin-top: 60px; right:0px;">
+        @((MarkupString) article.Body)
+    </div>
+    
+}
+
+
+@code {
+    [Parameter]
+    public int? ArticleId { get; set; }
+
+    private ArticleDTO? article;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ArticleId != 0)
+        {
+            article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
+        }
+
+        await base.OnParametersSetAsync();
+    }
+    private void Back()
+    {
+        var uri = $"{NavigationManager.BaseUri}";
+
+        NavigationManager.NavigateTo(uri);
+    }
+}

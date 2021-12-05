@@ -11,10 +11,12 @@
 @using System.ComponentModel.Design
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
+
 
 <PageTitle>Home</PageTitle>
 
-<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
+<RadzenAutoComplete Data=@Videos style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
 <TopMenu/>
@@ -66,7 +68,7 @@
                                     
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <RadzenButton Text="Watch" ButtonStyle="ButtonStyle.Primary" />
+                                    <RadzenButton Text="Watch" Click=@(() => ViewVideo(video)) ButtonStyle="ButtonStyle.Primary" />
                                 </div>
                             </div>
                         </RadzenCard>
@@ -111,7 +113,7 @@
                                     
                                 </div>
                                 <div class="col-md-4 text-right">
-                                    <RadzenButton Text="Watch" ButtonStyle="ButtonStyle.Primary" />
+                                    <RadzenButton Text="Read" Click=@(() => ViewArticle(article)) ButtonStyle="ButtonStyle.Primary" />
                                 </div>
                             </div>
                         </RadzenCard>
@@ -167,5 +169,20 @@
         Videos =  await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
         Articles =  await Http.GetFromJsonAsync<ArticleDTO[]>("api/Article");
     }
+    
+    private void ViewArticle(ArticleDTO article)
+    {
+        var uri = $"{NavigationManager.BaseUri}ArticleDetails/{article.Id}";
+
+        NavigationManager.NavigateTo(uri);
+    }
+    
+    private void ViewVideo(VideoDTO video)
+    {
+        var uri = $"{NavigationManager.BaseUri}VideoDetails/{video.Id}";
+
+        NavigationManager.NavigateTo(uri);
+    }
+
     
 }
