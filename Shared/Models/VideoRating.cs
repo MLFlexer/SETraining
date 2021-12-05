@@ -1,19 +1,19 @@
 
 namespace SETraining.Shared.Models
 {
-    public class Rating
+    public class VideoRating
     {
-        private Rating() { } //Constructor for EF Core.
+        private VideoRating() { } //Constructor for EF Core.
 
-        public Rating(int value, Learner learner) //Article article,
+        public VideoRating(int value, Learner learner, Video video) //Article article,
         {
             Value = value;
-            // Article = article;
             Learner = learner;
+            Video = video;
         }
         public int Id {get; set;}
         public int Value { get; set; }
-        // public Article Article { get; set; }
+        public Video Video { get; set; }
         public Learner Learner { get; set; }
     }
 }

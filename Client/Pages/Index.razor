@@ -8,14 +8,16 @@
 @using SETraining.Shared
 @using SETraining.Shared.DTOs
 @using SETraining.Shared.Models
+@using System.ComponentModel.Design
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject HttpClient Http
 
 <PageTitle>Home</PageTitle>
 
-<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @oninput=@(args => searchTitle(args.Value.ToString())) />
+<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
-@* <TopMenu/> *@
+<TopMenu/>
 
 
 @if (Videos == null && Articles == null)
@@ -131,22 +133,26 @@
     {
         Videos =  await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
         Articles =  await Http.GetFromJsonAsync<ArticleDTO[]>("api/Article");
+        search = "";
     }
 
     public FilterSetting? filters = new ();
     public VideoDTO[]? Videos;
     public ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
+    string search = "";
 
     async Task searchTitle(string title)
     {
-        if (title == "")
+        search = title;
+        if (title.Trim() == "")
         {
             ClearResult();
             return;
         }
 
         Articles = await Http.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
+        Videos = await Http.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
             
         
     }

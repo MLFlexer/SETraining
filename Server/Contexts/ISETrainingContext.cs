@@ -13,7 +13,9 @@ public interface ISETrainingContext :IDisposable
     DbSet<ProgrammingLanguage> ProgrammingLanguages { get; }
     DbSet<Learner> Learners { get; }
     DbSet<Moderator> Moderators { get; }
-    DbSet<Rating> Ratings { get; }
+    DbSet<ArticleRating> ArticleRatings { get; }
+    DbSet<VideoRating> VideoRatings { get; }
+    
     DbSet<ArticleHistoryEntry> ArticleHistoryEntries { get; }
     DbSet<VideoHistoryEntry> VideoHistoryEntries { get; }
     DbSet<Image> Images { get; }

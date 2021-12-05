@@ -79,7 +79,7 @@ public class ArticleRepository : IArticleRepository
     public async Task<Option<IEnumerable<ArticleDTO>>> ReadArticlesFromTitleAsync(string contentTitle, FilterSetting? filters)
     {
         
-        return await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower()))
+        return await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower().Trim()))
             .Select(c => new ArticleDTO(
                 c.Id,
                 c.Title,

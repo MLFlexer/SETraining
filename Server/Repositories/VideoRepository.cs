@@ -78,7 +78,7 @@ public class VideoRepository : IVideoRepository
       //ReadAsync on a string
     public async Task<Option<IEnumerable<VideoDTO>>> ReadFromTitleAsync(string contentTitle, FilterSetting? filters)
     {
-        return await _context.Videos.Where(c => c.Title.Contains(contentTitle))
+        return await _context.Videos.Where(c => c.Title.ToLower().Trim().Contains(contentTitle.ToLower().Trim()))
             .Select(c => new VideoDTO(
                 c.Id,
                 c.Title,

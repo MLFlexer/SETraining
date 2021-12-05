@@ -10,7 +10,8 @@ public class SETrainingContext : DbContext, ISETrainingContext
     public DbSet<Article> Articles => Set<Article>();
     public DbSet<Learner> Learners => Set<Learner>();
     public DbSet<Moderator> Moderators => Set<Moderator>();
-    public DbSet<Rating> Ratings => Set<Rating>();
+    public DbSet<ArticleRating> ArticleRatings => Set<ArticleRating>();
+    public DbSet<VideoRating> VideoRatings => Set<VideoRating>();
     public DbSet<ProgrammingLanguage> ProgrammingLanguages => Set<ProgrammingLanguage>();
     public DbSet<ArticleHistoryEntry> ArticleHistoryEntries => Set<ArticleHistoryEntry>();
     public DbSet<VideoHistoryEntry> VideoHistoryEntries => Set<VideoHistoryEntry>();

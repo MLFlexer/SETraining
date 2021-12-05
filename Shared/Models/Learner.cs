@@ -14,5 +14,5 @@ public class Learner
     public ICollection<ArticleHistoryEntry>? ArticleHistory { get; set; }
     public ICollection<VideoHistoryEntry>? VideoHistory { get; set; }
     public ICollection<Article>? Favorites { get; set; }
-    public ICollection<Rating>? Ratings { get; set; }
+    public ICollection<ArticleRating>? Ratings { get; set; }
 }

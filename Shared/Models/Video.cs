@@ -15,7 +15,8 @@ public class Video
     public DifficultyLevel? Difficulty { get; set; }
     public Moderator? Creator { get; set; }
     public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
-    public ICollection<Rating>? Ratings { get; set; }
+    
+    public ICollection<VideoRating>? VideoRatings { get; set; }
     public int? AvgRating { get; set; }
     public string Path { get; set; }
 }

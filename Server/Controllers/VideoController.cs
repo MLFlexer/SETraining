@@ -32,14 +32,14 @@ namespace SETraining.Server.Controllers
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
-        [HttpGet("{id}")]
+        [HttpGet("id={id}")]
         public async Task<ActionResult<VideoDTO>> Get(int id,[FromQuery] FilterSetting? filter)
             => (await _repository.ReadFromIdAsync(id, filter)).ToActionResult();
 
          //Get from a string
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
-        [HttpGet("{title}")]
+        [HttpGet("title={title}")]
         public async Task<ActionResult<IEnumerable<VideoDTO>>> Get(string title, [FromQuery] FilterSetting? filter)
         {
             return (await _repository.ReadFromTitleAsync(title, filter)).ToActionResult();

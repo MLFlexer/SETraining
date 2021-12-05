@@ -15,7 +15,8 @@ public class Article
     public DifficultyLevel? Difficulty { get; set; }
     public Moderator? Creator { get; set; }
     public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
-    public ICollection<Rating>? Ratings { get; set; }
+    
+    public ICollection<ArticleRating>? ArticleRatings { get; set; }
     public int? AvgRating { get; set; }
     
     public string Body { get; set; }
