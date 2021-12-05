@@ -16,7 +16,7 @@
 
 <PageTitle>Home</PageTitle>
 
-<RadzenAutoComplete Data=@Videos style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
+<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
 <TopMenu/>
