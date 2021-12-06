@@ -15,11 +15,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var connS = builder.Configuration.GetConnectionString("Khan");
+var connS = builder.Configuration.GetConnectionString("SETraining");
 Console.WriteLine(connS);
-builder.Services.AddDbContext<KhanContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Khan")));
-builder.Services.AddScoped<IKhanContext, KhanContext>();
-builder.Services.AddScoped<IContentRepository, ContentRepository>();
+builder.Services.AddDbContext<SETrainingContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("SETraining")));
+builder.Services.AddScoped<ISETrainingContext, SETrainingContext>();
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<IVideoRepository, VideoRepository>();
 builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguagesRepository>();
 builder.Services.AddSwaggerGen();
 

@@ -8,9 +8,9 @@ using SETraining.Shared.Models;
 namespace SETraining.Server.Repositories;
 public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 {
-    private readonly IKhanContext _context;
+    private readonly ISETrainingContext _context;
 
-    public ProgrammingLanguagesRepository(IKhanContext context)
+    public ProgrammingLanguagesRepository(ISETrainingContext context)
     {
         _context = context;
     }

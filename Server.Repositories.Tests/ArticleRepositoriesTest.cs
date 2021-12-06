@@ -14,80 +14,62 @@ using System.Linq;
 
 namespace Server.Repositories.Tests;
 
-public class ContentRepositoriesTest : IDisposable
+public class ArticleRepositoriesTest : IDisposable
 {
-    private readonly KhanContext _context;
-    private readonly ContentRepository _repository;
+    private readonly SETrainingContext _context;
+    private readonly ArticleRepository _repository;
     private bool disposedValue;
     
-    public ContentRepositoriesTest()
+    public ArticleRepositoriesTest()
     {
         var connection = new SqliteConnection("Filename=:memory:");
         connection.Open();
-        var builder = new DbContextOptionsBuilder<KhanContext>();
+        var builder = new DbContextOptionsBuilder<SETrainingContext>();
         builder.UseSqlite(connection);
-        var context = new KhanContext(builder.Options);
+        var context = new SETrainingContext(builder.Options);
         context.Database.EnsureCreated();
         
         //Add existing test data 
         
         //TODO: ADD ALL FIELDS TO ENTITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-                new Video("Introduction to Java", "no file"),
-                new Video("Introduction to CSharp", "no file"),
-                new Article("Introduction to Java", "Text body Java Article") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
-                new Article("Introduction to CSharp", "Text Body CSharp Article")
+                new Article("Introduction to Java",  "<b>Test<b/>"),
+                new Article("Introduction to CSharp", "<b>Test<b/>"),
+                new Article("Introduction to Java",  "<b>Test<b/>") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
+                new Article("Introduction to CSharp",  "<b>Test<b/>")
             );
 
         context.SaveChanges();
 
         _context = context;
-        _repository = new ContentRepository(_context);
+        _repository = new ArticleRepository(_context);
         
     }
 
-    [Fact]
-    public async void Create_new_Video_with_generated_id()
-    {
-        //Arrange 
-        var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new ContentCreateDTO("Introduction to Go", "Video") {ProgrammingLanguages = programmingLangs};
-        //Act
-        var created = await _repository.CreateAsync(toCreate);
-        
-        //Assert
-        Assert.Equal(5, created.Id);
-        Assert.Equal("Video", created.Type);
-        Assert.Equal("Introduction to Go", created.Title);
-        Assert.Equal(programmingLangs,created.ProgrammingLanguages);
-    }
-    
     [Fact]
     public async void Create_new_Article_with_generated_id()
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new ContentCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
-        
+        var toCreate = new ArticleCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
         //Act
-        var created = await _repository.CreateAsync(toCreate);
+        var created = await _repository.CreateArticleAsync(toCreate);
         
         //Assert
         Assert.Equal(5, created.Id);
-        Assert.Equal("Article", created.Type);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
-    
+
     //[Fact]
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
-        var contentsFromDB = await _repository.ReadAsync();
-        var expected_1 = new ContentDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        var expected_2 = new ContentDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
-        var expected_3 = new ContentDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Video");
-        var expected_4 = new ContentDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+        var contentsFromDB = await _repository.ReadAllArticlesAsync(null);
+        var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
+        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Article");
+        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
   
         Assert.Collection(contentsFromDB,
                 c => Assert.Equal(expected_1.ProgrammingLanguages, c.ProgrammingLanguages),
@@ -102,7 +84,7 @@ public class ContentRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_id_does_not_exist_returns_null()
     {
-        var contentsFromDB = await _repository.ReadAsync(99);
+        var contentsFromDB = await _repository.ReadArticleFromIdAsync(99, null);
         Assert.True(contentsFromDB.IsNone);
     }
 
@@ -110,39 +92,38 @@ public class ContentRepositoriesTest : IDisposable
      [Fact]
     public async void Read_given_title_does_not_exist_returns_emptyList()
     {
-        var contentsFromDB = await _repository.ReadAsync("THISISNOTWORKING");
+        var contentsFromDB = await _repository.ReadArticlesFromTitleAsync("THISISNOTWORKING", null);
 
         Assert.Empty(contentsFromDB.Value);
     }
     
     [Fact]
-    public async Task Read_given_id_exists_returns_Content()
+    public async Task Read_given_id_exists_returns_Article()
     {
         //Arrange
-        var expected = new ContentDTO(1, "Introduction to Java", null, null, null, null, "Article");
+        var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article");
         
         //Act
-        var contentFromDB = await _repository.ReadAsync(1);
+        var contentFromDB = await _repository.ReadArticleFromIdAsync(1, null);
         var actual = contentFromDB.Value;
         
         //Assert
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.Title, actual.Title);
-        Assert.Equal(expected.Type, actual.Type);
     }
 
 
    
      [Fact]
-    public async void Read_given_title_exists_returns_ContentList()
+    public async void Read_given_title_exists_returns_ArticleList()
     {
         //Arrange
-        var expected_1 = new ContentDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
-        var expected_2 = new ContentDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
   
         //Act
-        var actual = await _repository.ReadAsync("CSharp");
-        IEnumerable<ContentDTO> actualValue = actual.Value; 
+        var actual = await _repository.ReadArticlesFromTitleAsync("CSharp", null);
+        IEnumerable<ArticleDTO> actualValue = actual.Value; 
         var actual1 = actualValue.First();
         var actual2 = actualValue.Last();
 
@@ -153,7 +134,6 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal(expected_1.ProgrammingLanguages, actual1.ProgrammingLanguages);
         Assert.Equal(expected_1.Difficulty, actual1.Difficulty);
         Assert.Equal(expected_1.AvgRating, actual1.AvgRating);
-        Assert.Equal(expected_1.Type, actual1.Type);
 
 
         Assert.Equal(expected_2.Id, actual2.Id);
@@ -162,24 +142,22 @@ public class ContentRepositoriesTest : IDisposable
         Assert.Equal(expected_2.ProgrammingLanguages, actual2.ProgrammingLanguages);
         Assert.Equal(expected_2.Difficulty, actual2.Difficulty);
         Assert.Equal(expected_2.AvgRating, actual2.AvgRating);
-        Assert.Equal(expected_2.Type, actual2.Type);
     }
     
     [Fact]
     public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
-        var content = new ContentUpdateDTO(contentCreate)
+        var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
+        var content = new ArticleUpdateDTO(contentCreate)
         {
             Title ="Introduction to Java", 
             Description = null, 
             ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
             Difficulty = null, 
-            AvgRating = null, 
-            Type= "Article"
+            AvgRating = null
         };
         
-        var updated = await _repository.UpdateAsync(42, content);
+        var updated = await _repository.UpdateArticleAsync(42, content);
         
         Assert.Equal(Status.NotFound, updated);
         
@@ -189,22 +167,21 @@ public class ContentRepositoriesTest : IDisposable
     public async Task  Update_updates_existing_Content()
     {
         //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        var contentCreate = new ContentCreateDTO("Introduction to Java", "Article");
-        var content = new ContentUpdateDTO(contentCreate)
+        var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
+        var content = new ArticleUpdateDTO(contentCreate)
         {
             Title ="Introduction to Java2", 
             Description = "This is updated", 
             ProgrammingLanguages = new List<string>(){}, 
             Difficulty = null, 
-            AvgRating = 20, 
-            Type= "Article"
+            AvgRating = 20
         };
         
-        var updated = await _repository.UpdateAsync(1, content);
+        var updated = await _repository.UpdateArticleAsync(1, content);
         
         Assert.Equal(Status.Updated, updated);
         
-        var option = await _repository.ReadAsync(1);
+        var option = await _repository.ReadArticleFromIdAsync(1, null);
         var UpdatedContent = option.Value;
         
         Assert.Equal("This is updated", UpdatedContent.Description);
@@ -216,17 +193,17 @@ public class ContentRepositoriesTest : IDisposable
     [Fact]
     public async Task  Delete_given_non_existing_id_returns_NotFound()
     {
-        var actual = await _repository.DeleteAsync(44);
+        var actual = await _repository.DeleteArticleAsync(44);
         Assert.Equal(Status.NotFound, actual);
     }
     
     [Fact]
     public async Task Delete_given_existing_id_deletes()
     {
-        var actual = await _repository.DeleteAsync(2);
+        var actual = await _repository.DeleteArticleAsync(2);
 
         Assert.Equal(Status.Deleted, actual);
-        Assert.Null(await _context.Contents.FindAsync(2));
+        Assert.Null(await _context.Articles.FindAsync(2));
     }
     
     public void Dispose()

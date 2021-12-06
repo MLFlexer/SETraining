@@ -1,0 +1,40 @@
+@page "/VideoDetails/{videoId:int}"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@using SETraining.Shared.DTOs
+
+<RadzenButton Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
+
+@if (video != null)
+{
+    
+    <div style="margin-top: 60px; right:0px;">
+        <video src="@video.Path"></video>
+        
+    </div>
+    
+}
+
+
+@code {
+    [Parameter]
+    public int? VideoId { get; set; }
+
+    private VideoDTO? video;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (VideoId != 0)
+        {
+            video = await Http.GetFromJsonAsync<VideoDTO>($"api/Video/id={VideoId}");
+        }
+
+        await base.OnParametersSetAsync();
+    }
+    private void Back()
+    {
+        var uri = $"{NavigationManager.BaseUri}";
+
+        NavigationManager.NavigateTo(uri);
+    }
+}

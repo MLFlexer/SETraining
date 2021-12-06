@@ -6,16 +6,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SETraining.Server.Contexts;
 
-public interface IKhanContext :IDisposable
+public interface ISETrainingContext :IDisposable
 {
-     DbSet<Content> Contents { get; }
-     DbSet<Video> Videos { get; }
+    DbSet<Video> Videos { get; }
      DbSet<Article> Articles { get; }
     DbSet<ProgrammingLanguage> ProgrammingLanguages { get; }
     DbSet<Learner> Learners { get; }
     DbSet<Moderator> Moderators { get; }
-    DbSet<Rating> Ratings { get; }
-    DbSet<HistoryEntry> HistoryEntries { get; }
+    DbSet<ArticleRating> ArticleRatings { get; }
+    DbSet<VideoRating> VideoRatings { get; }
+    
+    DbSet<ArticleHistoryEntry> ArticleHistoryEntries { get; }
+    DbSet<VideoHistoryEntry> VideoHistoryEntries { get; }
     DbSet<Image> Images { get; }
     
     int SaveChanges();
