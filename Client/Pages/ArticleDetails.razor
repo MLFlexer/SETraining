@@ -2,6 +2,8 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @using SETraining.Shared.DTOs
+@inject IHttpClientFactory _httpClientFactory
+
 
 <RadzenButton Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
 
@@ -20,12 +22,14 @@
     public int? ArticleId { get; set; }
 
     private ArticleDTO? article;
+    HttpClient anonymous = new ();
 
     protected override async Task OnParametersSetAsync()
     {
+        anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous");
         if (ArticleId != 0)
         {
-            article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
+            article = await anonymous.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
         }
 
         await base.OnParametersSetAsync();
