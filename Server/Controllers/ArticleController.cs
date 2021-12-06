@@ -8,10 +8,12 @@ using SETraining.Shared.DTOs;
 using SETraining.Shared;
 using BDSAProject.Server;
 
+
 namespace SETraining.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ArticleController : ControllerBase
     {
         private readonly ILogger<ArticleController> _logger;

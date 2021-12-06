@@ -12,7 +12,7 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-
+@inject IHttpClientFactory _httpClientFactory
 
 <PageTitle>Home</PageTitle>
 
@@ -129,12 +129,13 @@
 
 @code {
 
+    HttpClient anonymous = new ();
 
 
     async void ClearResult()
     {
-        Videos =  await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
-        Articles =  await Http.GetFromJsonAsync<ArticleDTO[]>("api/Article");
+        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
+        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
         search = "";
     }
 
@@ -153,8 +154,8 @@
             return;
         }
 
-        Articles = await Http.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
-        Videos = await Http.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
+        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
+        Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
             
         
     }
@@ -166,8 +167,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        Videos =  await Http.GetFromJsonAsync<VideoDTO[]>("api/Video");
-        Articles =  await Http.GetFromJsonAsync<ArticleDTO[]>("api/Article");
+        anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
+        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
+        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
     }
     
     private void ViewArticle(ArticleDTO article)
