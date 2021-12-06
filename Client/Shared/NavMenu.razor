@@ -1,37 +1,64 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">SETraining</a>
-        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-</div>
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
-            </NavLink>
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+<AuthorizeView>
+    
+    <NotAuthorized>
+           <div class="top-row ps-3 navbar navbar-dark">
+                   <div class="container-fluid">
+                       <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                           <a  aria-hidden="true">SETraining</a> 
+                           </NavLink>
+                       <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                           <span class="navbar-toggler-icon"></span>
+                       </button>
+                   </div>
+               </div>
+               <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+                   <nav class="flex-column">
+                       <div class="nav-item px-3">
+                           <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                               <span class="oi oi-home" aria-hidden="true"></span> Home
+                           </NavLink>
+                       </div>
+                   </nav>
+               </div> 
+        </NotAuthorized>
+
+    <Authorized>
+        <div class="top-row ps-3 navbar navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="">SETraining</a>
+                <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="contents">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="addcontent">
-                        <span class="oi oi-list-rich" aria-hidden="true"></span> Add Content
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <nav class="flex-column">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Home
                     </NavLink>
                 </div>
-    </nav>
-</div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="CreateArticle">
+                        <span class="oi oi-document" aria-hidden="true"></span> Add new article
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="CreateVideo">
+                        <span class="oi oi-video" aria-hidden="true"></span> Add new video
+                    </NavLink>
+                </div>
+            </nav>
+        </div>
+    </Authorized>
 
+</AuthorizeView>
 @code {
     private bool collapseNavMenu = true;
 
