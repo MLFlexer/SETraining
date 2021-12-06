@@ -9,6 +9,7 @@ namespace SETraining.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class ProgrammingLanguagesController : ControllerBase
     {
         private readonly ILogger<ProgrammingLanguagesController> _logger;

@@ -12,6 +12,7 @@ namespace SETraining.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class VideoController : ControllerBase
     {
         private readonly ILogger<VideoController> _logger;
