@@ -55,10 +55,10 @@
                             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
                             <div class="row">
                                 <div class="col-md-8 text-truncate">
-                                    @* @foreach (var l in video.ProgrammingLanguages) *@
-                                    @* { *@
-                                    @*     <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/> *@
-                                    @* } *@
+                                    @foreach (var l in video.ProgrammingLanguages)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
+                                    }
                                     @if (video.Difficulty != null)
                                     {
                                        <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", video.Difficulty.Value.ToString())}")/>
@@ -99,10 +99,10 @@
                             <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;" />
                             <div class="row">
                                 <div class="col-md-8 text-truncate">
-                                    @* @foreach (var l in article.ProgrammingLanguages) *@
-                                    @* { *@
-                                    @*     <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/> *@
-                                    @* } *@
+                                    @foreach (var l in article.ProgrammingLanguages)
+                                    {
+                                        <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
+                                    }
                                     
                                     @if (article.Difficulty != null)
                                     {
