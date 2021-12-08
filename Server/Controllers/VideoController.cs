@@ -53,7 +53,7 @@ namespace SETraining.Server.Controllers
         {
             var created = await _repository.CreateAsync(video);
 
-            return CreatedAtRoute(nameof(Get), new { created.Id }, created);
+            return CreatedAtAction(nameof(Get), new { created.Id }, created);
         }
 
         //put = update

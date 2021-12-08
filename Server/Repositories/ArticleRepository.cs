@@ -1,4 +1,5 @@
 ﻿
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
 using SETraining.Shared;
@@ -21,7 +22,7 @@ public class ArticleRepository : IArticleRepository
            var entity = new Article(article.Title, article.Body)
             {
                 Description = article.Description,
-                ProgrammingLanguages = article.ProgrammingLanguages.Select(p => new ProgrammingLanguage(p)).ToList(),
+                ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync(),
                 Difficulty = article.Difficulty,
                 AvgRating = article.AvgRating
             };
@@ -37,7 +38,7 @@ public class ArticleRepository : IArticleRepository
                 entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
-                article.Body
+                entity.Body
             ); 
     }
 
@@ -134,10 +135,12 @@ public class ArticleRepository : IArticleRepository
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
         var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);
-
+        
         foreach (var language in languages)
         {
             yield return existing.TryGetValue(language, out var p) ? p : new ProgrammingLanguage(language);
         }
+        
+        
     }
 }

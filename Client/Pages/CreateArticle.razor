@@ -6,7 +6,7 @@
 @using System.Net.Http.Headers
 @inject HttpClient Http
 @inject DialogService DialogService
-@implements IDisposable
+@inject NavigationManager NavigationManager
 @attribute [Authorize]
 
 <div class="row">
@@ -17,24 +17,24 @@
         <h4>Description</h4>
         <RadzenTextBox Change=@(args => OnDescriptionChange(args.ToString())) />
 
-        @if (ProgrammingLanguages != null)
-       {
-           <div style="margin-top: 20px;">
-               <h4>Choose existing languages</h4>
-               <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="string" Change=@(args => OnChosenProgrammingLanguagesChange(args, "CheckBoxList with horizontal orientation"))>
-                   <Items>
-                       @foreach (var lang in ProgrammingLanguages)
-                       {
-                           <RadzenCheckBoxListItem Text="@lang.Name" Value="@lang.Name"/>
-                       }
-                   </Items>
-               </RadzenCheckBoxList>
-               <div style="margin-top: 10px;">Or add new language</div>
-               <RadzenButton Click=@AddNewLanguage Icon="add_circle_outline" ButtonStyle="ButtonStyle.Secondary"/>
-           </div>
-           
-          
-       }
+       @*  @if (ProgrammingLanguages != null) *@
+       @* { *@
+       @*     <div style="margin-top: 20px;"> *@
+       @*         <h4>Choose existing languages</h4> *@
+       @*         <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="string" Change=@(args => OnChosenProgrammingLanguagesChange(args, "CheckBoxList with horizontal orientation"))> *@
+       @*             <Items> *@
+       @*                 @foreach (var lang in ProgrammingLanguages) *@
+       @*                 { *@
+       @*                     <RadzenCheckBoxListItem Text="@lang.Name" Value="@lang.Name"/> *@
+       @*                 } *@
+       @*             </Items> *@
+       @*         </RadzenCheckBoxList> *@
+       @*         <div style="margin-top: 10px;">Or add new language</div> *@
+       @*         <RadzenButton Click=@AddNewLanguage Icon="add_circle_outline" ButtonStyle="ButtonStyle.Secondary"/> *@
+       @*     </div> *@
+       @*      *@
+       @*     *@
+       @* } *@
         
         <div style="margin-top: 20px;">
             <h4>Pick difficulty level</h4>
@@ -63,7 +63,7 @@
             
         <div style="margin-top: 20px;">
           <h4>Content of the article</h4>
-                  <RadzenHtmlEditor @bind-Value=@Html style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
+                  <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
         </div>
         
                   
@@ -99,9 +99,19 @@
             imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
+    string HtmlInput;
+    string TitleInput;
+    string DescriptionInput;
+    
+    ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    string[]? ChosenLanguages = {"Test"};
+    int ChosenDifficulty = 1;
+    
     
     private async Task UploadImage()
     {
+    //IMAGE UPLOAD 
+        
         if (imageFile != null)
         {
             var bytes = new byte[imageFile.Size];
@@ -124,38 +134,12 @@
         imageUrl = string.Empty;
         imageFile = null;
     }
-
-    //
     
-    
-    
-    string Html = "";
-    string Title = "";
-    string Description = "";
-    public ProgrammingLanguageDTO[]? ProgrammingLanguages;
-    
-    IEnumerable<string> ChosenLanguages = new string[] { };
-    int ChosenDifficulty = 1;
+    ////IMAGE UPLOAD 
 
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
-        DialogService.OnOpen += Open;
-        DialogService.OnClose += Close;
-    }
-    void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options)
-    {
-        Console.WriteLine("Dialog opened");
-    }
-
-    void Close(dynamic result)
-    {
-        //console.Log($"Dialog closed");
-    }
-    
-    void OnProgrammingLanguagesChange()
-    {
-    // console.Log($"Paste: {args.Html}");
     }
 
     void OnPaste(HtmlEditorPasteEventArgs args)
@@ -166,19 +150,19 @@
     void OnTitleChange(string title)
     {
     // console.Log($"Change: {html}");
-        Title = title;
+        TitleInput = title;
     }
     
     void OnDescriptionChange(string description)
     {
     // console.Log($"Change: {html}");
-        Description = description;
+        DescriptionInput = description;
     }
     
     void OnHtmlChange(string html)
     {
     // console.Log($"Change: {html}");
-        Html = html;
+        HtmlInput = html;
     }
     
     void OnChosenProgrammingLanguagesChange(IEnumerable<string> value, string name)
@@ -194,32 +178,26 @@
     private async Task Publish()
     {
         
-        ArticleCreateDTO article = new(Title, Html);
-        var response = await Http.PostAsJsonAsync("api/Article", article);
+        ArticleCreateDTO article = new(TitleInput, HtmlInput)
+        {
+            Description = DescriptionInput,
+            ProgrammingLanguages = ChosenLanguages,
+            Difficulty = (DifficultyLevel) ChosenDifficulty
+            
+        };
         
+        var response = await Http.PostAsJsonAsync("api/Article", article);
+        if (response.IsSuccessStatusCode)
+        {
+            var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
+
+            var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+
+            NavigationManager.NavigateTo(uri);
+        }
     }
 
-    async Task AddNewLanguage()
-    {
-        var result = await DialogService.OpenAsync("Simple Dialog", ds =>
-            @<div>
-                <div class="row">
-                    <div class="col">
-                        <RadzenButton Text="Ok" Click="() => ds.Close(true)" Class="mr-1" Style="width: 80px;" />
-                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Secondary" Class="mr-1" />
-                    </div>
-                </div>
-            </div>);
-    
-    }
-    
-    public void Dispose()
-    {
-    // The DialogService is a singleton so it is advisable to unsubscribe.
-        DialogService.OnOpen -= Open;
-        DialogService.OnClose -= Close;
-    }
-    
+
     void OnExecute(HtmlEditorExecuteEventArgs args)
     {
         // console.Log($"Execute: {args.CommandName}");
