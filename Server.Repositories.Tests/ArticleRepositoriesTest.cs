@@ -51,7 +51,7 @@ public class ArticleRepositoriesTest : IDisposable
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new ArticleCreateDTO("Introduction to Go", "Article") {ProgrammingLanguages = programmingLangs};
+        var toCreate = new ArticleCreateDTO{Title ="Introduction to Go", Body = "Article", ProgrammingLanguages = programmingLangs};
         //Act
         var created = await _repository.CreateArticleAsync(toCreate);
         
@@ -147,14 +147,14 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task UpdateAsync_given_non_existing_id_returns_NotFound()
     {
-        var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
-        var content = new ArticleUpdateDTO(contentCreate)
+        var content = new ArticleUpdateDTO
         {
             Title ="Introduction to Java", 
             Description = null, 
             ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
             Difficulty = null, 
-            AvgRating = null
+            AvgRating = null,
+            Body = "Article"
         };
         
         var updated = await _repository.UpdateArticleAsync(42, content);
@@ -167,14 +167,15 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task  Update_updates_existing_Content()
     {
         //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
-        var content = new ArticleUpdateDTO(contentCreate)
+        //var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
+        var content = new ArticleUpdateDTO
         {
             Title ="Introduction to Java2", 
             Description = "This is updated", 
             ProgrammingLanguages = new List<string>(){}, 
             Difficulty = null, 
-            AvgRating = 20
+            AvgRating = 20,
+            Body = "Article"
         };
         
         var updated = await _repository.UpdateArticleAsync(1, content);
