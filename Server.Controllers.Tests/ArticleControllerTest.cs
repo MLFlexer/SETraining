@@ -42,7 +42,7 @@ public class ArticleControllerTest
     public async void Create_creates_Article(){
 
         var logger = new Mock<ILogger<ArticleController>>();
-        var toCreate = new ArticleCreateDTO("Dette er en title", "Article");  //should ArticleCreateDTO have an empty constructor
+        var toCreate = new ArticleCreateDTO{Title ="Dette er en title", Body ="Article" };  //should ArticleCreateDTO have an empty constructor
         var created = new ArticleDTO(1, "Dette er en title", null, null, null, null, "Article");        
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.CreateArticleAsync(toCreate)).ReturnsAsync(created);
@@ -126,14 +126,13 @@ public class ArticleControllerTest
     public async void Put_given_exisiting_article_updates_article(){
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var toCreate = new ArticleCreateDTO("Dette er en title", "Article");
-        var article = new ArticleUpdateDTO(toCreate);
+        var article = new ArticleUpdateDTO();
         var repository = new Mock <IArticleRepository>();
-        repository.Setup(m => m.UpdateArticleAsync(article.Id, article)).ReturnsAsync(Status.Updated);
+        repository.Setup(m => m.UpdateArticleAsync(1, article)).ReturnsAsync(Status.Updated);
         var controller = new ArticleController(logger.Object, repository.Object);
 
         //Act
-        var response = await controller.Put(article.Id, article);
+        var response = await controller.Put(1, article);
 
         //Arrange
         Assert.IsType<NoContentResult>(response);
@@ -143,14 +142,13 @@ public class ArticleControllerTest
     public async void Put_given_non_exisiting_article_returns_notFound(){
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var toCreate = new ArticleCreateDTO("Dette er en title", "Article");
-        var article = new ArticleUpdateDTO(toCreate);
+        var article = new ArticleUpdateDTO();
         var repository = new Mock <IArticleRepository>();
-        repository.Setup(m => m.UpdateArticleAsync(article.Id, article)).ReturnsAsync(Status.NotFound);
+        repository.Setup(m => m.UpdateArticleAsync(1, article)).ReturnsAsync(Status.NotFound);
         var controller = new ArticleController(logger.Object, repository.Object);
 
         //Act
-        var response = await controller.Put(article.Id, article);
+        var response = await controller.Put(1, article);
 
         //Arrange
         Assert.IsType<NotFoundResult>(response);

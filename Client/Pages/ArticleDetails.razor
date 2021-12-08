@@ -8,7 +8,8 @@
 
 <div style="position:relative">
 
-<RadzenButton style="right:0px; position: absolute;" Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
+    <RadzenButton style="right:0px; position: absolute;" Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
+    <RadzenButton style="right:0px;margin-top: 40px; position: absolute;" Click=@(() => UpdateArticle()) Text="Edit article" ButtonStyle="ButtonStyle.Secondary" />
    
 
 @if (article != null)
@@ -60,6 +61,13 @@
     private void Back()
     {
         var uri = $"{NavigationManager.BaseUri}";
+
+        NavigationManager.NavigateTo(uri);
+    }
+    
+    private void UpdateArticle()
+    {
+        var uri = $"{NavigationManager.BaseUri}UpdateArticle/{ArticleId}";
 
         NavigationManager.NavigateTo(uri);
     }
