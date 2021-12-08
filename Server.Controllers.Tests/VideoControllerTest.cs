@@ -41,18 +41,18 @@ public class VideoControllerTest
     public async void Create_creates_Video(){
 
         var logger = new Mock<ILogger<VideoController>>();
-        var toCreate = new VideoCreateDTO("Dette er en title", "Video");  //should VideoCreateDTO have an empty constructor
+        var toCreate = new VideoCreateDTO{Title = "Dette er en title", Path = "Video"};  //should VideoCreateDTO have an empty constructor
         var created = new VideoDTO(1, "Dette er en title", null, null, null, null, "Video");        
         var repository = new Mock<IVideoRepository>();
         repository.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(created);
         var controller = new VideoController(logger.Object, repository.Object);
 
         // Act
-        var result = await controller.Post(toCreate) as CreatedAtRouteResult;
+        var result = await controller.Post(toCreate) as CreatedAtActionResult;
 
         // Assert
         Assert.Equal(created, result?.Value);
-        Assert.Equal("Get", result?.RouteName);
+        Assert.Equal("Get", result?.ActionName);
         Assert.Equal(KeyValuePair.Create("Id", (object?)1), result?.RouteValues?.Single());
         
     } 
@@ -125,8 +125,7 @@ public class VideoControllerTest
     public async void Put_given_exisiting_video_updates_video(){
         //Arrange
         var logger = new Mock<ILogger<VideoController>>();
-        var toCreate = new VideoCreateDTO("Dette er en title", "Video");
-        var video = new VideoUpdateDTO(toCreate);
+        var video = new VideoUpdateDTO();
         var repository = new Mock <IVideoRepository>();
         repository.Setup(m => m.UpdateAsync(video.Id, video)).ReturnsAsync(Status.Updated);
         var controller = new VideoController(logger.Object, repository.Object);
@@ -142,8 +141,7 @@ public class VideoControllerTest
     public async void Put_given_non_exisiting_video_returns_notFound(){
         //Arrange
         var logger = new Mock<ILogger<VideoController>>();
-        var toCreate = new VideoCreateDTO("Dette er en title", "Video");
-        var video = new VideoUpdateDTO(toCreate);
+        var video = new VideoUpdateDTO();
         var repository = new Mock <IVideoRepository>();
         repository.Setup(m => m.UpdateAsync(video.Id, video)).ReturnsAsync(Status.NotFound);
         var controller = new VideoController(logger.Object, repository.Object);

@@ -51,7 +51,7 @@ public class VideoRepositoriesTest : IDisposable
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
-        var toCreate = new VideoCreateDTO("Introduction to Go", "Video") {ProgrammingLanguages = programmingLangs};
+        var toCreate = new VideoCreateDTO{Title = "Introduction to Go", Path = "Video", ProgrammingLanguages = programmingLangs};
         //Act
         var created = await _repository.CreateAsync(toCreate);
         
@@ -147,14 +147,14 @@ public class VideoRepositoriesTest : IDisposable
     [Fact]
     public async Task UpdateAsync_on_video_given_non_existing_id_returns_NotFound()
     {
-        var contentCreate = new VideoCreateDTO("Introduction to Java", "Video");
-        var content = new VideoUpdateDTO(contentCreate)
+        var content = new VideoUpdateDTO
         {
             Title ="Introduction to Java", 
             Description = null, 
             ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
             Difficulty = null, 
-            AvgRating = null
+            AvgRating = null,
+            Path = "Video"
         };
         
         var updated = await _repository.UpdateAsync(42, content);
@@ -166,15 +166,15 @@ public class VideoRepositoriesTest : IDisposable
     [Fact]
     public async Task  Update_updates_existing_video()
     {
-        //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Video");
-        var contentCreate = new VideoCreateDTO("Introduction to Java", "Video");
-        var content = new VideoUpdateDTO(contentCreate)
+        var content = new VideoUpdateDTO
         {
             Title ="Introduction to Java2", 
             Description = "This is updated", 
             ProgrammingLanguages = new List<string>(){}, 
             Difficulty = null, 
-            AvgRating = 20
+            AvgRating = 20,
+            Path = "Video"
+            
         };
         
         var updated = await _repository.UpdateAsync(1, content);

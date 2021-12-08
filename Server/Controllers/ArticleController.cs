@@ -53,8 +53,8 @@ namespace SETraining.Server.Controllers
         public async Task<IActionResult> Post(ArticleCreateDTO article)
         {
             var created = await _repository.CreateArticleAsync(article);
-
-            return CreatedAtRoute(nameof(GetFromTitle), new { created.Id }, created);
+            Console.WriteLine(created);
+            return CreatedAtAction(nameof(Get), new { created.Id }, created);
         }
 
         //put = update
