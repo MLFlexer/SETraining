@@ -1,0 +1,252 @@
+@page "/UpdateArticle/{articleId:int}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SETraining.Shared.DTOs
+@using SETraining.Shared.Models
+@using System.Net.Http.Headers
+@inject HttpClient Http
+@inject DialogService DialogService
+@implements IDisposable
+@attribute [Authorize]
+@inject NavigationManager NavigationManager
+
+<div class="row">
+    <div class="col-12">
+        <h1>Add new article</h1>
+        <h4>Title</h4>
+        <RadzenTextBox Value="@Title" Change=@(args => OnTitleChange(args.ToString())) />
+        <h4>Description</h4>
+        <RadzenTextBox Value="@UpdatedDescription" Change=@(args => OnDescriptionChange(args.ToString())) />
+
+        @if (ProgrammingLanguages != null)
+       {
+           <div style="margin-top: 20px;">
+               <h4>Choose existing languages</h4>
+               <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="string" Change=@(args => OnChosenProgrammingLanguagesChange(args, "CheckBoxList with horizontal orientation"))>
+                   <Items>
+                       @foreach (var lang in ProgrammingLanguages)
+                       {
+                           <RadzenCheckBoxListItem Text="@lang.Name" Value="@lang.Name"/>
+                       }
+                   </Items>
+               </RadzenCheckBoxList>
+               <div style="margin-top: 10px;">Or add new language</div>
+               <RadzenButton Click=@AddNewLanguage Icon="add_circle_outline" ButtonStyle="ButtonStyle.Secondary"/>
+           </div>
+           
+          
+       }
+        
+        <div style="margin-top: 20px;">
+            <h4>Pick difficulty level</h4>
+                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args, "CheckBoxList with horizontal orientation"))>
+                                 <Items>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="1"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="2"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="3"/>
+                                 </Items>
+                             </RadzenRadioButtonList> 
+        </div>
+       
+        <div class="form-group">
+                               @if (!string.IsNullOrWhiteSpace(imageUrl))
+                               {
+                                   <div><img src="@imageUrl" alt="Character Image" class="img-thumbnail"></div>
+                               }
+                               <h4 style="margin-top: 20px;">Add image</h4>
+                               <label for="Image">Image</label>
+                           </div>
+                           <div class="form-group input-group">
+                               <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
+                               <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
+                               </div>
+        
+            
+        <div style="margin-top: 20px;">
+          <h4>Content of the article</h4>
+                  <RadzenHtmlEditor @bind-Value=@Html style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
+        </div>
+        
+                  
+    </div>
+  
+</div>
+  <RadzenButton style="margin-bottom:10px;"Click=@(Update) Text="Save Edit" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+
+
+
+
+
+@code {
+    //Image
+    private string imageName = Guid.NewGuid().ToString();
+
+    private string imageUrl = string.Empty;
+
+    private IBrowserFile? imageFile;
+    
+    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    {
+        imageFile = e.GetMultipleFiles().FirstOrDefault();
+
+        if (imageFile != null)
+        {
+            var bytes = new byte[imageFile.Size];
+            await imageFile.OpenReadStream().ReadAsync(bytes);
+            var contentType = imageFile.ContentType;
+            imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+        }
+    }
+    
+    private async Task UploadImage()
+    {
+        if (imageFile != null)
+        {
+            var bytes = new byte[imageFile.Size];
+            await imageFile.OpenReadStream().ReadAsync(bytes);
+            var byteContent = new ByteArrayContent(bytes);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
+            var content = new MultipartFormDataContent();
+            content.Add(byteContent, "file", imageFile.Name);
+            var response = await Http.PostAsync($"api/images/{imageName}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var ImageUrl = response.Headers.Location?.ToString();
+            }
+        }
+    }
+
+    private void ClearImage()
+    {
+        imageUrl = string.Empty;
+        imageFile = null;
+    }
+
+    //
+    
+    
+    
+    string Html = "";
+    string Title = "";
+    string UpdatedDescription = "";
+    public ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    public ArticleDTO? article;
+    [Parameter]
+    public int ArticleId { get; set; }
+    
+    IEnumerable<string> ChosenLanguages = new string[] { };
+    int ChosenDifficulty = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
+        Html = article.Body;
+        Title = article.Title;
+        UpdatedDescription = article.Description;
+    //ProgrammingLanguages = article.ProgrammingLanguages;
+        
+
+        DialogService.OnOpen += Open;
+        DialogService.OnClose += Close;
+    }
+
+    void Open(string title, Type type, Dictionary<string, object> parameters, DialogOptions options)
+    {
+        Console.WriteLine("Dialog opened");
+    }
+
+    void Close(dynamic result)
+    {
+        //console.Log($"Dialog closed");
+    }
+    
+    void OnProgrammingLanguagesChange()
+    {
+    // console.Log($"Paste: {args.Html}");
+    }
+
+    void OnPaste(HtmlEditorPasteEventArgs args)
+    {
+        // console.Log($"Paste: {args.Html}");
+    }
+    
+    void OnTitleChange(string title)
+    {
+    // console.Log($"Change: {html}");
+        Title = title;
+    }
+    
+    void OnDescriptionChange(string description)
+    {
+    // console.Log($"Change: {html}");
+        UpdatedDescription = description;
+    }
+    
+    void OnHtmlChange(string html)
+    {
+    // console.Log($"Change: {html}");
+        Html = html;
+    }
+    
+    void OnChosenProgrammingLanguagesChange(IEnumerable<string> value, string name)
+    {
+        Console.WriteLine($"{name} value changed to {string.Join(", ", value)}");
+    }
+    
+    void OnChosenDifficultyLevelChange(int? value, string name)
+    {
+        //console.Log($"{name} value changed to {value}");
+    }
+    
+    private async Task Update()
+    {
+        ArticleUpdateDTO article = new ArticleUpdateDTO
+        {
+            Title = Title,
+            Body = Html,
+            Description = UpdatedDescription,
+            Id = ArticleId
+        };
+        
+
+        var response = await Http.PutAsJsonAsync($"api/Article/{ArticleId}", article);
+        if (response.IsSuccessStatusCode)
+        {
+            var uri = $"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}";
+
+            NavigationManager.NavigateTo(uri);
+        }
+        
+        
+    }
+
+    async Task AddNewLanguage()
+    {
+        var result = await DialogService.OpenAsync("Simple Dialog", ds =>
+            @<div>
+                <div class="row">
+                    <div class="col">
+                        <RadzenButton Text="Ok" Click="() => ds.Close(true)" Class="mr-1" Style="width: 80px;" />
+                        <RadzenButton Text="Cancel" Click="() => ds.Close(false)" ButtonStyle="ButtonStyle.Secondary" Class="mr-1" />
+                    </div>
+                </div>
+            </div>);
+    
+    }
+    
+    public void Dispose()
+    {
+    // The DialogService is a singleton so it is advisable to unsubscribe.
+        DialogService.OnOpen -= Open;
+        DialogService.OnClose -= Close;
+    }
+    
+    void OnExecute(HtmlEditorExecuteEventArgs args)
+    {
+        // console.Log($"Execute: {args.CommandName}");
+    }
+
+
+}
