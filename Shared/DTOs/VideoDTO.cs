@@ -9,12 +9,6 @@ public record VideoDTO(int Id, string Title, string? Description, ICollection<st
 
 public record VideoCreateDTO
 {
-    public VideoCreateDTO(string title, string path)
-    {
-        Title = title;
-        Path = path;
-    }
-
     public string Title { get; init; }
     public string? Description { get; init; }
     public ICollection<string>? ProgrammingLanguages { get; init; }
@@ -26,11 +20,6 @@ public record VideoCreateDTO
 }
 
 public record VideoUpdateDTO : VideoCreateDTO
-{
-    public VideoUpdateDTO(VideoCreateDTO original) : base(original)
-    {
-        // TODO: Det her er auto-genereret kode. Skal det laves om?
-    }
-
+{ 
     public int Id { get; init; }
 }

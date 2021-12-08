@@ -49,11 +49,11 @@ public class ArticleControllerTest
         var controller = new ArticleController(logger.Object, repository.Object);
 
         // Act
-        var result = await controller.Post(toCreate) as CreatedAtRouteResult;
+        var result = await controller.Post(toCreate) as CreatedAtActionResult;
 
         // Assert
         Assert.Equal(created, result?.Value);
-        Assert.Equal("GetFromTitle", result?.RouteName);
+        Assert.Equal("Get", result?.ActionName);
         Assert.Equal(KeyValuePair.Create("Id", (object?)1), result?.RouteValues?.Single());
         
     } 
