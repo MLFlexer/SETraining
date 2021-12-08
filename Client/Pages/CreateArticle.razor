@@ -178,8 +178,10 @@
     private async Task Publish()
     {
         
-        ArticleCreateDTO article = new(TitleInput, HtmlInput)
+        var article = new ArticleCreateDTO
         {
+            Body = HtmlInput,
+            Title = TitleInput,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages,
             Difficulty = (DifficultyLevel) ChosenDifficulty
