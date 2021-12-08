@@ -1,11 +1,11 @@
-@page "/addcontent"
+@page "/CreateVideo"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @attribute [Authorize]
 
     <div class="row">
         <div class="col-6">
-            <h1>Add new article</h1>
+            <h1>Add new video</h1>
             <div>Preview your article on the right</div>
             <RadzenHtmlEditor @bind-Value=@value style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnChange Paste=@OnPaste Execute=@OnExecute />
                

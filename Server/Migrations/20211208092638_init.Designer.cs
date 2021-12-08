@@ -12,7 +12,7 @@ using SETraining.Server.Contexts;
 namespace SETraining.Server.Migrations
 {
     [DbContext(typeof(SETrainingContext))]
-    [Migration("20211206121740_init")]
+    [Migration("20211208092638_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

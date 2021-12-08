@@ -49,6 +49,7 @@
     protected override async Task OnParametersSetAsync()
     {
         anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous");
+        
         if (ArticleId != 0)
         {
             article = await anonymous.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
