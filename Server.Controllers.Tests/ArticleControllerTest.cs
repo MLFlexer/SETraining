@@ -130,6 +130,7 @@ public class ArticleControllerTest
         var article = new ArticleUpdateDTO(toCreate);
         var repository = new Mock <IArticleRepository>();
         repository.Setup(m => m.UpdateArticleAsync(article.Id, article)).ReturnsAsync(Status.Updated);
+        Console.WriteLine(article.Id);
         var controller = new ArticleController(logger.Object, repository.Object);
 
         //Act
