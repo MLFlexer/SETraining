@@ -12,7 +12,7 @@ public record ArticleCreateDTO
     public string Title { get; init; }
     public string Body {get; init; }
     public string? Description { get; init; }  
-    public ICollection<string>? ProgrammingLanguages { get; init; }
+    public IEnumerable<string>? ProgrammingLanguages { get; init; }
     public DifficultyLevel? Difficulty { get; init; }
 
     public int? AvgRating { get; init; }

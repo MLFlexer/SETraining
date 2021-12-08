@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SETraining.Shared.DTOs
+@using SETraining.Shared.ExtensionMethods
 @using SETraining.Shared.Models
 @using System.Net.Http.Headers
 @inject HttpClient Http
@@ -17,32 +18,39 @@
         <h4>Description</h4>
         <RadzenTextBox Change=@(args => OnDescriptionChange(args.ToString())) />
 
-       @*  @if (ProgrammingLanguages != null) *@
-       @* { *@
-       @*     <div style="margin-top: 20px;"> *@
-       @*         <h4>Choose existing languages</h4> *@
-       @*         <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="string" Change=@(args => OnChosenProgrammingLanguagesChange(args, "CheckBoxList with horizontal orientation"))> *@
-       @*             <Items> *@
-       @*                 @foreach (var lang in ProgrammingLanguages) *@
-       @*                 { *@
-       @*                     <RadzenCheckBoxListItem Text="@lang.Name" Value="@lang.Name"/> *@
-       @*                 } *@
-       @*             </Items> *@
-       @*         </RadzenCheckBoxList> *@
-       @*         <div style="margin-top: 10px;">Or add new language</div> *@
-       @*         <RadzenButton Click=@AddNewLanguage Icon="add_circle_outline" ButtonStyle="ButtonStyle.Secondary"/> *@
-       @*     </div> *@
-       @*      *@
-       @*     *@
-       @* } *@
+        @if (ProgrammingLanguages != null)
+       {
+           <div style="margin-top: 20px;">
+               <h4>Choose existing languages</h4>
+             
+                      
+                       
+                             <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
+                                 <Items>
+                                      @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
+                                      {
+                                          <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
+                                      }
+                                 </Items>
+                                 </RadzenCheckBoxList>                     
+       
+               <div style="margin-top: 10px;">Or add new language</div>
+                <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-100" />
+                <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+           </div>
+       
+       
+       
+       
+       }
         
         <div style="margin-top: 20px;">
             <h4>Pick difficulty level</h4>
                    <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args, "CheckBoxList with horizontal orientation"))>
                                  <Items>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="1"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="2"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="3"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="0"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="1"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="2"/>
                                  </Items>
                              </RadzenRadioButtonList> 
         </div>
@@ -104,8 +112,8 @@
     string DescriptionInput;
     
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
-    string[]? ChosenLanguages = {"Test"};
-    int ChosenDifficulty = 1;
+    IEnumerable<int> ChosenLanguages = new List<int>();
+    int ChosenDifficulty = 0;
     
     
     private async Task UploadImage()
@@ -135,7 +143,6 @@
         imageFile = null;
     }
     
-    ////IMAGE UPLOAD 
 
     protected override async Task OnInitializedAsync()
     {
@@ -165,14 +172,16 @@
         HtmlInput = html;
     }
     
-    void OnChosenProgrammingLanguagesChange(IEnumerable<string> value, string name)
+    void OnChosenProgrammingLanguagesChange(int chosenNames)
     {
-        Console.WriteLine($"{name} value changed to {string.Join(", ", value)}");
+        Console.WriteLine(chosenNames);
     }
     
-    void OnChosenDifficultyLevelChange(int? value, string name)
+    void OnChosenDifficultyLevelChange(int value, string name)
     {
-        //console.Log($"{name} value changed to {value}");
+        Console.WriteLine((DifficultyLevel) value);
+        ChosenDifficulty = value;
+    //console.Log($"{name} value changed to {value}");
     }
     
     private async Task Publish()
@@ -183,11 +192,12 @@
             Body = HtmlInput,
             Title = TitleInput,
             Description = DescriptionInput,
-            ProgrammingLanguages = ChosenLanguages,
+            ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) ChosenDifficulty
             
         };
         
+        Console.WriteLine(article);
         var response = await Http.PostAsJsonAsync("api/Article", article);
         if (response.IsSuccessStatusCode)
         {
@@ -199,9 +209,42 @@
         }
     }
 
+    private async Task OnAddLanguage()
+    {
+        if (newLang == null || newLang.Trim() == "")
+        {
+            return;
+        }
+        
+        var langToPost = new ProgrammingLanguageCreateDTO
+        {
+            Name = newLang
+        };
+        
+        var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        }
+    }
 
     void OnExecute(HtmlEditorExecuteEventArgs args)
     {
         // console.Log($"Execute: {args.CommandName}");
+    }
+
+    void OnNewLanguageValue(string val)
+    {
+        newLang = val;
+    }
+
+    bool? checkBoxValue;
+    string? newLang;
+
+    void OnChooseLanguages(IEnumerable<int> value)
+    {
+        Console.WriteLine($"Value changed to {value}");
+        ChosenLanguages = value;
     }
 }
