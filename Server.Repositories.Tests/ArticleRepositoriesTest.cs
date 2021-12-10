@@ -68,7 +68,7 @@ public class ArticleRepositoriesTest : IDisposable
         var listContents = contentsFromDB.ToList();
         var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>");
         var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
-        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>");
+        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(){new("Java 4"), new("Java 5")}, null, null, "<b>Test<b/>");
         var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");        
         
         //Using string equality, because record equality does not seem to work somehow...
@@ -76,6 +76,8 @@ public class ArticleRepositoriesTest : IDisposable
         Assert.Equal(expected_2.ToString(), listContents[1].ToString());
         Assert.Equal(expected_3.ToString(), listContents[2].ToString());
         Assert.Equal(expected_4.ToString(), listContents[3].ToString());
+        Assert.Equal(expected_3.ProgrammingLanguages.First(), listContents[2].ProgrammingLanguages.First());
+        Assert.Equal(expected_3.ProgrammingLanguages.Last(), listContents[2].ProgrammingLanguages.Last());
     }
     
     [Fact]
