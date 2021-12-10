@@ -44,7 +44,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     public async void Create_new_ProgrammingLanguage_with_generated_id()
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO("SourcePawn");
+        var toCreate = new ProgrammingLanguageCreateDTO{Name = "SourcePawn"};
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
