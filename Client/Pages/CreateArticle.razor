@@ -238,7 +238,6 @@
             
         };
         
-        Console.WriteLine(article);
         var response = await Http.PostAsJsonAsync("api/Article", article);
         if (response.IsSuccessStatusCode)
         {
