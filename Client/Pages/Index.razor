@@ -9,6 +9,7 @@
 @using SETraining.Shared.DTOs
 @using SETraining.Shared.Models
 @using System.ComponentModel.Design
+@using System.Text
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
@@ -19,7 +20,20 @@
 <RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
-<TopMenu/>
+
+@if(ProgrammingLanguages != null) {
+    <div style="height: 30px; width: 100%; margin-top: 10px; margin-bottom: 10px; margin-left: 15px; flex-direction: row">
+        <RadzenDropDown style="margin-top: 0px"
+                        @bind-Value=@SelectedDifficultyLevel Multiple="false" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
+                        Change=@(args => OnSelectedDifficultyLevel(args))  />
+    
+        <RadzenDropDown style="margin-top: 0px" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        @bind-Value=@SelectedProgrammingLanguages Multiple="true" Placeholder="Programming Languages..." Data=@ProgrammingLanguages TextProperty="Name" ValueProperty="Name"
+                        Change=@(args => OnSelectedProgrammingLanguages(args))  />
+    </div>
+ 
+}
+
 
 
 @if (Videos == null && Articles == null)
@@ -128,9 +142,30 @@
 
 
 @code {
+    
+    //Properties
 
     HttpClient anonymous = new ();
-
+    ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    IEnumerable<string> SelectedProgrammingLanguages = new List<string>();
+    string? SelectedDifficultyLevel;
+    
+    FilterSetting? filters = new ();
+    VideoDTO[]? Videos;
+    ArticleDTO[]? Articles;
+    DifficultyLevel? DifficultyLevel;
+    string search = "";
+    
+    
+    //Methods 
+    
+    protected override async Task OnInitializedAsync()
+    {
+        anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
+        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
+        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
+        ProgrammingLanguages = await anonymous.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+    }
 
     async void ClearResult()
     {
@@ -138,12 +173,6 @@
         Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
         search = "";
     }
-
-    public FilterSetting? filters = new ();
-    public VideoDTO[]? Videos;
-    public ArticleDTO[]? Articles;
-    DifficultyLevel? DifficultyLevel;
-    string search = "";
 
     async Task searchTitle(string title)
     {
@@ -154,23 +183,14 @@
             return;
         }
 
-        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
+        var URIParams = BuildURIString(title);
+
+        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/{URIParams}");
         Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
             
         
     }
-
-    void OnChange(string value, string name)
-    {
-        Console.WriteLine($"{name} value changed to {value}");
-    }
     
-    protected override async Task OnInitializedAsync()
-    {
-        anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
-        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
-        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
-    }
     
     private void ViewArticle(ArticleDTO article)
     {
@@ -186,5 +206,48 @@
         NavigationManager.NavigateTo(uri);
     }
 
+    void OnSelectedProgrammingLanguages(object value)
+    {
+        var str = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
+        
+        
+
+        foreach (var lang in SelectedProgrammingLanguages)
+        {
+            Console.WriteLine(lang);
+        }
+    }
     
+    void OnSelectedDifficultyLevel(object value)
+    {
+       //Console.WriteLine(SelectedDifficultyLevel);
+        //Console.WriteLine();
+    }
+
+    string BuildURIString(string title)
+    {
+        var URI = new StringBuilder();
+        
+        //Add title
+        URI.Append("title=");
+        URI.Append(title);
+        URI.Append("&");
+        
+        //Add difficultylevel
+        URI.Append("difficulty=");
+        URI.Append(SelectedDifficultyLevel);
+        URI.Append("&");
+        
+        //Add Programminglanguages 
+        foreach (var lang in SelectedProgrammingLanguages)
+        {
+            URI.Append("languages=");
+            URI.Append(lang);
+            URI.Append("&");
+        }
+
+        return URI.ToString();
+
+    }
+
 }
