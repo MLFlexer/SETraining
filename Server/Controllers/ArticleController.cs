@@ -20,31 +20,21 @@ namespace SETraining.Server.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<ArticleDTO>> Get(string difficulty, params string[] languages)
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [HttpGet("all")]
+        public async Task<IEnumerable<ArticleDTO>> Get()
         {
-            if (String.IsNullOrEmpty(difficulty) && languages.IsNullOrEmpty())
-            {
-                return await GetAllArticles();
-            }
-            else if (String.IsNullOrEmpty(difficulty) && !languages.IsNullOrEmpty())
-            {
-                return await GetAllArticlesWithLanguages(languages);
-            }
-            else if (!String.IsNullOrEmpty(difficulty) && languages.IsNullOrEmpty())
-            {
-                return await GetAllArticlesWithDifficulty(difficulty);
-            }
-
-            return await _repository.ReadAllArticlesAsync(difficulty, languages);
+            return await _repository.ReadAllArticlesAsync();
         }
 
-        private async Task<IEnumerable<ArticleDTO>> GetAllArticles() => await _repository.ReadAllArticlesAsync();
-        private async Task<IEnumerable<ArticleDTO>> GetAllArticlesWithDifficulty(string difficulty) => 
-            await _repository.ReadAllArticlesAsync(difficulty);
-        private async Task<IEnumerable<ArticleDTO>> GetAllArticlesWithLanguages(string[] languages) => 
-            await _repository.ReadAllArticlesAsync(languages);
-
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [HttpGet]
+        public async Task<IEnumerable<ArticleDTO>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
+        {
+            return await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
+        }
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
@@ -52,14 +42,6 @@ namespace SETraining.Server.Controllers
         public async Task<ActionResult<ArticleDTO>> GetFromId(int id)
             => (await _repository.ReadArticleFromIdAsync(id)).ToActionResult();
 
-         //Get from a string
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ArticleDTO), 200)]
-        [HttpGet("title={title}")]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromTitle(string title)
-        {
-            return (await _repository.ReadArticlesFromTitleAsync(title)).ToActionResult();
-        }
 
 
         [HttpPost]

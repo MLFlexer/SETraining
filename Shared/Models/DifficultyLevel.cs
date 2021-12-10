@@ -2,7 +2,7 @@ namespace SETraining.Shared.Models;
 
 public enum DifficultyLevel
 {
-    Novice,
-    Intermediate,
-    Expert
+    Novice = 1,
+    Intermediate = 2,
+    Expert = 3
 }

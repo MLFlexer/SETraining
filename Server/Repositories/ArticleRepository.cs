@@ -4,6 +4,7 @@ using SETraining.Server.Contexts;
 using SETraining.Shared;
 using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
+using SETraining.Shared.ExtensionMethods;
 
 namespace SETraining.Server.Repositories;
 public class ArticleRepository : IArticleRepository
@@ -65,7 +66,6 @@ public class ArticleRepository : IArticleRepository
                         c.Difficulty,
                         c.AvgRating,
                         c.Body
-                        
                     ))
                     .FirstOrDefaultAsync();
     }
@@ -85,6 +85,28 @@ public class ArticleRepository : IArticleRepository
                 c.Body)).ToListAsync();
     }
 
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
+    {
+        if (!String.IsNullOrEmpty(difficulty) && !(languages!.IsNullOrEmpty()))
+        {
+            return await ReadAllArticlesAsync(title, difficulty, languages);
+        }
+        else if (String.IsNullOrEmpty(difficulty) && !(languages!.IsNullOrEmpty()))
+        {
+            return await ReadAllArticlesAsync(title, languages);
+        }
+        else if (!String.IsNullOrEmpty(difficulty) && languages!.IsNullOrEmpty())
+        {
+            return await ReadAllArticlesAsync(title, difficulty);
+        }
+        else if (!String.IsNullOrEmpty(title))
+        {
+            return await ReadAllArticlesAsync(title);
+        }
+
+        return await ReadAllArticlesAsync();
+    }
+
     public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync()
     {
         return await _context.Articles
@@ -100,10 +122,10 @@ public class ArticleRepository : IArticleRepository
                     ).ToListAsync();
     }
 
-    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string difficulty)
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string title)
     {
         return await _context.Articles
-                    .Where(article => article.Difficulty.Value.ToString() == difficulty)
+                    .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
                     .Select(content =>
                         new ArticleDTO(
                                 content.Id,
@@ -116,10 +138,14 @@ public class ArticleRepository : IArticleRepository
                     ).ToListAsync();
     }
 
-    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string[] languages)
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string title, string difficulty)
     {
+        if (String.IsNullOrEmpty(title)) title = "";
+        var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
+
         return await _context.Articles
-                    .Where(article => article.ProgrammingLanguages.Select(p => p.Name).ToArray().Intersect(languages).Any())
+                    .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
+                    .Where(article => article.Difficulty.Value == diffycultyToEnum)
                     .Select(content =>
                         new ArticleDTO(
                                 content.Id,
@@ -131,22 +157,68 @@ public class ArticleRepository : IArticleRepository
                                 content.Body)
                     ).ToListAsync();
     }
-
-    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string difficulty, string[] languages)
+    
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string title, string[] languages)
     {
-        return await _context.Articles
-                    .Where(article => article.Difficulty.Value.ToString() == difficulty)
-                    .Where(article => article.ProgrammingLanguages.Select(p => p.Name).ToArray().Intersect(languages).Any())
+        if (String.IsNullOrEmpty(title)) title = "";
+
+        var all = await _context.Articles
+                .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
+                .Select(content =>
+                new ArticleDTO(
+                        content.Id,
+                        content.Title,
+                        content.Description,
+                        content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
+                        content.Difficulty,
+                        content.AvgRating,
+                        content.Body)
+            ).ToListAsync();
+
+        return all.Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
+                  .Select(content =>
+                        new ArticleDTO(
+                                content.Id,
+                                content.Title,
+                                content.Description,
+                                content.ProgrammingLanguages,
+                                content.Difficulty,
+                                content.AvgRating,
+                                content.Body)
+                    );
+    }
+
+    public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesAsync(string title, string difficulty, string[] languages)
+    {
+        if (String.IsNullOrEmpty(title)) title = "";
+        var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
+
+        var allWithDifficulty = await _context.Articles
+                .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
+                .Where(article => article.Difficulty.Value == diffycultyToEnum)
+                .Select(content =>
+                    new ArticleDTO(
+                            content.Id,
+                            content.Title,
+                            content.Description,
+                            content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
+                            content.Difficulty,
+                            content.AvgRating,
+                            content.Body)
+                ).ToListAsync();
+
+        return allWithDifficulty
+                    .Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
                     .Select(content =>
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
                                 content.Description,
-                                content.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                                content.ProgrammingLanguages,
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body)
-                    ).ToListAsync();
+                    );
     }
 
     public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
