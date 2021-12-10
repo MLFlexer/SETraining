@@ -38,8 +38,8 @@ public class VideoControllerTest
     // }
 
     [Fact]
-    public async void Create_creates_Video(){
-
+    public async void Create_creates_Video()
+    {
         var logger = new Mock<ILogger<VideoController>>();
         var toCreate = new VideoCreateDTO{Title = "Dette er en title", Path = "Video"};  //should VideoCreateDTO have an empty constructor
         var created = new VideoDTO(1, "Dette er en title", null, null, null, null, "Video");        
@@ -58,7 +58,8 @@ public class VideoControllerTest
     } 
    
     [Fact]
-    public async void Get_given_non_existing_id_returns_notfound(){
+    public async void Get_given_non_existing_id_returns_notfound()
+    {
         //Arrange
         var logger = new Mock<ILogger<VideoController>>();
         var repository = new Mock<IVideoRepository>();
@@ -71,7 +72,8 @@ public class VideoControllerTest
     }  
 
     [Fact]
-       public async void Get_given_existing_id_returns_video(){
+    public async void Get_given_existing_id_returns_video()
+    {
         //Arrange
         var logger = new Mock<ILogger<VideoController>>();
         var expected = new VideoDTO(1, "Dette er en title", null, null, null, null, "Video");
@@ -87,7 +89,8 @@ public class VideoControllerTest
 
     //TODO, denne test skal måske skrives om så den retunerer NotFound
     [Fact]
-    public async void Get_given_non_existing_title_returns_null(){
+    public async void Get_given_non_existing_title_returns_null()
+    {
        //Arrange
         var logger = new Mock<ILogger<VideoController>>();
         var repository = new Mock<IVideoRepository>();
@@ -102,7 +105,8 @@ public class VideoControllerTest
 
 
      [Fact]
-       public async void Get_given_existing_title_returns_video(){
+     public async void Get_given_existing_title_returns_video()
+     {
         //Arrange
         var logger = new Mock<ILogger<VideoController>>();
         var expected = new List<VideoDTO> {new VideoDTO(1, "This is a title", null, null, null, null, "Video")};
@@ -113,8 +117,7 @@ public class VideoControllerTest
         var actual = await controller.Get("title");
         //Assert
         Assert.Equal(expected, actual.Value);
-        
-    }
+     }
 
 
     [Fact]

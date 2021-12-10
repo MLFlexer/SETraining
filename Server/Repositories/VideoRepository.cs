@@ -113,15 +113,17 @@ public class VideoRepository : IVideoRepository
         {
             return Status.NotFound;
         }
+       _context.Videos.Remove(entity);
+        await _context.SaveChangesAsync();
 
         entity.Description = video.Description;
         entity.Difficulty = video.Difficulty;
         entity.Title = video.Title;
         entity.Path = video.Path;
         entity.AvgRating = video.AvgRating;
-
         entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(video.ProgrammingLanguages).ToListAsync();
         
+        _context.Videos.Add(entity);
         await _context.SaveChangesAsync();
 
         return Status.Updated;

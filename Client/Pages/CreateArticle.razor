@@ -2,12 +2,16 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SETraining.Shared.DTOs
+@using SETraining.Shared.ExtensionMethods
 @using SETraining.Shared.Models
 @using System.Net.Http.Headers
 @inject HttpClient Http
 @inject DialogService DialogService
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
+
+<PageTitle>Create new article</PageTitle>
+
 
 <div class="row">
     <div class="col-12">
@@ -17,32 +21,39 @@
         <h4>Description</h4>
         <RadzenTextBox Change=@(args => OnDescriptionChange(args.ToString())) />
 
-       @*  @if (ProgrammingLanguages != null) *@
-       @* { *@
-       @*     <div style="margin-top: 20px;"> *@
-       @*         <h4>Choose existing languages</h4> *@
-       @*         <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="string" Change=@(args => OnChosenProgrammingLanguagesChange(args, "CheckBoxList with horizontal orientation"))> *@
-       @*             <Items> *@
-       @*                 @foreach (var lang in ProgrammingLanguages) *@
-       @*                 { *@
-       @*                     <RadzenCheckBoxListItem Text="@lang.Name" Value="@lang.Name"/> *@
-       @*                 } *@
-       @*             </Items> *@
-       @*         </RadzenCheckBoxList> *@
-       @*         <div style="margin-top: 10px;">Or add new language</div> *@
-       @*         <RadzenButton Click=@AddNewLanguage Icon="add_circle_outline" ButtonStyle="ButtonStyle.Secondary"/> *@
-       @*     </div> *@
-       @*      *@
-       @*     *@
-       @* } *@
+        @if (ProgrammingLanguages != null)
+       {
+           <div style="margin-top: 20px;">
+               <h4>Choose existing languages</h4>
+             
+                      
+                       
+                             <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
+                                 <Items>
+                                      @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
+                                      {
+                                          <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
+                                      }
+                                 </Items>
+                                 </RadzenCheckBoxList>                     
+       
+               <div style="margin-top: 10px;">Or add new language</div>
+                <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-100" />
+                <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+           </div>
+       
+       
+       
+       
+       }
         
         <div style="margin-top: 20px;">
             <h4>Pick difficulty level</h4>
-                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args, "CheckBoxList with horizontal orientation"))>
+                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args))>
                                  <Items>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="1"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="2"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="3"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="0"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="1"/>
+                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="2"/>
                                  </Items>
                              </RadzenRadioButtonList> 
         </div>
@@ -61,6 +72,8 @@
                                </div>
         
             
+        <button type="button" @onclick="UploadImage" class="btn btn-secondary">UPLOAD IMAGE (NIKO)</button>
+                                   
         <div style="margin-top: 20px;">
           <h4>Content of the article</h4>
                   <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
@@ -70,7 +83,7 @@
     </div>
   
 </div>
-  <RadzenButton style="margin-bottom:10px;"Click=@(Publish) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+  <RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
 
   
         
@@ -80,13 +93,33 @@
 @code {
     
     
-    //Image
+    //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
     private string imageUrl = string.Empty;
 
     private IBrowserFile? imageFile;
     
+    string HtmlInput;
+    string TitleInput;
+    string DescriptionInput;
+    
+    bool? checkBoxValue;
+    string? newLang;
+    
+    ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    IEnumerable<int> ChosenLanguages = new List<int>();
+    int ChosenDifficulty = 0;
+    
+    //***Methods***
+    
+    //Init method
+    protected override async Task OnInitializedAsync()
+    {
+        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+    }
+    
+    //Methods for image uploads
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
         imageFile = e.GetMultipleFiles().FirstOrDefault();
@@ -99,14 +132,6 @@
             imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    ProgrammingLanguageDTO[]? ProgrammingLanguages;
-    string[]? ChosenLanguages = {"Test"};
-    int ChosenDifficulty = 1;
-    
     
     private async Task UploadImage()
     {
@@ -125,6 +150,11 @@
             if (response.IsSuccessStatusCode)
             {
                 var ImageUrl = response.Headers.Location?.ToString();
+                Console.WriteLine(ImageUrl);
+            }
+            else
+            {
+                Console.WriteLine(response);
             }
         }
     }
@@ -135,13 +165,8 @@
         imageFile = null;
     }
     
-    ////IMAGE UPLOAD 
-
-    protected override async Task OnInitializedAsync()
-    {
-        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
-    }
-
+    //HTML Editor and required properties
+    
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         // console.Log($"Paste: {args.Html}");
@@ -165,17 +190,49 @@
         HtmlInput = html;
     }
     
-    void OnChosenProgrammingLanguagesChange(IEnumerable<string> value, string name)
+    void OnChosenDifficultyLevelChange(int value)
     {
-        Console.WriteLine($"{name} value changed to {string.Join(", ", value)}");
+        ChosenDifficulty = value;
     }
     
-    void OnChosenDifficultyLevelChange(int? value, string name)
+    void OnExecute(HtmlEditorExecuteEventArgs args)
     {
-        //console.Log($"{name} value changed to {value}");
+        // console.Log($"Execute: {args.CommandName}");
     }
     
-    private async Task Publish()
+    void OnChooseLanguages(IEnumerable<int> value)
+    {
+        ChosenLanguages = value;
+    }
+    
+    //Add new language
+    private async Task OnAddLanguage()
+    {
+        if (newLang == null || newLang.Trim() == "")
+        {
+            return;
+        }
+        
+        var langToPost = new ProgrammingLanguageCreateDTO
+        {
+            Name = newLang
+        };
+        
+        var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        }
+    }
+
+    void OnNewLanguageValue(string val)
+    {
+        newLang = val;
+    }
+
+    //Publish article
+    private async Task PublishArticle()
     {
         
         var article = new ArticleCreateDTO
@@ -183,7 +240,7 @@
             Body = HtmlInput,
             Title = TitleInput,
             Description = DescriptionInput,
-            ProgrammingLanguages = ChosenLanguages,
+            ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) ChosenDifficulty
             
         };
@@ -197,11 +254,5 @@
 
             NavigationManager.NavigateTo(uri);
         }
-    }
-
-
-    void OnExecute(HtmlEditorExecuteEventArgs args)
-    {
-        // console.Log($"Execute: {args.CommandName}");
     }
 }

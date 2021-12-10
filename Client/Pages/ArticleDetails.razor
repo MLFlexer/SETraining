@@ -5,6 +5,7 @@
 @inject IHttpClientFactory _httpClientFactory
 
 
+<PageTitle>@(article == null ? "Loading" : article.Title)</PageTitle>
 
 <div style="position:relative">
 
@@ -16,24 +17,27 @@
 {
     <div>
         <h1 class="mb-0">@(article.Title)</h1>
-        <div>
-            Article
-        </div>
-        <div style="font-size: .8em">@article.Description</div>
-        <div class="col-md-8 text-truncate" style="margin-top: 10px">
+            <div>
+                Article
+            </div>
+            <div style="font-size: .8em">@article.Description
+            </div>
+        <div class="text-truncate" style="margin-top: 10px">
             @foreach (var l in article.ProgrammingLanguages)
             {
-                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}") />
             }
             
             @if (article.Difficulty != null)
             {
-                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}")/>
-            }                     
+                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}") />
+            }
+            <br/>
+            <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
         </div>
     </div>   
     
-     <div style="width: 100%; height: 500px; margin-top: 10px">
+    <div style="width: 100%; height: 500px; margin-top: 10px">
         @((MarkupString) article.Body)
     </div>
 

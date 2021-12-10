@@ -33,6 +33,7 @@ public class VideoRepositoriesTest : IDisposable
         
         //TODO: ADD ALL FIELDS TO ENTITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
+                
                 new Video("Introduction to Java",  "<b>Test<b/>"),
                 new Video("Introduction to CSharp", "<b>Test<b/>"),
                 new Video("Introduction to Java",  "<b>Test<b/>") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
@@ -61,28 +62,29 @@ public class VideoRepositoriesTest : IDisposable
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
 
-    //[Fact]
+    [Fact]
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Video her?
         var contentsFromDB = await _repository.ReadAllAsync();
-        var expected_1 = new VideoDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Video");
-        var expected_2 = new VideoDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Video");
-        var expected_3 = new VideoDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Video");
-        var expected_4 = new VideoDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
+        var listContents = contentsFromDB.ToList();
+        var expected_1 = new VideoDTO(1, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>");
+        var expected_2 = new VideoDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
+        var expected_3 = new VideoDTO(3, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "<b>Test<b/>");
+        var expected_4 = new VideoDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
   
-        Assert.Collection(contentsFromDB,
-            c => Assert.Equal(expected_1.ProgrammingLanguages, c.ProgrammingLanguages),
-            c => Assert.Equal(expected_2, c),
-                //TODO: Hvordan tester man c og ikke kun c.ProgrammingLanguages
-            c => Assert.Equal(expected_3, c),
-            c => Assert.Equal(expected_4, c)
-        );
+        //Using string equality, because record equality does not seem to work somehow...
+        Assert.Equal(expected_1.ToString(), listContents[0].ToString());
+        Assert.Equal(expected_2.ToString(), listContents[1].ToString());
+        Assert.Equal(expected_3.ToString(), listContents[2].ToString());
+        Assert.Equal(expected_4.ToString(), listContents[3].ToString());
+        Assert.Equal(expected_3.ProgrammingLanguages.First(), listContents[2].ProgrammingLanguages.First());
+        Assert.Equal(expected_3.ProgrammingLanguages.Last(), listContents[2].ProgrammingLanguages.Last());
         
     }
     
     [Fact]
-    public async Task Read_given_id_on_video_does_not_exist_returns_null()
+    public async Task Read_given_non_existing_id_returns_null()
     {
         var contentsFromDB = await _repository.ReadFromIdAsync(99);
         Assert.True(contentsFromDB.IsNone);
@@ -90,7 +92,7 @@ public class VideoRepositoriesTest : IDisposable
 
     //Todo: er lidt usikker på om denne test er okay??
      [Fact]
-    public async void Read_given_title_does_not_exist_returns_emptyList()
+    public async void Read_given_non_existing_title_returns_emptyList()
     {
         var contentsFromDB = await _repository.ReadFromTitleAsync("THISISNOTWORKING");
 

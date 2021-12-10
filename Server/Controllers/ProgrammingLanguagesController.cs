@@ -35,13 +35,14 @@ namespace SETraining.Server.Controllers
             return await _repository.ReadAsync(@name);
         }
 
+        [Authorize]
         [HttpPost]
         [ProducesResponseType(typeof(ProgrammingLanguageDTO), 201)]
         public async Task<IActionResult> Post(ProgrammingLanguageCreateDTO language)
         {
             var created = await _repository.CreateAsync(language);
 
-            return CreatedAtRoute(nameof(Get), new { created.Name }, created);
+            return CreatedAtAction(nameof(Get), new { created.Name }, created);
         }
     }
 }

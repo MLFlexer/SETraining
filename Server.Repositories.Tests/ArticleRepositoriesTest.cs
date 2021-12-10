@@ -47,7 +47,7 @@ public class ArticleRepositoriesTest : IDisposable
     }
 
     [Fact]
-    public async void Create_new_Article_with_generated_id()
+    public async void Create_new_Article_generates_id()
     {
         //Arrange 
         var programmingLangs = new List<string>() {"Java", "Go"};
@@ -61,28 +61,28 @@ public class ArticleRepositoriesTest : IDisposable
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
     }
 
-    //[Fact]
+    [Fact]
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAllArticlesAsync();
+        var listContents = contentsFromDB.ToList();
         var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
         var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
         var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Article");
         var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
-  
-        Assert.Collection(contentsFromDB,
-                c => Assert.Equal(expected_1.ProgrammingLanguages, c.ProgrammingLanguages),
-            c => Assert.Equal(expected_2, c),
-                //TODO: Hvordan tester man c og ikke kun c.ProgrammingLanguages
-            c => Assert.Equal(expected_3, c),
-            c => Assert.Equal(expected_4, c)
-        );
         
+        //Using string equality, because record equality does not seem to work somehow...
+        Assert.Equal(expected_1.ToString(), listContents[0].ToString());
+        Assert.Equal(expected_2.ToString(), listContents[1].ToString());
+        Assert.Equal(expected_3.ToString(), listContents[2].ToString());
+        Assert.Equal(expected_4.ToString(), listContents[3].ToString());
+        Assert.Equal(expected_3.ProgrammingLanguages.First(), listContents[2].ProgrammingLanguages.First());
+        Assert.Equal(expected_3.ProgrammingLanguages.Last(), listContents[2].ProgrammingLanguages.Last());
     }
     
     [Fact]
-    public async Task Read_given_id_does_not_exist_returns_null()
+    public async Task Read_given_non_existing_id_returns_null()
     {
         var contentsFromDB = await _repository.ReadArticleFromIdAsync(99);
         Assert.True(contentsFromDB.IsNone);
@@ -90,7 +90,7 @@ public class ArticleRepositoriesTest : IDisposable
 
     //Todo: er lidt usikker på om denne test er okay??
      [Fact]
-    public async void Read_given_title_does_not_exist_returns_emptyList()
+    public async void Read_given_non_existing_title_returns_emptyList()
     {
         var contentsFromDB = await _repository.ReadArticlesFromTitleAsync("THISISNOTWORKING");
 
@@ -98,7 +98,7 @@ public class ArticleRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public async Task Read_given_id_exists_returns_Article()
+    public async Task Read_given_existing_id_returns_Article()
     {
         //Arrange
         var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article");
@@ -115,7 +115,7 @@ public class ArticleRepositoriesTest : IDisposable
 
    
      [Fact]
-    public async void Read_given_title_exists_returns_ArticleList()
+    public async void Read_given_exsiting_title_returns_ArticleList()
     {
         //Arrange
         var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
@@ -166,8 +166,6 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task  Update_updates_existing_Content()
     {
-        //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        //var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
         var content = new ArticleUpdateDTO
         {
             Title ="Introduction to Java2", 
