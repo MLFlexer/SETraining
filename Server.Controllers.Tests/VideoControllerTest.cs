@@ -60,13 +60,12 @@ public class VideoControllerTest
     [Fact]
     public async void Get_given_non_existing_id_returns_notfound(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<VideoController>>();
         var repository = new Mock<IVideoRepository>();
-        repository.Setup(m => m.ReadFromIdAsync(42, filter)).ReturnsAsync(default(VideoDTO));
+        repository.Setup(m => m.ReadFromIdAsync(42)).ReturnsAsync(default(VideoDTO));
         var controller = new VideoController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.Get(42, filter);
+        var actual = await controller.Get(42);
         //Assert
         Assert.IsType<NotFoundResult>(actual.Result);
     }  
@@ -74,14 +73,13 @@ public class VideoControllerTest
     [Fact]
        public async void Get_given_existing_id_returns_video(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<VideoController>>();
         var expected = new VideoDTO(1, "Dette er en title", null, null, null, null, "Video");
         var repository = new Mock<IVideoRepository>();
-        repository.Setup(m => m.ReadFromIdAsync(1, filter)).ReturnsAsync(expected);
+        repository.Setup(m => m.ReadFromIdAsync(1)).ReturnsAsync(expected);
         var controller = new VideoController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.Get(1, filter);
+        var actual = await controller.Get(1);
         //Assert
         Assert.Equal(expected, actual.Value);
         
@@ -91,14 +89,13 @@ public class VideoControllerTest
     [Fact]
     public async void Get_given_non_existing_title_returns_null(){
        //Arrange
-       var filter = new FilterSetting();
         var logger = new Mock<ILogger<VideoController>>();
         var repository = new Mock<IVideoRepository>();
         var created = new List<VideoDTO> {new VideoDTO(1, "This is a title", null, null, null, null, "Video")};
-        repository.Setup(m => m.ReadFromTitleAsync("DOES_NOT_EXIST", filter)).ReturnsAsync(created);
+        repository.Setup(m => m.ReadFromTitleAsync("DOES_NOT_EXIST")).ReturnsAsync(created);
         var controller = new VideoController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.Get("DOES_NOT_EXIST", filter);
+        var actual = await controller.Get("DOES_NOT_EXIST");
         //Assert
         Assert.Null(actual.Result);
     } 
@@ -107,14 +104,13 @@ public class VideoControllerTest
      [Fact]
        public async void Get_given_existing_title_returns_video(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<VideoController>>();
         var expected = new List<VideoDTO> {new VideoDTO(1, "This is a title", null, null, null, null, "Video")};
         var repository = new Mock <IVideoRepository>();
-        repository.Setup(m => m.ReadFromTitleAsync("title", filter)).ReturnsAsync(expected);
+        repository.Setup(m => m.ReadFromTitleAsync("title")).ReturnsAsync(expected);
         var controller = new VideoController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.Get("title", filter);
+        var actual = await controller.Get("title");
         //Assert
         Assert.Equal(expected, actual.Value);
         

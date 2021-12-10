@@ -61,13 +61,12 @@ public class ArticleControllerTest
     [Fact]
     public async void Get_given_non_existing_id_returns_notfound(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
-        repository.Setup(m => m.ReadArticleFromIdAsync(42, filter)).ReturnsAsync(default(ArticleDTO));
+        repository.Setup(m => m.ReadArticleFromIdAsync(42)).ReturnsAsync(default(ArticleDTO));
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.GetFromId(42, filter);
+        var actual = await controller.GetFromId(42);
         //Assert
         Assert.IsType<NotFoundResult>(actual.Result);
     }  
@@ -75,14 +74,13 @@ public class ArticleControllerTest
     [Fact]
        public async void Get_given_existing_id_returns_article(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
         var expected = new ArticleDTO(1, "Dette er en title", null, null, null, null, "Article");
         var repository = new Mock<IArticleRepository>();
-        repository.Setup(m => m.ReadArticleFromIdAsync(1, filter)).ReturnsAsync(expected);
+        repository.Setup(m => m.ReadArticleFromIdAsync(1)).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.GetFromId(1, filter);
+        var actual = await controller.GetFromId(1);
         //Assert
         Assert.Equal(expected, actual.Value);
         
@@ -92,14 +90,13 @@ public class ArticleControllerTest
     [Fact]
     public async void Get_given_non_existing_title_returns_null(){
        //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
         var created = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", null, null, null, null, "Article")};
-        repository.Setup(m => m.ReadArticlesFromTitleAsync("DOES_NOT_EXIST", filter)).ReturnsAsync(created);
+        repository.Setup(m => m.ReadArticlesFromTitleAsync("DOES_NOT_EXIST")).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.GetFromTitle("DOES_NOT_EXIST", filter);
+        var actual = await controller.GetFromTitle("DOES_NOT_EXIST");
         //Assert
         Assert.Null(actual.Result);
     } 
@@ -108,14 +105,13 @@ public class ArticleControllerTest
      [Fact]
        public async void Get_given_existing_title_returns_article(){
         //Arrange
-        var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
         var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", null, null, null, null, "Article")};
         var repository = new Mock <IArticleRepository>();
-        repository.Setup(m => m.ReadArticlesFromTitleAsync("title", filter)).ReturnsAsync(expected);
+        repository.Setup(m => m.ReadArticlesFromTitleAsync("title")).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
-        var actual = await controller.GetFromTitle("title", filter);
+        var actual = await controller.GetFromTitle("title");
         //Assert
         Assert.Equal(expected, actual.Value);
         

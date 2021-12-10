@@ -1,12 +1,8 @@
 ﻿
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
-using SETraining.Shared;
-using BDSAProject.Server;
 
 namespace SETraining.Server.Controllers
 {
@@ -25,25 +21,25 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<VideoDTO>> Get([FromQuery] FilterSetting? filters)
+        public async Task<IEnumerable<VideoDTO>> Get()
         {
-            return await _repository.ReadAllAsync(filters);
+            return await _repository.ReadAllAsync();
         }
 
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
         [HttpGet("id={id}")]
-        public async Task<ActionResult<VideoDTO>> Get(int id,[FromQuery] FilterSetting? filter)
-            => (await _repository.ReadFromIdAsync(id, filter)).ToActionResult();
+        public async Task<ActionResult<VideoDTO>> Get(int id)
+            => (await _repository.ReadFromIdAsync(id)).ToActionResult();
 
          //Get from a string
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(VideoDTO), 200)]
         [HttpGet("title={title}")]
-        public async Task<ActionResult<IEnumerable<VideoDTO>>> Get(string title, [FromQuery] FilterSetting? filter)
+        public async Task<ActionResult<IEnumerable<VideoDTO>>> Get(string title)
         {
-            return (await _repository.ReadFromTitleAsync(title, filter)).ToActionResult();
+            return (await _repository.ReadFromTitleAsync(title)).ToActionResult();
         }
 
 

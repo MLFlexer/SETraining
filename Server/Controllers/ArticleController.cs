@@ -1,13 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
-using SETraining.Shared;
-using BDSAProject.Server;
-
+using SETraining.Shared.ExtensionMethods;
 
 namespace SETraining.Server.Controllers
 {
@@ -26,25 +21,44 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ArticleDTO>> Get([FromQuery] FilterSetting? filters)
+        public async Task<IEnumerable<ArticleDTO>> Get(string difficulty, params string[] languages)
         {
-            return await _repository.ReadAllArticlesAsync(filters);
+            if (String.IsNullOrEmpty(difficulty) && languages.IsNullOrEmpty())
+            {
+                return await GetAllArticles();
+            }
+            else if (String.IsNullOrEmpty(difficulty) && !languages.IsNullOrEmpty())
+            {
+                return await GetAllArticlesWithLanguages(languages);
+            }
+            else if (!String.IsNullOrEmpty(difficulty) && languages.IsNullOrEmpty())
+            {
+                return await GetAllArticlesWithDifficulty(difficulty);
+            }
+
+            return await _repository.ReadAllArticlesAsync(difficulty, languages);
         }
+
+        private async Task<IEnumerable<ArticleDTO>> GetAllArticles() => await _repository.ReadAllArticlesAsync();
+        private async Task<IEnumerable<ArticleDTO>> GetAllArticlesWithDifficulty(string difficulty) => 
+            await _repository.ReadAllArticlesAsync(difficulty);
+        private async Task<IEnumerable<ArticleDTO>> GetAllArticlesWithLanguages(string[] languages) => 
+            await _repository.ReadAllArticlesAsync(languages);
 
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet("id={id}")]
-        public async Task<ActionResult<ArticleDTO>> GetFromId(int id,  [FromQuery] FilterSetting? filters)
-            => (await _repository.ReadArticleFromIdAsync(id, filters)).ToActionResult();
+        public async Task<ActionResult<ArticleDTO>> GetFromId(int id)
+            => (await _repository.ReadArticleFromIdAsync(id)).ToActionResult();
 
          //Get from a string
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet("title={title}")]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromTitle(string title, [FromQuery] FilterSetting? filters)
+        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromTitle(string title)
         {
-            return (await _repository.ReadArticlesFromTitleAsync(title, filters)).ToActionResult();
+            return (await _repository.ReadArticlesFromTitleAsync(title)).ToActionResult();
         }
 
 

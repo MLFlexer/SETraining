@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Shared;
 
-namespace BDSAProject.Server;
+namespace SETraining.Server;
 
 public static class Extensions
 {

@@ -65,7 +65,7 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
-        var contentsFromDB = await _repository.ReadAllArticlesAsync(null);
+        var contentsFromDB = await _repository.ReadAllArticlesAsync();
         var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
         var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
         var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "Article");
@@ -84,7 +84,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_id_does_not_exist_returns_null()
     {
-        var contentsFromDB = await _repository.ReadArticleFromIdAsync(99, null);
+        var contentsFromDB = await _repository.ReadArticleFromIdAsync(99);
         Assert.True(contentsFromDB.IsNone);
     }
 
@@ -92,7 +92,7 @@ public class ArticleRepositoriesTest : IDisposable
      [Fact]
     public async void Read_given_title_does_not_exist_returns_emptyList()
     {
-        var contentsFromDB = await _repository.ReadArticlesFromTitleAsync("THISISNOTWORKING", null);
+        var contentsFromDB = await _repository.ReadArticlesFromTitleAsync("THISISNOTWORKING");
 
         Assert.Empty(contentsFromDB.Value);
     }
@@ -104,7 +104,7 @@ public class ArticleRepositoriesTest : IDisposable
         var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article");
         
         //Act
-        var contentFromDB = await _repository.ReadArticleFromIdAsync(1, null);
+        var contentFromDB = await _repository.ReadArticleFromIdAsync(1);
         var actual = contentFromDB.Value;
         
         //Assert
@@ -122,7 +122,7 @@ public class ArticleRepositoriesTest : IDisposable
         var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
   
         //Act
-        var actual = await _repository.ReadArticlesFromTitleAsync("CSharp", null);
+        var actual = await _repository.ReadArticlesFromTitleAsync("CSharp");
         IEnumerable<ArticleDTO> actualValue = actual.Value; 
         var actual1 = actualValue.First();
         var actual2 = actualValue.Last();
@@ -182,7 +182,7 @@ public class ArticleRepositoriesTest : IDisposable
         
         Assert.Equal(Status.Updated, updated);
         
-        var option = await _repository.ReadArticleFromIdAsync(1, null);
+        var option = await _repository.ReadArticleFromIdAsync(1);
         var UpdatedContent = option.Value;
         
         Assert.Equal("This is updated", UpdatedContent.Description);

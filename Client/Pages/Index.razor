@@ -128,9 +128,7 @@
 
 
 @code {
-
     HttpClient anonymous = new ();
-
 
     async void ClearResult()
     {
@@ -139,7 +137,6 @@
         search = "";
     }
 
-    public FilterSetting? filters = new ();
     public VideoDTO[]? Videos;
     public ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
@@ -156,8 +153,6 @@
 
         Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/title={title}");
         Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
-            
-        
     }
 
     void OnChange(string value, string name)
@@ -185,6 +180,4 @@
 
         NavigationManager.NavigateTo(uri);
     }
-
-    
 }
