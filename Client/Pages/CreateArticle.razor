@@ -72,6 +72,8 @@
                                </div>
         
             
+        <button type="button" @onclick="UploadImage" class="btn btn-secondary">UPLOAD IMAGE (NIKO)</button>
+                                   
         <div style="margin-top: 20px;">
           <h4>Content of the article</h4>
                   <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
@@ -148,6 +150,11 @@
             if (response.IsSuccessStatusCode)
             {
                 var ImageUrl = response.Headers.Location?.ToString();
+                Console.WriteLine(ImageUrl);
+            }
+            else
+            {
+                Console.WriteLine(response);
             }
         }
     }
