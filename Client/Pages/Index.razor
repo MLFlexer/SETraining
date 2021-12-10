@@ -183,7 +183,9 @@
             return;
         }
 
-        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/{BuildURIString(title)}");
+        var URIParams = BuildURIString(title);
+
+        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/{URIParams}");
         Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
             
         
