@@ -9,7 +9,7 @@ namespace SETraining.Server.Contexts;
 public interface ISETrainingContext :IDisposable
 {
     DbSet<Video> Videos { get; }
-     DbSet<Article> Articles { get; }
+    DbSet<Article> Articles { get; }
     DbSet<ProgrammingLanguage> ProgrammingLanguages { get; }
     DbSet<Learner> Learners { get; }
     DbSet<Moderator> Moderators { get; }

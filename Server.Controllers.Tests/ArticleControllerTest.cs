@@ -39,7 +39,8 @@ public class ArticleControllerTest
 
     //TODO: Denne test skal laves færdig
     [Fact]
-    public async void Create_creates_Article(){
+    public async void Create_creates_Article()
+    {
 
         var logger = new Mock<ILogger<ArticleController>>();
         var toCreate = new ArticleCreateDTO{Title ="Dette er en title", Body ="Article" };  //should ArticleCreateDTO have an empty constructor
@@ -59,7 +60,8 @@ public class ArticleControllerTest
     } 
    
     [Fact]
-    public async void Get_given_non_existing_id_returns_notfound(){
+    public async void Get_given_non_existing_id_returns_notfound()
+    {
         //Arrange
         var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
@@ -73,7 +75,8 @@ public class ArticleControllerTest
     }  
 
     [Fact]
-       public async void Get_given_existing_id_returns_article(){
+       public async void Get_given_existing_id_returns_article()
+       {
         //Arrange
         var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
@@ -90,7 +93,8 @@ public class ArticleControllerTest
 
     //TODO, denne test skal måske skrives om så den retunerer NotFound
     [Fact]
-    public async void Get_given_non_existing_title_returns_null(){
+    public async void Get_given_non_existing_title_returns_null()
+    {
        //Arrange
         var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
@@ -106,7 +110,8 @@ public class ArticleControllerTest
 
 
      [Fact]
-       public async void Get_given_existing_title_returns_article(){
+       public async void Get_given_existing_title_returns_article()
+       {
         //Arrange
         var filter = new FilterSetting();
         var logger = new Mock<ILogger<ArticleController>>();
@@ -119,11 +124,12 @@ public class ArticleControllerTest
         //Assert
         Assert.Equal(expected, actual.Value);
         
-    }
+       }
 
 
     [Fact]
-    public async void Put_given_exisiting_article_updates_article(){
+    public async void Put_given_exisiting_article_updates_article()
+    {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var article = new ArticleUpdateDTO();
@@ -139,7 +145,8 @@ public class ArticleControllerTest
     }
 
     [Fact]
-    public async void Put_given_non_exisiting_article_returns_notFound(){
+    public async void Put_given_non_exisiting_article_returns_notFound()
+    {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var article = new ArticleUpdateDTO();
@@ -156,7 +163,8 @@ public class ArticleControllerTest
 
 
     [Fact]
-    public async void Delete_given_article_returns_the_NoArticle_Status(){
+    public async void Delete_given_article_returns_the_NoArticle_Status()
+    {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
@@ -172,8 +180,9 @@ public class ArticleControllerTest
     }
 
     [Fact]
-    public async void Delete_given_non_existing_article_returns_notfound_status(){
-         //Arrange
+    public async void Delete_given_non_existing_article_returns_notfound_status()
+    {
+        //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.DeleteArticleAsync(98)).ReturnsAsync(Status.NotFound);
@@ -185,7 +194,4 @@ public class ArticleControllerTest
         //Arrange
         Assert.IsType<NotFoundResult>(response);
     }
-    
-
-    
 }
