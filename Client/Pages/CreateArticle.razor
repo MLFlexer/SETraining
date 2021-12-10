@@ -46,7 +46,7 @@
         
         <div style="margin-top: 20px;">
             <h4>Pick difficulty level</h4>
-                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args, "CheckBoxList with horizontal orientation"))>
+                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args))>
                                  <Items>
                                      <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="0"/>
                                      <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="1"/>
@@ -78,7 +78,7 @@
     </div>
   
 </div>
-  <RadzenButton style="margin-bottom:10px;"Click=@(Publish) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+  <RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
 
   
         
@@ -88,13 +88,33 @@
 @code {
     
     
-    //Image
+    //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
     private string imageUrl = string.Empty;
 
     private IBrowserFile? imageFile;
     
+    string HtmlInput;
+    string TitleInput;
+    string DescriptionInput;
+    
+    bool? checkBoxValue;
+    string? newLang;
+    
+    ProgrammingLanguageDTO[]? ProgrammingLanguages;
+    IEnumerable<int> ChosenLanguages = new List<int>();
+    int ChosenDifficulty = 0;
+    
+    //***Methods***
+    
+    //Init method
+    protected override async Task OnInitializedAsync()
+    {
+        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+    }
+    
+    //Methods for image uploads
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
         imageFile = e.GetMultipleFiles().FirstOrDefault();
@@ -107,14 +127,6 @@
             imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    ProgrammingLanguageDTO[]? ProgrammingLanguages;
-    IEnumerable<int> ChosenLanguages = new List<int>();
-    int ChosenDifficulty = 0;
-    
     
     private async Task UploadImage()
     {
@@ -143,12 +155,8 @@
         imageFile = null;
     }
     
-
-    protected override async Task OnInitializedAsync()
-    {
-        ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
-    }
-
+    //HTML Editor and required properties
+    
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         // console.Log($"Paste: {args.Html}");
@@ -172,19 +180,49 @@
         HtmlInput = html;
     }
     
-    void OnChosenProgrammingLanguagesChange(int chosenNames)
+    void OnChosenDifficultyLevelChange(int value)
     {
-        Console.WriteLine(chosenNames);
-    }
-    
-    void OnChosenDifficultyLevelChange(int value, string name)
-    {
-        Console.WriteLine((DifficultyLevel) value);
         ChosenDifficulty = value;
-    //console.Log($"{name} value changed to {value}");
     }
     
-    private async Task Publish()
+    void OnExecute(HtmlEditorExecuteEventArgs args)
+    {
+        // console.Log($"Execute: {args.CommandName}");
+    }
+    
+    void OnChooseLanguages(IEnumerable<int> value)
+    {
+        ChosenLanguages = value;
+    }
+    
+    //Add new language
+    private async Task OnAddLanguage()
+    {
+        if (newLang == null || newLang.Trim() == "")
+        {
+            return;
+        }
+        
+        var langToPost = new ProgrammingLanguageCreateDTO
+        {
+            Name = newLang
+        };
+        
+        var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        }
+    }
+
+    void OnNewLanguageValue(string val)
+    {
+        newLang = val;
+    }
+
+    //Publish article
+    private async Task PublishArticle()
     {
         
         var article = new ArticleCreateDTO
@@ -207,44 +245,5 @@
 
             NavigationManager.NavigateTo(uri);
         }
-    }
-
-    private async Task OnAddLanguage()
-    {
-        if (newLang == null || newLang.Trim() == "")
-        {
-            return;
-        }
-        
-        var langToPost = new ProgrammingLanguageCreateDTO
-        {
-            Name = newLang
-        };
-        
-        var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
-        
-        if (response.IsSuccessStatusCode)
-        {
-            ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
-        }
-    }
-
-    void OnExecute(HtmlEditorExecuteEventArgs args)
-    {
-        // console.Log($"Execute: {args.CommandName}");
-    }
-
-    void OnNewLanguageValue(string val)
-    {
-        newLang = val;
-    }
-
-    bool? checkBoxValue;
-    string? newLang;
-
-    void OnChooseLanguages(IEnumerable<int> value)
-    {
-        Console.WriteLine($"Value changed to {value}");
-        ChosenLanguages = value;
     }
 }
