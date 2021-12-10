@@ -110,22 +110,27 @@ public class ArticleRepository : IArticleRepository
     
 
     public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
-    {
+    { 
         var entity = _context.Articles.ToList().Find(c => c.Id == id);
 
-       if (entity == null)
+        if (entity == null)
         {
             return Status.NotFound;
         }
 
+        _context.Articles.Remove(entity);
+        await _context.SaveChangesAsync();
+        
+        
         entity.Description = article.Description;
         entity.Difficulty = article.Difficulty;
         entity.Title = article.Title;
         entity.Body = article.Body;
         entity.AvgRating = article.AvgRating;
-
-        //entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
+        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
         
+        
+        _context.Articles.Add(entity);
         await _context.SaveChangesAsync();
 
         return Status.Updated;

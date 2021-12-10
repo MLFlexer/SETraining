@@ -17,10 +17,11 @@
 {
     <div>
         <h1 class="mb-0">@(article.Title)</h1>
-        <div>
-            Article
-        </div>
-        <div style="font-size: .8em">@article.Description</div>
+            <div>
+                Article
+            </div>
+            <div style="font-size: .8em">@article.Description
+            </div>
         <div class="text-truncate" style="margin-top: 10px">
             @foreach (var l in article.ProgrammingLanguages)
             {
@@ -36,7 +37,7 @@
         </div>
     </div>   
     
-     <div style="width: 100%; height: 500px; margin-top: 10px">
+    <div style="width: 100%; height: 500px; margin-top: 10px">
         @((MarkupString) article.Body)
     </div>
 
