@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
 using SETraining.Shared;
 using SETraining.Shared.DTOs;
+using SETraining.Shared.ExtensionMethods;
 using SETraining.Shared.Models;
 
 namespace SETraining.Server.Repositories;

@@ -150,7 +150,6 @@
     IEnumerable<string> SelectedProgrammingLanguages = new List<string>();
     string? SelectedDifficultyLevel;
     
-    FilterSetting? filters = new ();
     VideoDTO[]? Videos;
     ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
@@ -185,7 +184,7 @@
 
         var URIParams = BuildURIString(title);
 
-        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article/{URIParams}");
+        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article?{URIParams}");
         Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
             
         
@@ -246,7 +245,9 @@
             URI.Append("&");
         }
 
-        return URI.ToString();
+        var st = URI.ToString();
+        st = st.Remove(st.Length - 1);
+        return st;
 
     }
 
