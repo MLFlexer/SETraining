@@ -84,7 +84,7 @@ public class VideoRepositoriesTest : IDisposable
     }
     
     [Fact]
-    public async Task Read_given_id_on_video_does_not_exist_returns_null()
+    public async Task Read_given_non_existing_id_returns_null()
     {
         var contentsFromDB = await _repository.ReadFromIdAsync(99, null);
         Assert.True(contentsFromDB.IsNone);
@@ -92,7 +92,7 @@ public class VideoRepositoriesTest : IDisposable
 
     //Todo: er lidt usikker på om denne test er okay??
      [Fact]
-    public async void Read_given_title_does_not_exist_returns_emptyList()
+    public async void Read_given_non_existing_title_returns_emptyList()
     {
         var contentsFromDB = await _repository.ReadFromTitleAsync("THISISNOTWORKING", null);
 

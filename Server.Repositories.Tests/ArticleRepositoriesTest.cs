@@ -165,8 +165,6 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task  Update_updates_existing_Content()
     {
-        //var expected_1 = new ContentCreateDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "Article");
-        //var contentCreate = new ArticleCreateDTO("Introduction to Java", "Article");
         var content = new ArticleUpdateDTO
         {
             Title ="Introduction to Java2", 
