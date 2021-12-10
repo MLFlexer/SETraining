@@ -4,6 +4,7 @@
 @using SETraining.Shared.DTOs
 @inject IHttpClientFactory _httpClientFactory
 
+<PageTitle>@(video == null ? "Loading" : video.Title)</PageTitle>
 
 
 <div style="position:relative">

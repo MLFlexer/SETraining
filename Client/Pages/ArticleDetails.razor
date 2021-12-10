@@ -5,6 +5,7 @@
 @inject IHttpClientFactory _httpClientFactory
 
 
+<PageTitle>@(article == null ? "Loading" : article.Title)</PageTitle>
 
 <div style="position:relative">
 
@@ -23,12 +24,12 @@
         <div class="text-truncate" style="margin-top: 10px">
             @foreach (var l in article.ProgrammingLanguages)
             {
-                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}")/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}") />
             }
             
             @if (article.Difficulty != null)
             {
-                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}")/>
+                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}") />
             }
             <br/>
             <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
