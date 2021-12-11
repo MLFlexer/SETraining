@@ -19,7 +19,7 @@ ________
 
 ### 2. Set connections string in user secrets 
 1. cd into `/Server` folder.
-2. type `dotnet user-secrets set  "ConnectionStrings:Khan" "$connectionsstring" `
+2. type `dotnet user-secrets set "ConnectionStrings:SETraining" "$connectionsstring"`
 3. Where `$connectionsstring` is our secret connectionsstring not found in VCS.
 
 ### 3. Run database with docker 🐳:
@@ -46,7 +46,7 @@ Run the following commands:
 - `docker volume prune`
 
 After that you should 
-- Restart the containers with step `2. Run database with docker 🐳`
+- Restart the containers with step `3. Run database with docker 🐳`
 
 
 ## Testing
