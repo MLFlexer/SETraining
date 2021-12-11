@@ -57,7 +57,7 @@
         {
             <RadzenCard class="flex-fill m-2" Style="width:300px;">
                 <div class="d-flex flex-row align-items-center">
-                    <RadzenImage Path="placeholder_small.jpg" Class="rounded-circle float-left mr-3" Style="width: 80px; height: 80px;"/>
+                    <RadzenImage Path="@(article.ImageURL?? "placeholder_small.jpg")" Class="rounded-circle float-left mr-3" Style="width: 80px; height: 80px;"/>
                     <div>
                         <h4 class="mb-0">@(article.Title)</h4>
                         <div>Article</div>

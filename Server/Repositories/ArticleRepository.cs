@@ -24,7 +24,8 @@ public class ArticleRepository : IArticleRepository
             Description = article.Description,
             ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync(),
             Difficulty = article.Difficulty,
-            AvgRating = article.AvgRating
+            AvgRating = article.AvgRating,
+            ImageURL = article.ImageURL
         };
         _context.Articles.Add(entity);
         
@@ -37,7 +38,8 @@ public class ArticleRepository : IArticleRepository
                 entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
-                entity.Body
+                entity.Body,
+                entity.ImageURL
                 ); 
     }
 
@@ -66,7 +68,8 @@ public class ArticleRepository : IArticleRepository
                         c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                         c.Difficulty,
                         c.AvgRating,
-                        c.Body
+                        c.Body,
+                        c.ImageURL
                     ))
                     .FirstOrDefaultAsync();
     }
@@ -83,7 +86,8 @@ public class ArticleRepository : IArticleRepository
                 c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
-                c.Body)).ToListAsync();
+                c.Body,
+                c.ImageURL)).ToListAsync();
     }
 
     public async Task<IEnumerable<ArticleDTO>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
@@ -119,7 +123,9 @@ public class ArticleRepository : IArticleRepository
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
-                                content.Body)
+                                content.Body,
+                                content.ImageURL
+                                )
                     ).ToListAsync();
     }
 
@@ -135,7 +141,8 @@ public class ArticleRepository : IArticleRepository
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
-                                content.Body)
+                                content.Body,
+                                content.ImageURL)
                     ).ToListAsync();
     }
 
@@ -155,7 +162,8 @@ public class ArticleRepository : IArticleRepository
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
-                                content.Body)
+                                content.Body,
+                                content.ImageURL)
                     ).ToListAsync();
     }
     
@@ -173,7 +181,8 @@ public class ArticleRepository : IArticleRepository
                         content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
                         content.Difficulty,
                         content.AvgRating,
-                        content.Body)
+                        content.Body,
+                        content.ImageURL)
             ).ToListAsync();
 
         return all.Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
@@ -185,7 +194,8 @@ public class ArticleRepository : IArticleRepository
                                 content.ProgrammingLanguages,
                                 content.Difficulty,
                                 content.AvgRating,
-                                content.Body)
+                                content.Body,
+                                content.ImageURL)
                     );
     }
 
@@ -205,7 +215,8 @@ public class ArticleRepository : IArticleRepository
                             content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
                             content.Difficulty,
                             content.AvgRating,
-                            content.Body)
+                            content.Body,
+                            content.ImageURL)
                 ).ToListAsync();
 
         return allWithDifficulty
@@ -218,7 +229,8 @@ public class ArticleRepository : IArticleRepository
                                 content.ProgrammingLanguages,
                                 content.Difficulty,
                                 content.AvgRating,
-                                content.Body)
+                                content.Body,
+                                content.ImageURL)
                     );
     }
     

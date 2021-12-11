@@ -15,7 +15,6 @@ public class SETrainingContext : DbContext, ISETrainingContext
     public DbSet<ProgrammingLanguage> ProgrammingLanguages => Set<ProgrammingLanguage>();
     public DbSet<ArticleHistoryEntry> ArticleHistoryEntries => Set<ArticleHistoryEntry>();
     public DbSet<VideoHistoryEntry> VideoHistoryEntries => Set<VideoHistoryEntry>();
-    public DbSet<Image> Images => Set<Image>();
 
     public SETrainingContext(DbContextOptions<SETrainingContext> options) : base(options) { }
 

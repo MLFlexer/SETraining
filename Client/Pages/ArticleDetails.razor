@@ -25,7 +25,7 @@
 @if (article != null)
 {
     <div>
-        <RadzenImage Path="placeholder_small.jpg" Class="img-fluid" Style="margin-top: 100px"/>
+        <RadzenImage Path="@(article.ImageURL?? "placeholder_small.jpg")" Class="img-fluid" Style="margin-top: 100px; border-radius: 5px;"/>
         <h1 class="mb-0">@(article.Title)</h1>
 
 

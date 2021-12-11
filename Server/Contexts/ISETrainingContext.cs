@@ -18,7 +18,6 @@ public interface ISETrainingContext :IDisposable
     
     DbSet<ArticleHistoryEntry> ArticleHistoryEntries { get; }
     DbSet<VideoHistoryEntry> VideoHistoryEntries { get; }
-    DbSet<Image> Images { get; }
     
     int SaveChanges();
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
