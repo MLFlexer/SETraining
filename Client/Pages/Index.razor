@@ -17,14 +17,14 @@
 
 <PageTitle>Home</PageTitle>
 
-<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@search @oninput=@(args => searchTitle(args.Value.ToString())) />
+<RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@searchedTitle @oninput=@(args => Search(args.Value.ToString())) /> 
 <RadzenButton style="width: calc(14% - 5px);" Click=@(() => ClearResult()) Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
 
 @if(ProgrammingLanguages != null) {
     <div style="height: 30px; width: 100%; margin-top: 10px; margin-bottom: 10px; margin-left: 15px; flex-direction: row">
         <RadzenDropDown style="margin-top: 0px"
-                        @bind-Value=@SelectedDifficultyLevel Multiple="false" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
+                        @bind-Value=@SelectedDifficultyLevel Multiple="false" AllowClear="true" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
                         Change=@(args => OnSelectedDifficultyLevel(args))  />
     
         <RadzenDropDown style="margin-top: 0px" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -43,7 +43,7 @@
 
 @if (Videos != null || Articles != null)
 {
-    <div style="margin-left: 20px; margin-top: 20px; ">Results: @(Articles.Length + Videos.Length) @(Articles.Length > 0 ? "items" : "item")</div>
+    <div style="margin-left: 20px; margin-top: 20px; ">Results: @(Articles.Length + Videos.Length) @(Articles.Length + Videos.Length > 1 ? "items" : "item")</div>
        
 }
 
@@ -153,7 +153,7 @@
     VideoDTO[]? Videos;
     ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
-    string search = "";
+    string searchedTitle = "";
     
     
     //Methods 
@@ -162,30 +162,26 @@
     {
         anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
         Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
-        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
+        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
         ProgrammingLanguages = await anonymous.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
 
     async void ClearResult()
     {
         Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
-        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article");
-        search = "";
+        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
+        searchedTitle = "";
+        SelectedDifficultyLevel = null;
+        SelectedProgrammingLanguages = new List<string>();
     }
 
-    async Task searchTitle(string title)
+    async Task Search(string title)
     {
-        search = title;
-        if (title.Trim() == "")
-        {
-            ClearResult();
-            return;
-        }
+        searchedTitle = title;
+        var URIParams = BuildURIString();
 
-        var URIParams = BuildURIString(title);
-
-        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article?{URIParams}");
-        Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={title}");
+        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article{URIParams}");
+        //Videos = await anonymous.GetFromJsonAsync<VideoDTO[]>($"api/Video/title={searchedTitle}");
             
         
     }
@@ -209,35 +205,41 @@
     {
         var str = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
         
-        
+         Search(searchedTitle);
 
         foreach (var lang in SelectedProgrammingLanguages)
         {
             Console.WriteLine(lang);
         }
+       
     }
     
     void OnSelectedDifficultyLevel(object value)
     {
-       //Console.WriteLine(SelectedDifficultyLevel);
-        //Console.WriteLine();
+        Search(searchedTitle);
     }
 
-    string BuildURIString(string title)
+    string BuildURIString()
     {
         var URI = new StringBuilder();
-        
-        //Add title
-        URI.Append("title=");
-        URI.Append(title);
-        URI.Append("&");
-        
-        //Add difficultylevel
-        URI.Append("difficulty=");
-        URI.Append(SelectedDifficultyLevel);
-        URI.Append("&");
-        
-        //Add Programminglanguages 
+
+        if (searchedTitle.Trim() != "")
+        {
+    //Add title
+            URI.Append("title=");
+            URI.Append(searchedTitle);
+            URI.Append("&");
+        }
+
+        if (SelectedDifficultyLevel != null)
+        {
+    //Add difficultylevel
+            URI.Append("difficulty=");
+            URI.Append(SelectedDifficultyLevel);
+            URI.Append("&");
+        }
+
+    //Add Programminglanguages 
         foreach (var lang in SelectedProgrammingLanguages)
         {
             URI.Append("languages=");
@@ -245,10 +247,19 @@
             URI.Append("&");
         }
 
-        var st = URI.ToString();
-        st = st.Remove(st.Length - 1);
-        return st;
+        if (URI.ToString() == "" && SelectedDifficultyLevel == null && SelectedDifficultyLevel != null)
+        {
+            URI.Insert(0, "/all");
+        }
+        else
+        {
+            URI.Insert(0, "?");
+            URI.Remove(URI.Length - 1, 1);
+        }
+        
+        return URI.ToString();
 
+        
     }
 
 }
