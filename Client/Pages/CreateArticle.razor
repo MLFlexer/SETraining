@@ -37,8 +37,8 @@
                                  </Items>
                                  </RadzenCheckBoxList>                     
        
-               <div style="margin-top: 10px;">Or add new language</div>
-                <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-100" />
+               <div style="margin-top: 10px; margin-left: 5px;">Or add new language</div>
+                <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-20" />
                 <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
            </div>
        
@@ -241,7 +241,7 @@
             Title = TitleInput,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) ChosenDifficulty
+            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1)
             
         };
         
