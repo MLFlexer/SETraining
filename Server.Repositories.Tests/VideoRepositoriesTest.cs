@@ -66,7 +66,7 @@ public class VideoRepositoriesTest : IDisposable
     public async Task Read_returns_all()
     {
         //TODO: Hvorfor bliver der sorteret på Video her?
-        var contentsFromDB = await _repository.ReadAllAsync(null);
+        var contentsFromDB = await _repository.ReadAllAsync();
         var listContents = contentsFromDB.ToList();
         var expected_1 = new VideoDTO(1, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>");
         var expected_2 = new VideoDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
@@ -86,7 +86,7 @@ public class VideoRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_non_existing_id_returns_null()
     {
-        var contentsFromDB = await _repository.ReadFromIdAsync(99, null);
+        var contentsFromDB = await _repository.ReadFromIdAsync(99);
         Assert.True(contentsFromDB.IsNone);
     }
 
@@ -94,7 +94,7 @@ public class VideoRepositoriesTest : IDisposable
      [Fact]
     public async void Read_given_non_existing_title_returns_emptyList()
     {
-        var contentsFromDB = await _repository.ReadFromTitleAsync("THISISNOTWORKING", null);
+        var contentsFromDB = await _repository.ReadFromTitleAsync("THISISNOTWORKING");
 
         Assert.Empty(contentsFromDB.Value);
     }
@@ -106,7 +106,7 @@ public class VideoRepositoriesTest : IDisposable
         var expected = new VideoDTO(1, "Introduction to Java", null, null, null, null, "Video");
         
         //Act
-        var contentFromDB = await _repository.ReadFromIdAsync(1, null);
+        var contentFromDB = await _repository.ReadFromIdAsync(1);
         var actual = contentFromDB.Value;
         
         //Assert
@@ -124,7 +124,7 @@ public class VideoRepositoriesTest : IDisposable
         var expected_2 = new VideoDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Video");
   
         //Act
-        var actual = await _repository.ReadFromTitleAsync("CSharp", null);
+        var actual = await _repository.ReadFromTitleAsync("CSharp");
         IEnumerable<VideoDTO> actualValue = actual.Value; 
         var actual1 = actualValue.First();
         var actual2 = actualValue.Last();
@@ -183,7 +183,7 @@ public class VideoRepositoriesTest : IDisposable
         
         Assert.Equal(Status.Updated, updated);
         
-        var option = await _repository.ReadFromIdAsync(1, null);
+        var option = await _repository.ReadFromIdAsync(1);
         var UpdatedContent = option.Value;
         
         Assert.Equal("This is updated", UpdatedContent.Description);

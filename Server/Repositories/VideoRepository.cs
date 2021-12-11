@@ -55,7 +55,7 @@ public class VideoRepository : IVideoRepository
         return Status.Deleted;
     }
 
-    public async Task<Option<VideoDTO>> ReadFromIdAsync(int contentId, FilterSetting? filters)
+    public async Task<Option<VideoDTO>> ReadFromIdAsync(int contentId)
     {
         return await _context.Videos.Where(c => c.Id == contentId)
             .Select(c => new VideoDTO(
@@ -76,7 +76,7 @@ public class VideoRepository : IVideoRepository
    
 
       //ReadAsync on a string
-    public async Task<Option<IEnumerable<VideoDTO>>> ReadFromTitleAsync(string contentTitle, FilterSetting? filters)
+    public async Task<Option<IEnumerable<VideoDTO>>> ReadFromTitleAsync(string contentTitle)
     {
         return await _context.Videos.Where(c => c.Title.ToLower().Trim().Contains(contentTitle.ToLower().Trim()))
             .Select(c => new VideoDTO(
@@ -89,8 +89,7 @@ public class VideoRepository : IVideoRepository
                 c.Path)).ToListAsync();
     }
 
-    public async Task<IEnumerable<VideoDTO>> ReadAllAsync(FilterSetting? filters)
-
+    public async Task<IEnumerable<VideoDTO>> ReadAllAsync()
     {
         var all = await _context.Videos.Select(content =>
             new VideoDTO(

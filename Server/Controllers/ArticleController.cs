@@ -1,13 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
-using SETraining.Shared;
-using BDSAProject.Server;
-
+using SETraining.Shared.ExtensionMethods;
 
 namespace SETraining.Server.Controllers
 {
@@ -25,27 +20,28 @@ namespace SETraining.Server.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
-        public async Task<IEnumerable<ArticleDTO>> Get([FromQuery] FilterSetting? filters)
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [HttpGet("all")]
+        public async Task<IEnumerable<ArticleDTO>> Get()
         {
-            return await _repository.ReadAllArticlesAsync(filters);
+            return await _repository.ReadAllArticlesAsync();
         }
 
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [HttpGet]
+        public async Task<IEnumerable<ArticleDTO>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
+        {
+            return await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
+        }
         
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet("id={id}")]
-        public async Task<ActionResult<ArticleDTO>> GetFromId(int id,  [FromQuery] FilterSetting? filters)
-            => (await _repository.ReadArticleFromIdAsync(id, filters)).ToActionResult();
+        public async Task<ActionResult<ArticleDTO>> GetFromId(int id)
+            => (await _repository.ReadArticleFromIdAsync(id)).ToActionResult();
 
-         //Get from a string
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ArticleDTO), 200)]
-        [HttpGet("title={title}")]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromTitle(string title, [FromQuery] FilterSetting? filters)
-        {
-            return (await _repository.ReadArticlesFromTitleAsync(title, filters)).ToActionResult();
-        }
 
 
         [HttpPost]
