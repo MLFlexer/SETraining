@@ -72,7 +72,7 @@
   
 </div>
 <div style="position:relative">
-    <RadzenButton style="margin-bottom:10px;"Click=@(UpdateArticle) Text="Edit" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+    <RadzenButton style="margin-bottom:10px;"Click=@(UpdateArticle) Text="Confirm Edit" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
     <RadzenButton style="margin-bottom:10px; right:0px; position: absolute ;"Click=@(DeleteArticle) Text="Delete" Icon="delete" ButtonStyle="ButtonStyle.Danger" />
 </div>
 
@@ -102,7 +102,7 @@
     
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
-    int ChosenDifficulty = 0;
+    int ChosenDifficulty;
     
     //***Methods***
     
@@ -114,7 +114,7 @@
         HtmlInput = article.Body;
         TitleInput = article.Title;
         DescriptionInput = article.Description;
-        ChosenDifficulty = (int) article.Difficulty;
+        ChosenDifficulty = (int) article.Difficulty -1;
         onLoadedProgrammingLanguages();
     }
 
@@ -247,7 +247,7 @@
             Title = TitleInput,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) ChosenDifficulty
+            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1)
             
         };
         
