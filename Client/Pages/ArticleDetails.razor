@@ -28,8 +28,6 @@
         <RadzenImage Path="@(article.ImageURL?? "placeholder_small.jpg")" Class="img-fluid" Style="margin-top: 100px; border-radius: 5px;"/>
         <h1 class="mb-0">@(article.Title)</h1>
 
-
-
         <div>
             Article
         </div>
@@ -43,7 +41,7 @@
 
             @if (article.Difficulty != null)
             {
-                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}") />
+                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.ToString())}") />
             }
             <br/>
             <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />

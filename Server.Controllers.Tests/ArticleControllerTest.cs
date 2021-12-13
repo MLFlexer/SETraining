@@ -10,6 +10,7 @@ using SETraining.Shared.DTOs;
 using Xunit;
 using SETraining.Shared;
 using System.Linq;
+using SETraining.Shared.Models;
 
 namespace Server.Controllers.Tests;
 
@@ -44,7 +45,7 @@ public class ArticleControllerTest
 
         var logger = new Mock<ILogger<ArticleController>>();
         var toCreate = new ArticleCreateDTO{Title ="Dette er en title", Body ="Article" };  //should ArticleCreateDTO have an empty constructor
-        var created = new ArticleDTO(1, "Dette er en title", null, null, null, null, "Article", null);        
+        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);        
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.CreateArticleAsync(toCreate)).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -78,7 +79,7 @@ public class ArticleControllerTest
        {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var expected = new ArticleDTO(1, "Dette er en title", null, null, null, null, "Article", null);
+        var expected = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.ReadArticleFromIdAsync(1)).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -164,7 +165,7 @@ public class ArticleControllerTest
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
-        var created = new ArticleDTO(1, "Dette er en title", null, null, null, null, "Article", null);        
+        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, null, "Article", null);        
         repository.Setup(m => m.DeleteArticleAsync(created.Id)).ReturnsAsync(Status.Deleted);
         var controller = new ArticleController(logger.Object, repository.Object);
 

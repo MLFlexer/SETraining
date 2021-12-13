@@ -20,10 +20,10 @@ builder.Services.AddRazorPages();
 var connS = builder.Configuration.GetConnectionString("SETraining");
 Console.WriteLine(connS);
 builder.Services.AddDbContext<SETrainingContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("SETraining")));
+
 builder.Services.AddScoped<ISETrainingContext, SETrainingContext>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
-builder.Services.AddScoped<IVideoRepository, VideoRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
+builder.Services.AddScoped<IUploadRepository, UploadRepository>();
 builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguagesRepository>();
 builder.Services.AddSwaggerGen();
 

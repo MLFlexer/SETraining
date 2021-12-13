@@ -19,13 +19,14 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<ArticleDTO> CreateArticleAsync(ArticleCreateDTO article)
     {
-        var entity = new Article(article.Title, article.Body)
+        var entity = new Article(article.Title, article.Type, DateTime.Today, DifficultyLevel.Expert)
         {
             Description = article.Description,
             ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync(),
             Difficulty = article.Difficulty,
             AvgRating = article.AvgRating,
-            ImageURL = article.ImageURL
+            ImageURL = article.ImageURL,
+            Created = DateTime.Now.ToUniversalTime()
         };
         _context.Articles.Add(entity);
         
@@ -34,13 +35,15 @@ public class ArticleRepository : IArticleRepository
         return new ArticleDTO(
                 entity.Id,
                 entity.Title,
+                entity.Type,
+                entity.Created.ToUniversalTime(),
                 entity.Description,
                 entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
                 entity.AvgRating,
                 entity.Body,
                 entity.ImageURL
-                ); 
+        ); 
     }
 
     public async Task<Status> DeleteArticleAsync(int contentId)
@@ -64,6 +67,8 @@ public class ArticleRepository : IArticleRepository
                     .Select(c => new ArticleDTO(
                         c.Id,
                         c.Title,
+                        c.Type,
+                        c.Created.ToUniversalTime(),
                         c.Description,
                         c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                         c.Difficulty,
@@ -82,6 +87,8 @@ public class ArticleRepository : IArticleRepository
             .Select(c => new ArticleDTO(
                 c.Id,
                 c.Title,
+                c.Type,
+                c.Created.ToUniversalTime(),
                 c.Description,
                 c.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 c.Difficulty,
@@ -119,6 +126,8 @@ public class ArticleRepository : IArticleRepository
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
+                                content.Type,
+                                content.Created.ToUniversalTime(),
                                 content.Description,
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
@@ -137,6 +146,8 @@ public class ArticleRepository : IArticleRepository
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
+                                content.Type,
+                                content.Created.ToUniversalTime(),
                                 content.Description,
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
@@ -153,11 +164,13 @@ public class ArticleRepository : IArticleRepository
 
         return await _context.Articles
                     .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
-                    .Where(article => article.Difficulty.Value == diffycultyToEnum)
+                    .Where(article => article.Difficulty == diffycultyToEnum)
                     .Select(content =>
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
+                                content.Type,
+                                content.Created.ToUniversalTime(),
                                 content.Description,
                                 content.ProgrammingLanguages.Select(p => p.Name).ToList(),
                                 content.Difficulty,
@@ -177,6 +190,8 @@ public class ArticleRepository : IArticleRepository
                 new ArticleDTO(
                         content.Id,
                         content.Title,
+                        content.Type,
+                        content.Created.ToUniversalTime(),
                         content.Description,
                         content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
                         content.Difficulty,
@@ -190,6 +205,8 @@ public class ArticleRepository : IArticleRepository
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
+                                content.Type,
+                                content.Created.ToUniversalTime(),
                                 content.Description,
                                 content.ProgrammingLanguages,
                                 content.Difficulty,
@@ -206,11 +223,13 @@ public class ArticleRepository : IArticleRepository
 
         var allWithDifficulty = await _context.Articles
                 .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
-                .Where(article => article.Difficulty.Value == diffycultyToEnum)
+                .Where(article => article.Difficulty == diffycultyToEnum)
                 .Select(content =>
                     new ArticleDTO(
                             content.Id,
                             content.Title,
+                            content.Type,
+                            content.Created.ToUniversalTime(),
                             content.Description,
                             content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
                             content.Difficulty,
@@ -225,6 +244,8 @@ public class ArticleRepository : IArticleRepository
                         new ArticleDTO(
                                 content.Id,
                                 content.Title,
+                                content.Type,
+                                content.Created.ToUniversalTime(),
                                 content.Description,
                                 content.ProgrammingLanguages,
                                 content.Difficulty,

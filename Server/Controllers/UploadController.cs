@@ -10,9 +10,9 @@ namespace SETraining.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-public class ImageController : Controller
+public class UploadController : Controller
 {
-    private readonly IImageRepository _repository;
+    private readonly IUploadRepository _repository;
     
     private readonly IReadOnlyCollection<string> _allowedContentTypes = new[]
     {
@@ -22,7 +22,7 @@ public class ImageController : Controller
         "video/mp4"
     };
 
-    public ImageController(IImageRepository repository)
+    public UploadController(IUploadRepository repository)
     {
         _repository = repository;
     }
@@ -37,7 +37,7 @@ public class ImageController : Controller
             return BadRequest("Content type not allowed");
         }
 
-        var (status, uri) = await _repository.CreateImageAsync(name.ToString(), file.ContentType, file.OpenReadStream());
+        var (status, uri) = await _repository.CreateUploadAsync(name.ToString(), file.ContentType, file.OpenReadStream());
 
         return status == Status.Created
             ? new CreatedResult(uri, null)

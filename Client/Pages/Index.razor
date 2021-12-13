@@ -38,14 +38,14 @@
 
 
 
-@if (Videos == null && Articles == null)
+@if (Articles == null)
 {
     <div>Loading...</div>
 }
 
-@if (Videos != null || Articles != null)
+@if (Articles != null)
 {
-    <div style="margin-left: 20px; margin-top: 20px; ">Results: @(Articles.Length) articles and @Videos.Length videos</div>
+    <div style="margin-left: 20px; margin-top: 20px; ">Results: @(Articles.Length) articles</div>
        
 }
 
@@ -63,7 +63,7 @@
                     </div>
                     <div style="margin-left: 10px">
                         <h4 class="mb-0">@(article.Title)</h4>
-                        <div>Article</div>
+                        <div>@article.Type.ToString()</div>
                         <div style="font-size: .8em">@article.Description</div>
                         <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
 
@@ -79,7 +79,7 @@
     
                         @if (article.Difficulty != null)
                         {
-                            <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.Value.ToString())}") />
+                            <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.ToString())}") />
                         }
                     </div>
                     <div class="col-md-4 text-right">
@@ -91,45 +91,6 @@
     
     }
     
-    
-    @if (Videos != null)
-        {
-            foreach (var video in Videos)
-            {
-                <RadzenCard class="flex-fill m-2" Style="width:300px;">
-                    <div class="d-flex flex-row align-items-center">
-                           <div style="width: 80px;height: 80px;overflow: hidden; " class="rounded-circle">
-                               <img src="placeholder_small.jpg"  style="height: 110%;transform: translateX(-50%);margin-left: 50%;" />
-                               </div>
-                        <div style="margin-left: 10px">
-                            <h4 class="mb-0">@(video.Title)</h4>
-                            <div>Video</div>
-                            <div style="font-size: .8em">@video.Description</div>
-                            <RadzenRating ReadOnly="true" Stars="5" Value=@(video.AvgRating == null ? 0 : video.AvgRating.Value) />
-        
-                        </div>
-                    </div>
-                    <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
-                    <div class="row">
-                        <div class="col-md-8 text-truncate">
-                            @foreach (var l in video.ProgrammingLanguages)
-                            {
-                                <RadzenBadge BadgeStyle="BadgeStyle.Secondary" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", l)}") />
-                            }
-        
-                            @if (video.Difficulty != null)
-                            {
-                                <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", video.Difficulty.Value.ToString())}") />
-                            }
-                        </div>
-                        <div class="col-md-4 text-right">
-                            <RadzenButton Text="Watch" Click=@(() => ViewVideo(video)) ButtonStyle="ButtonStyle.Primary"/>
-                        </div>
-                    </div>
-                </RadzenCard>
-            }
-        
-        }
 </div>
 
 
@@ -146,7 +107,6 @@
     IEnumerable<string> SelectedProgrammingLanguages = new List<string>();
     string? SelectedDifficultyLevel;
     
-    VideoDTO[]? Videos;
     ArticleDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
     string searchedTitle = "";
@@ -157,14 +117,12 @@
     protected override async Task OnInitializedAsync()
     {
         anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
-        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
         Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
         ProgrammingLanguages = await anonymous.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
 
     private async Task ClearResult()
     {
-        Videos =  await anonymous.GetFromJsonAsync<VideoDTO[]>("api/Video");
         Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
         searchedTitle = "";
         SelectedDifficultyLevel = null;
@@ -191,13 +149,6 @@
         NavigationManager.NavigateTo(uri);
     }
     
-    private void ViewVideo(VideoDTO video)
-    {
-        var uri = $"{NavigationManager.BaseUri}VideoDetails/{video.Id}";
-
-        NavigationManager.NavigateTo(uri);
-    }
-
     void OnSelectedProgrammingLanguages(object value)
     {
         Console.WriteLine("Programming language selected");

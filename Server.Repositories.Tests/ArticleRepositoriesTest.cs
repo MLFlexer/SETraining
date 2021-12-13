@@ -33,10 +33,10 @@ public class ArticleRepositoriesTest : IDisposable
         
         //TODO: ADD ALL FIELDS TO ENTITIES IN RANGE AND CORRESPONDING TESTS
         context.AddRange(
-                new Article("Introduction to Java",  "<b>Test<b/>"),
-                new Article("Introduction to CSharp", "<b>Test<b/>"),
-                new Article("Introduction to Java",  "<b>Test<b/>") {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
-                new Article("Introduction to CSharp",  "<b>Test<b/>")
+                new Article("Introduction to Java", ArticleType.Written, DateTime.Today, DifficultyLevel.Expert),
+                new Article("Introduction to CSharp", ArticleType.Written, DateTime.Today, DifficultyLevel.Expert),
+                new Article("Introduction to Java", ArticleType.Written, DateTime.Today, DifficultyLevel.Expert) {ProgrammingLanguages = new List<ProgrammingLanguage>(){new("Java 4"), new("Java 5")}},
+                new Article("Introduction to CSharp", ArticleType.Written, DateTime.Today, DifficultyLevel.Expert)
             );
 
         context.SaveChanges();
@@ -68,10 +68,10 @@ public class ArticleRepositoriesTest : IDisposable
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAllArticlesAsync();
         var listContents = contentsFromDB.ToList();
-        var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "<b>Test<b/>", null);
-        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>", null);
-        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>", null);
-        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>", null);
+        var expected_1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(){"Java 4", "Java 5"}, DifficultyLevel.Expert, null, "<b>Test<b/>", null);
+        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
+        var expected_3 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
+        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
         
         //Using string equality, because record equality does not seem to work somehow...
         Assert.Equal(expected_1.ToString(), listContents[0].ToString());
@@ -102,7 +102,7 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task Read_given_existing_id_returns_Article()
     {
         //Arrange
-        var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article", null);
+        var expected = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);
         
         //Act
         var contentFromDB = await _repository.ReadArticleFromIdAsync(1);
@@ -119,8 +119,8 @@ public class ArticleRepositoriesTest : IDisposable
     public async void Read_given_exsiting_title_returns_ArticleList()
     {
         //Arrange
-        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article", null);
-        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article", null);
+        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "Article", null);
+        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today, null, new List<string>(), DifficultyLevel.Expert, null, "Article", null);
   
         //Act
         var actual = await _repository.ReadArticlesFromTitleAsync("CSharp");
@@ -153,7 +153,7 @@ public class ArticleRepositoriesTest : IDisposable
             Title ="Introduction to Java", 
             Description = null, 
             ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
-            Difficulty = null, 
+            Difficulty = DifficultyLevel.Expert, 
             AvgRating = null,
             Body = "Article"
         };
@@ -172,7 +172,7 @@ public class ArticleRepositoriesTest : IDisposable
             Title ="Introduction to Java2", 
             Description = "This is updated", 
             ProgrammingLanguages = new List<string>(){}, 
-            Difficulty = null, 
+            Difficulty = DifficultyLevel.Expert, 
             AvgRating = 20,
             Body = "Article"
         };

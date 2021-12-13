@@ -12,7 +12,6 @@ public static class SeedExtensions
 {
 
     private static IArticleRepository _articleRepository;
-    private static IVideoRepository _videoRepository;
 
     public static IHost Seed(this IHost host)
     {
@@ -20,18 +19,16 @@ public static class SeedExtensions
         {
             var context = scope.ServiceProvider.GetRequiredService<SETrainingContext>();
             _articleRepository = new ArticleRepository(context);
-            _videoRepository = new VideoRepository(context);
 
-            SeedArticlesAndVideos(context);
+            SeedArticles(context);
             SeedLearners(context);
             SeedArticleRatings(context);
-            SeedVideoRatings(context);
             SeedHistoryEntries(context);
         }
         return host;
     }
 
-    private static void SeedArticlesAndVideos(SETrainingContext context)
+    private static void SeedArticles(SETrainingContext context)
     {
         context.Database.Migrate();
         //context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
@@ -50,13 +47,13 @@ public static class SeedExtensions
         var invalidFilePath = "*invalid filepath, used for testing*";
 
         context.Articles.AddRange(
-            new Article("Java", javaArticleText1) {
+            new Article("Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
                 Description = "The Wikipedia page about the programming language Java",
                 Difficulty = DifficultyLevel.Novice,
                 Creator = wikipedia,
                 ProgrammingLanguages = new[] { java }
             },
-            new Article("C# Article",  "<b>Test<b/>") {
+            new Article("C# Article", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
                 Description = "An Article about C#",
                 Difficulty = DifficultyLevel.Intermediate,
                 Creator = jkof,
@@ -64,25 +61,22 @@ public static class SeedExtensions
                 AvgRating = 4
                     
             },
-            new Article("Better Article", "<b>Test<b/>") {
+            new Article("Better Article", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
                 ProgrammingLanguages = new[] { java, csharp, fsharp },
                 Description = "An Article about Java and C#"
             },
-            new Article("Javascript Introduction", "<b>Test<b/>") {
+            new Article("Javascript Introduction", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
                 ProgrammingLanguages = new[] { javascript },
                 AvgRating = 1,
                 Description = "An introduction to the Javascript language"
-            }
-        );
-        
-        context.Videos.AddRange(
-            new Video("Java Video", videolink) {
+            },
+            new Article("Java Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice) {
                 Description = "The Wikipedia page about the programming language Java",
                 Difficulty = DifficultyLevel.Novice,
                 Creator = wikipedia,
                 ProgrammingLanguages = new[] { java }
             },
-            new Video("C# Video",  videolink) {
+            new Article("C# Video",  ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Expert ) {
                 Description = "An Video about C#",
                 Difficulty = DifficultyLevel.Intermediate,
                 Creator = jkof,
@@ -90,17 +84,17 @@ public static class SeedExtensions
                 AvgRating = 4
                     
             },
-            new Video("Better Video", videolink) {
+            new Article("Better Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Intermediate) {
                 ProgrammingLanguages = new[] { java, csharp },
                 Description = "A Video about Java and C#"
             },
-            new Video("Javascript Introduction Video", videolink) {
+            new Article("Javascript Introduction Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice) {
                 ProgrammingLanguages = new[] { javascript, fsharp },
                 AvgRating = 1,
                 Description = "An introduction to the Javascript language"
             }
+            
         );
-        
         
         context.SaveChanges();
     }
@@ -142,37 +136,14 @@ public static class SeedExtensions
             context.ArticleRatings.Add(new ArticleRating(
                 randomRating,
                 learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner(""),
-                articles.ElementAtOrDefault(i) ?? new Article("", "")
+                articles.ElementAtOrDefault(i) ?? new Article("", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert)
             ));
         }
     
         context.SaveChanges();
     }
     
-    private static void SeedVideoRatings(SETrainingContext context)
-    {
-        context.Database.Migrate();
-        if (context.VideoRatings.Any()) return;
-        
-        var videos = context.Videos.ToList();
     
-        var learners = context.Learners.ToList();
-    
-        for (var i = 0; i < videos.Count/2; i++)
-        {
-            var rand = new Random();
-            int randomRating = rand.Next(1, 6);
-    
-            context.VideoRatings.Add(new VideoRating(
-                randomRating,
-                learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner(""),
-                videos.ElementAtOrDefault(i) ?? new Video("", "")
-            ));
-        }
-    
-        context.SaveChanges();
-    }
-
     private static void SeedHistoryEntries(SETrainingContext context)
     {
         context.Database.Migrate();
@@ -186,30 +157,14 @@ public static class SeedExtensions
             for (var i = 0; i < contents.Count; i++)
             {
                 context.ArticleHistoryEntries.Add(new ArticleHistoryEntry(
-                    DateTime.UtcNow,
-                    contents.ElementAtOrDefault(i) ?? new Article("", ""),
+                    DateTime.UtcNow.ToUniversalTime(),
+                    contents.ElementAtOrDefault(i) ?? new Article("", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert),
                     learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
                 ));
             }
 
             context.SaveChanges();
         }
-        if (!context.VideoHistoryEntries.Any())
-        {
-            var contents = context.Videos.ToList();
-
-            var learners = context.Learners.ToList();
-
-            for (var i = 0; i < contents.Count; i++)
-            {
-                context.VideoHistoryEntries.Add(new VideoHistoryEntry(
-                    DateTime.UtcNow,
-                    contents.ElementAtOrDefault(i) ?? new Video("", ""),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
-                ));
-            }
-
-            context.SaveChanges();
-        }
+   
     }
 }
