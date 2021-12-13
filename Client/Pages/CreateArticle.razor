@@ -236,6 +236,7 @@
     //Publish article
     private async Task PublishArticle()
     {
+        await UploadImage();
         
         var article = new ArticleCreateDTO
         {

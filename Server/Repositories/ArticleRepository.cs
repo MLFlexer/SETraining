@@ -253,6 +253,7 @@ public class ArticleRepository : IArticleRepository
         entity.Title = article.Title;
         entity.Body = article.Body;
         entity.AvgRating = article.AvgRating;
+        entity.ImageURL = article.ImageURL;
         entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
         
         
