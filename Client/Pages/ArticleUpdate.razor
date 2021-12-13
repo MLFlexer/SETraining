@@ -50,10 +50,12 @@
         </div>
 
         <div class="form-group">
-            @if (!string.IsNullOrWhiteSpace(imageUrl))
+            @if (!string.IsNullOrWhiteSpace(ImageURL))
             {
-                <div><img src="@imageUrl" alt="Character Image" class="img-thumbnail"></div>
+                <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
             }
+            
+            
             <h4 style="margin-top: 20px;">Add image</h4>
             <label for="Image">Image</label>
         </div>
@@ -85,8 +87,7 @@
     //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
-    private string imageUrl = string.Empty;
-
+    private string ImageURL = string.Empty;
     private IBrowserFile? imageFile;
     
     string HtmlInput;
@@ -115,10 +116,11 @@
         TitleInput = article.Title;
         DescriptionInput = article.Description;
         ChosenDifficulty = (int) article.Difficulty -1;
-        onLoadedProgrammingLanguages();
+        LoadProgrammingLanguages();
+        LoadImage();
     }
 
-    void onLoadedProgrammingLanguages()
+    void LoadProgrammingLanguages()
     {
         var ProgrammingLanguagesToStrings = ProgrammingLanguages.Select(p => p.Name).ToList();
         var temp = new List<int>();
@@ -130,17 +132,29 @@
         ChosenLanguages = temp;
     }
 
+    void LoadImage()
+    {
+        if (!string.IsNullOrWhiteSpace(article.ImageURL))
+        {
+            ImageURL = $"{article.ImageURL}?nocache={Guid.NewGuid()}";
+            imageName = ImageURL.Split("/").Last();
+        }
+    }
+
     //Methods for image uploads
     private async Task OnFileSelection(InputFileChangeEventArgs e)
     {
+        ClearImage();
+        
         imageFile = e.GetMultipleFiles().FirstOrDefault();
 
         if (imageFile != null)
         {
             var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream().ReadAsync(bytes);
+            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var contentType = imageFile.ContentType;
-            imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+            ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+
         }
     }
     
@@ -151,23 +165,27 @@
         if (imageFile != null)
         {
             var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream().ReadAsync(bytes);
+            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var byteContent = new ByteArrayContent(bytes);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/images/{imageName}", content);
+            var response = await Http.PostAsync($"api/image/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                var ImageUrl = response.Headers.Location?.ToString();
+                ImageURL = response.Headers.Location?.ToString();
+            }
+            else
+            {
+                Console.WriteLine(response);
             }
         }
     }
 
     private void ClearImage()
     {
-        imageUrl = string.Empty;
+        ImageURL = null;
         imageFile = null;
     }
     
@@ -240,14 +258,19 @@
     //Update article
     private async Task UpdateArticle()
     {
+        Console.WriteLine(ImageURL);
+        await UploadImage();
+
+        Console.WriteLine(ImageURL);
         
-        var article = new ArticleCreateDTO
+        var article = new ArticleUpdateDTO
         {
             Body = HtmlInput,
             Title = TitleInput,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1)
+            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
+            ImageURL = ImageURL
             
         };
         

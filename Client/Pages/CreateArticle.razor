@@ -59,9 +59,9 @@
         </div>
        
         <div class="form-group">
-                               @if (!string.IsNullOrWhiteSpace(imageUrl))
+                               @if (!string.IsNullOrWhiteSpace(ImageURLLocal))
                                {
-                                   <div><img src="@imageUrl" alt="Character Image" class="img-thumbnail"></div>
+                                   <div><img src="@ImageURLLocal" alt="Character Image" class="img-thumbnail"></div>
                                }
                                <h4 style="margin-top: 20px;">Add image</h4>
                                <label for="Image">Image</label>
@@ -96,7 +96,9 @@
     //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
-    private string imageUrl = string.Empty;
+    private string ImageURLLocal = string.Empty;
+
+    private string? ImageURLServer;
 
     private IBrowserFile? imageFile;
     
@@ -127,9 +129,9 @@
         if (imageFile != null)
         {
             var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream().ReadAsync(bytes);
+            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var contentType = imageFile.ContentType;
-            imageUrl = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+            ImageURLLocal = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
     
@@ -140,17 +142,17 @@
         if (imageFile != null)
         {
             var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream().ReadAsync(bytes);
+            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var byteContent = new ByteArrayContent(bytes);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/images/{imageName}", content);
+            var response = await Http.PostAsync($"api/image/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                var ImageUrl = response.Headers.Location?.ToString();
-                Console.WriteLine(ImageUrl);
+                ImageURLServer = response.Headers.Location?.ToString();
+                Console.WriteLine(ImageURLServer);
             }
             else
             {
@@ -161,7 +163,7 @@
 
     private void ClearImage()
     {
-        imageUrl = string.Empty;
+        ImageURLLocal = string.Empty;
         imageFile = null;
     }
     
@@ -234,6 +236,7 @@
     //Publish article
     private async Task PublishArticle()
     {
+        await UploadImage();
         
         var article = new ArticleCreateDTO
         {
@@ -241,7 +244,8 @@
             Title = TitleInput,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1)
+            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
+            ImageURL = ImageURLServer
             
         };
         

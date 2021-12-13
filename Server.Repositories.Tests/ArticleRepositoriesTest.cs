@@ -68,10 +68,10 @@ public class ArticleRepositoriesTest : IDisposable
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAllArticlesAsync();
         var listContents = contentsFromDB.ToList();
-        var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "<b>Test<b/>");
-        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
-        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>");
-        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>");
+        var expected_1 = new ArticleDTO(1, "Introduction to Java", null, new List<string>(){"Java 4", "Java 5"}, null, null, "<b>Test<b/>", null);
+        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>", null);
+        var expected_3 = new ArticleDTO(3, "Introduction to Java", null, new List<string>(), null, null, "<b>Test<b/>", null);
+        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "<b>Test<b/>", null);
         
         //Using string equality, because record equality does not seem to work somehow...
         Assert.Equal(expected_1.ToString(), listContents[0].ToString());
@@ -102,7 +102,7 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task Read_given_existing_id_returns_Article()
     {
         //Arrange
-        var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article");
+        var expected = new ArticleDTO(1, "Introduction to Java", null, null, null, null, "Article", null);
         
         //Act
         var contentFromDB = await _repository.ReadArticleFromIdAsync(1);
@@ -119,8 +119,8 @@ public class ArticleRepositoriesTest : IDisposable
     public async void Read_given_exsiting_title_returns_ArticleList()
     {
         //Arrange
-        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article");
-        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article");
+        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", null, new List<string>(), null, null, "Article", null);
+        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", null, new List<string>(), null, null, "Article", null);
   
         //Act
         var actual = await _repository.ReadArticlesFromTitleAsync("CSharp");

@@ -18,6 +18,8 @@ public class Article
     
     public ICollection<ArticleRating>? ArticleRatings { get; set; }
     public int? AvgRating { get; set; }
-    
+
+    public string? ImageURL { get; set; }
+
     public string Body { get; set; }
 }

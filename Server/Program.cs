@@ -1,4 +1,6 @@
 
+using Azure.Identity;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +23,12 @@ builder.Services.AddDbContext<SETrainingContext>(options => options.UseNpgsql(bu
 builder.Services.AddScoped<ISETrainingContext, SETrainingContext>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
 builder.Services.AddScoped<IVideoRepository, VideoRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguagesRepository>();
 builder.Services.AddSwaggerGen();
+
+var blobContainerConns = builder.Configuration.GetConnectionString("AzureBlob");
+builder.Services.AddScoped<BlobContainerClient>(_ => new BlobContainerClient(blobContainerConns, "setrainingupload"));
 
 var app = builder.Build();
 
