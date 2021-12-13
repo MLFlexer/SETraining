@@ -21,6 +21,6 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
-    - name: TestReports
-      run: dotnet test --no-build --verbosity --filter FullyQualifiedName\!~ImageRepositoriesTest
+    - name: Run XUnit tests
+      run: dotnet test --filter FullyQualifiedName\!~ImageRepositoriesTest --no-build --verbosity normal
     
