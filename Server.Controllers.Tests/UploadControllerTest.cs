@@ -14,16 +14,23 @@ using SETraining.Shared.Models;
 
 namespace Server.Controllers.Tests;
 
-public class ImageControllerTest
+public class UploadControllerTest
 {
-    public ImageControllerTest()
+    public UploadControllerTest()
     {
         
     }
 
     [Fact]
-    public void UploadUploadesImage()
+    public void Post_returns_uri_response()
     {
         
     }
+    
+    [Fact]
+    public void Post_returns_Created_Status()
+    {
+        
+    }
+    
 }

@@ -58,6 +58,14 @@ Make sure to install Coverlet and XUnit in test projects with dotnet CLI
 
 A badge with code coverage is automatically built upon each push to main via `coverall.oi`
 
+### How Do I get Aggregated test results? 
+- `cd` to root directory and run the following command: 
+- `dotnet test SETraining.sln --logger:trx --results-directory ../TestResults \
+  "/p:CollectCoverage=true" \
+  "/p:CoverletOutput=../TestResults/" \
+  "/p:MergeWith=../TestResults/coverlet.json" \
+  "/p:CoverletOutputFormat=\"json,cobertura\"" `
+
 ## Extra 
 Find total line count in whole project from bash:
 - cd to root directory 
