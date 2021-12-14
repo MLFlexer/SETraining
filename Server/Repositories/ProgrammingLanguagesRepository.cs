@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
 using SETraining.Shared;
@@ -17,6 +18,11 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 
     public async Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageCreateDTO language)
     {
+        if (String.IsNullOrWhiteSpace(language.Name))
+        {
+            return new ProgrammingLanguageDTO("ProgrammingLanguage with empty or null name will not be added to context");
+        }
+
         var entity = new ProgrammingLanguage(language.Name);
 
         _context.ProgrammingLanguages.Add(entity);
@@ -29,8 +35,8 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
     public async Task<Option<ProgrammingLanguageDTO>> ReadAsync(string name)
     {
         return await _context.ProgrammingLanguages
-            .Where(c => c.Name == name)
-            .Select(c => new ProgrammingLanguageDTO(name))
+            .Where(c => c.Name.ToLower() == name.ToLower().Trim())
+            .Select(c => new ProgrammingLanguageDTO(c.Name))
             .FirstOrDefaultAsync();
     }
 
