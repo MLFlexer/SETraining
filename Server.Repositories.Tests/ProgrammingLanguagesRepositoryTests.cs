@@ -41,7 +41,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async void Create_new_ProgrammingLanguage_with_generated_id()
+    public async Task Create_new_ProgrammingLanguage_returns_Created_Programming_Language()
     {
         //Arrange
         var toCreate = new ProgrammingLanguageCreateDTO{Name = "SourcePawn"};
@@ -53,6 +53,35 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
         Assert.Equal("SourcePawn", created.Name);
     }
     
+    [Fact]
+    public async Task Create_new_ProgrammingLanguage_With_special_Letters()
+    {
+        //Arrange
+        var toCreate = new ProgrammingLanguageCreateDTO{Name = "C#2"};
+
+        //Act
+        var created = await _repository.CreateAsync(toCreate);
+        
+        //Assert
+        Assert.Equal("C#2", created.Name);
+    }
+    
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData(null)]
+    public async Task Create_new_ProgrammingLanguage_Where_Name_isEmpty_or_null_returns_object_with_error_message(string name)
+    {
+        //Arrange
+        var toCreate = new ProgrammingLanguageCreateDTO{Name = name};
+
+        //Act
+        var created = await _repository.CreateAsync(toCreate);
+        
+        //Assert
+        Assert.Equal("ProgrammingLanguage with empty or null name will not be added to context", created.Name);
+    }
+
     [Fact]
     public async Task Read_returns_all_ProgrammingLanguages()
     {
@@ -74,25 +103,66 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
         }
     }
     
-    [Fact]
-    public async Task Read_given_non_existing_name_returns_OptionIsNone()
+    [Theory]
+    [InlineData("NotALanguage")]
+    [InlineData(" ")]
+    [InlineData("")]
+    public async Task Read_given_non_existing_name_or_nullOrEmpty_returns_OptionIsNone(string searchName)
     {
-        var actual = await _repository.ReadAsync("NotALanguage");
+        var actual = await _repository.ReadAsync(searchName);
         Assert.True(actual.IsNone);
     }
     
-    [Fact]
-    public async Task Read_given_existing_name_returns_ProgrammingLanguage()
+    [Theory]
+    [InlineData("F#")]
+    [InlineData("Go")]
+    [InlineData("Java")]
+    [InlineData("JavaScript")]
+    [InlineData("C#")]
+    public async Task Read_given_precisely_existing_name_returns_ProgrammingLanguage(string searchName)
     {
         //Arrange
-        var expected = new ProgrammingLanguageDTO("C#");
+        var expected = new ProgrammingLanguageDTO(searchName);
         
         //Act
-        var actual = await _repository.ReadAsync("C#");
+        var actual = await _repository.ReadAsync(searchName);
 
         //Assert
         Assert.Equal(expected.Name, actual.Value.Name);
     }
     
+    [Theory]
+    [InlineData("c#")]
+    [InlineData("JAVASCRIPT")]
+    [InlineData("jAvA")]
+
+    public async Task Read_Upper_and_LowerCase_returns_ProgrammingLanguage_with_same_Lowercase_letters(
+        string searchName)
+    {
+        //Arrange
+        var expected = new ProgrammingLanguageDTO(searchName);
+        
+        //Act
+        var actual = await _repository.ReadAsync(searchName);
+
+        //Assert
+        Assert.Equal(expected.Name.ToLower(), actual.Value.Name.ToLower());
+
+    }
+    
+    [Theory]
+    [InlineData("   JavaScript")]
+    [InlineData("   Go    ")]
+    [InlineData("Java    ")]
+    public async Task Read_String_with_Withspaces_in_End_and_Beginning_Returns_ProgrammingLanguage(string searchString)
+    {
+        var expected = new ProgrammingLanguage(searchString);
+
+        var actual = await _repository.ReadAsync(searchString);
+        
+        Assert.Equal(expected.Name.Trim(), actual.Value.Name);
+    }
+
+
     public void Dispose() => _context.Dispose();
 }
