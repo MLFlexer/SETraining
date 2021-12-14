@@ -16,35 +16,13 @@ namespace Server.Controllers.Tests;
 
 public class ArticleControllerTest
 {
-    
-    //TODO: hvad gør denne test?
-    //[Fact]
-    // public async void Get_Returns_Article_From_Repo()
-    // {
-    //     //Arrange 
-    //     var filter = new FilterSetting();
-    //     var logger = new Mock<ILogger<ArticleController>>();
-    //     var expected = Array.Empty<ArticleDTO>();
-    //     var repository = new Mock<IArticleRepository>();
-    //     repository.Setup(m => m.ReadFromIdAsync()).ReturnsAsync(expected);
-    //
-    //     var controller = new ArticleController(logger.Object, repository.Object);
-    //
-    //     //act
-    //     var actual = await controller.Get(filter);
-    //
-    //
-    //     //Assert
-    //     Assert.Equal(expected, actual);
-    // }
 
     //TODO: Denne test skal laves færdig
     [Fact]
     public async void Create_creates_Article()
     {
-
         var logger = new Mock<ILogger<ArticleController>>();
-        var toCreate = new ArticleCreateDTO{Title ="Dette er en title", Body ="Article" };  //should ArticleCreateDTO have an empty constructor
+        var toCreate = new ArticleCreateDTO();
         var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);        
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.CreateArticleAsync(toCreate)).ReturnsAsync(created);
@@ -57,8 +35,38 @@ public class ArticleControllerTest
         Assert.Equal(created, result?.Value);
         Assert.Equal("Get", result?.ActionName);
         Assert.Equal(KeyValuePair.Create("Id", (object?)1), result?.RouteValues?.Single());
-        
+
     } 
+
+    [Fact]
+    public async void Get_given_existing_returns_article(){
+        //Arrange
+        var logger = new Mock<ILogger<ArticleController>>();
+        var expected = Array.Empty<ArticleDTO>();
+        var repository = new Mock<IArticleRepository>();
+        repository.Setup(m => m.ReadAllArticlesAsync()).ReturnsAsync(expected);
+        var controller = new ArticleController(logger.Object, repository.Object);
+        //Act
+        var actual = await controller.Get();
+        
+        //Assert
+        Assert.Equal(expected, actual);
+    }
+
+    // TODO: skal lige laves færdig, rammer et problem ift default(ArticleDTO) og tror det omhandler den der option klasse.
+    //  [Fact]
+    // public async void Get_given_non_existing_returns_notfound(){
+    //     //Arrange
+    //     var logger = new Mock<ILogger<ArticleController>>();
+    //     var repository = new Mock<IArticleRepository>();
+    //     repository.Setup(m => m.ReadAllArticlesAsync()).ReturnsAsync(default(ArticleDTO));
+    //     var controller = new ArticleController(logger.Object, repository.Object);
+    //     //Act
+    //     var actual = await controller.Get();
+        
+    //     //Assert
+    //     Assert.Equal(expected, actual);
+    // }
    
     [Fact]
     public async void Get_given_non_existing_id_returns_notfound()
@@ -72,7 +80,7 @@ public class ArticleControllerTest
         var actual = await controller.GetFromId(42);
         //Assert
         Assert.IsType<NotFoundResult>(actual.Result);
-    }  
+    }    
 
     [Fact]
        public async void Get_given_existing_id_returns_article()
@@ -90,38 +98,70 @@ public class ArticleControllerTest
         
     }
 
-    //TODO, denne test skal måske skrives om så den retunerer NotFound
-    //[Fact]
-    // public async void Get_given_non_existing_title_returns_null()
-    // {
-    //    //Arrange
-    //     var logger = new Mock<ILogger<ArticleController>>();
-    //     var repository = new Mock<IArticleRepository>();
-    //     var created = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", null, null, null, null, "Article")};
-    //     repository.Setup(m => m.ReadArticlesFromTitleAsync("DOES_NOT_EXIST")).ReturnsAsync(created);
-    //     var controller = new ArticleController(logger.Object, repository.Object);
-    //     //Act
-    //     var actual = await controller.GetFromTitle("DOES_NOT_EXIST");
-    //     //Assert
-    //     Assert.Null(actual.Result);
-    // } 
+    //TODO, denne test skal måske skrives om så den retunerer NotFound.
+    [Fact]
+    public async void Get_given_non_existing_paramerets_returns_null()
+    {
+       //Arrange
+        var logger = new Mock<ILogger<ArticleController>>();
+        var repository = new Mock<IArticleRepository>();
+        var created = new List<ArticleDTO> { new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, "Article", null)};
+        repository.Setup(m => m.ReadAllArticlesFromParametersAsync("DOES_NOT_EXIST", "2", new string[]{"java"})).ReturnsAsync(created);
+        var controller = new ArticleController(logger.Object, repository.Object);
+        //Act
+        //var actual = await controller.GetFromTitle("DOES_NOT_EXIST");
+        var actual = await controller.GetFromParameters("DOES_NOT_EXIST", "2", null);
+        //Assert
+
+        Assert.Empty(actual);
+    } 
+
+    //TODO : der skal blive testet med sproget C# til når dette er oppe og køre
+     [Fact]
+       public async void Get_given_existing_parameters_returns_article()
+       {
+        //Arrange
+        var logger = new Mock<ILogger<ArticleController>>();
+        var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, new string[]{"Java"}, DifficultyLevel.Expert, 3, "Article", null)};
+        var repository = new Mock <IArticleRepository>();
+        repository.Setup(m => m.ReadAllArticlesFromParametersAsync("title", "3", new string[]{"Java"})).ReturnsAsync(expected);
+        var controller = new ArticleController(logger.Object, repository.Object);
+        //Act
+        var actual = await controller.GetFromParameters("title", "3", new string[]{"Java"});
+        //Assert
+        Assert.Equal(expected, actual);
+        
+       }
+
+    //TODO : alle disse er navne på test som skal ind i repo!!
+    // [Fact]
+    // public async void Get_given_existing_title_AND_no_matching_parameter_on_difficulty_and_language_returns_article(){
+
+    // }
+    // [Fact]
+    // public async void Get_given_difficulty_AND_no_matching_parameter_on_title_and_language_returns_article(){
+    // }
+       
+    // [Fact]
+    // public async void Get_given_language_AND_no_matching_parameter_on_title_and_difficulty_returns_article(){
+    // }
+    
+
+    // [Fact]
+    // public async void Get_given_title_and_difficulty_AND_no_matching_parameter_on_language_returns_article(){}
 
 
-     //[Fact]
-       // public async void Get_given_existing_title_returns_article()
-       // {
-       //  //Arrange
-       //  var logger = new Mock<ILogger<ArticleController>>();
-       //  var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", null, null, null, null, "Article")};
-       //  var repository = new Mock <IArticleRepository>();
-       //  repository.Setup(m => m.ReadArticlesFromTitleAsync("title")).ReturnsAsync(expected);
-       //  var controller = new ArticleController(logger.Object, repository.Object);
-       //  //Act
-       //  var actual = await controller.GetFromTitle("title");
-       //  //Assert
-       //  Assert.Equal(expected, actual.Value);
-       //  
-       // }
+    // [Fact]
+    // public async void Get_given_title_and_language_AND_no_matching_parameter_on_difficulty_returns_article(){}
+
+
+    // [Fact]
+    // public async void Get_given_difficulty_and_language_AND_no_matching_parameter_on_title_returns_article(){}
+
+    // [Fact]
+    // public async void Get_given_one_language_returns_article(){}
+
+       
 
 
     [Fact]
