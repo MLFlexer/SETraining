@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Shared;
+using System.Linq;
 
 namespace SETraining.Server;
 
@@ -11,9 +12,11 @@ public static class Extensions
         Status.Deleted => new NoContentResult(),
         Status.NotFound => new NotFoundResult(),
         Status.Conflict => new ConflictResult(),
+        Status.NoContent => new NoContentResult(),
         _ => throw new NotSupportedException($"{status} not supported")
     };
 
     public static ActionResult<T> ToActionResult<T>(this Option<T> option) where T : class
         => option.IsSome ? option.Value : new NotFoundResult();
+    
 }

@@ -39,7 +39,7 @@ public class ArticleControllerTest
     } 
 
     [Fact]
-    public async void Get_given_existing_returns_article(){
+    public async void GetAll_given_existing_returns_articles(){
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var expected = Array.Empty<ArticleDTO>();
@@ -50,7 +50,7 @@ public class ArticleControllerTest
         var actual = await controller.Get();
         
         //Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.Value);
     }
 
     // TODO: skal lige laves færdig, rammer et problem ift default(ArticleDTO) og tror det omhandler den der option klasse.
@@ -113,7 +113,7 @@ public class ArticleControllerTest
         var actual = await controller.GetFromParameters("DOES_NOT_EXIST", "2", null);
         //Assert
 
-        Assert.Empty(actual);
+        Assert.IsType<NotFoundResult>(actual.Result);
     } 
 
     //TODO : der skal blive testet med sproget C# til når dette er oppe og køre
@@ -129,7 +129,7 @@ public class ArticleControllerTest
         //Act
         var actual = await controller.GetFromParameters("title", "3", new string[]{"Java"});
         //Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.Value);
         
        }
 
@@ -211,7 +211,7 @@ public class ArticleControllerTest
 
         //Act
         var response = await controller.Delete(created.Id);
-
+        
         //Arrange
         Assert.IsType<NoContentResult>(response);
     }

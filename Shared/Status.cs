@@ -7,5 +7,6 @@ public enum Status
     Deleted,
     NotFound,
     BadRequest,
-    Conflict
+    Conflict,
+    NoContent
 }
