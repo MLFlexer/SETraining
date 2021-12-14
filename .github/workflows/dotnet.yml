@@ -22,5 +22,5 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Run XUnit tests
-      run: dotnet test --filter FullyQualifiedName\!~ImageRepositoriesTest --no-build --verbosity normal
+      run: dotnet test --filter FullyQualifiedName\!~UploadRepositoriesTest --no-build --verbosity normal
     

@@ -13,15 +13,15 @@ using Xunit;
 
 namespace Server.Repositories.Tests;
 
-public class ImageRepositoriesTest : IDisposable
+public class UploadRepositoriesTest : IDisposable
 {
     private BlobServiceClient _serviceClient;
     private BlobContainerClient _containerClient;
-    private ImageRepository _repository;
+    private UploadRepository _repository;
     private string _mockUserName;
     private string _mockContainerName;
     
-    public ImageRepositoriesTest()
+    public UploadRepositoriesTest()
     {
         //Account name
         _mockUserName = "devstoreaccount1";
@@ -33,31 +33,44 @@ public class ImageRepositoriesTest : IDisposable
         
         _containerClient = _serviceClient.CreateBlobContainer("imagetest");
         
-        _repository = new ImageRepository(_containerClient);
+        _repository = new UploadRepository(_containerClient);
     }
 
     [Fact]
-    public async Task Create_returns_uri()
+    public async Task CreateUploadAsync_returns_status_uri()
     {
         //Arrange
         var ExpectedResult = Status.Created;
         
         //Act
-        var result = await _repository.CreateImageAsync("tester.jpg", "jpeg",  new MemoryStream());
+        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
 
         //Assert
         Assert.NotNull(result.uri);
     }
     
     [Fact]
-    public async Task CreateImageAsync_returns_status_Created()
+    public async Task CreateUploadAsync_returns_status_Created()
     {
         //Arrange
         var ExpectedResult = Status.Created;
         
         //Act
-        var result = await _repository.CreateImageAsync("tester.jpg", "jpeg",  new MemoryStream());
+        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
 
+        //Assert
+        Assert.Equal(result.status, ExpectedResult); 
+    }
+    
+    [Fact]
+    public async Task Uploaded_has_correct_media_type()
+    {
+        //Arrange
+        var ExpectedResult = Status.Created;
+        
+        //Act
+        var result = await _repository.CreateUploadAsync("tester.jpg", "mp4",  new MemoryStream());
+        
         //Assert
         Assert.Equal(result.status, ExpectedResult); 
     }

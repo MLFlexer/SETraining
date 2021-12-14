@@ -4,16 +4,16 @@ using SETraining.Shared;
 
 namespace SETraining.Server.Repositories;
 
-public class ImageRepository : IImageRepository
+public class UploadRepository : IUploadRepository
 {
     private readonly BlobContainerClient _client;
 
-    public ImageRepository(BlobContainerClient client)
+    public UploadRepository(BlobContainerClient client)
     {
         _client = client;
     }
 
-    public async Task<(Status status, Uri uri)> CreateImageAsync(string name, string contentType, Stream stream)
+    public async Task<(Status status, Uri uri)> CreateUploadAsync(string name, string contentType, Stream stream)
     {
         var client = _client.GetBlockBlobClient(name);
 
