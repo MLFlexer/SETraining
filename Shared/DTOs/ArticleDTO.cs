@@ -18,6 +18,8 @@ public record ArticleCreateDTO
     public DifficultyLevel Difficulty { get; init; }
 
     public string? ImageURL { get; set; }
+    
+    public string? VideoURL { get; set; }
 
     public int? AvgRating { get; init; }
 }

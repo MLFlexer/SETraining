@@ -79,6 +79,7 @@
         <div class="form-group input-group">
             <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
             <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
+            <button type="button" @onclick="UploadImage" class="btn btn-secondary">UPLOAD</button>
         </div>
 
         
@@ -114,7 +115,7 @@
     }
     
     //***Properties*** 
-    private string imageName = Guid.NewGuid().ToString();
+    private string ImageName = Guid.NewGuid().ToString();
 
     private string ImageURL = string.Empty;
     private IBrowserFile? imageFile;
@@ -167,7 +168,7 @@
         if (!string.IsNullOrWhiteSpace(article.ImageURL))
         {
             ImageURL = $"{article.ImageURL}?nocache={Guid.NewGuid()}";
-            imageName = ImageURL.Split("/").Last();
+            ImageName = ImageURL.Split("/").Last();
         }
     }
 
@@ -200,11 +201,12 @@
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/ImageUpload/{imageName}", content);
+            var response = await Http.PostAsync($"api/ImageUpload/{ImageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
                 ImageURL = response.Headers.Location?.ToString();
+                Console.WriteLine(ImageURL);
             }
             else
             {
@@ -215,6 +217,7 @@
 
     private void ClearImage()
     {
+        ImageName = Guid.NewGuid().ToString();
         ImageURL = null;
         imageFile = null;
     }

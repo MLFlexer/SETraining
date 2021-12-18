@@ -67,9 +67,9 @@
         </div>
        
         <div class="form-group">
-                               @if (!string.IsNullOrWhiteSpace(ImageURLLocal))
+                               @if (!string.IsNullOrWhiteSpace(ImageURL))
                                {
-                                   <div><img src="@ImageURLLocal" alt="Character Image" class="img-thumbnail"></div>
+                                   <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
                                }
                                
                                @if (ChosenType == 0)
@@ -133,6 +133,7 @@
                     <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
                     <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
                 </div>
+                <button type="button" @onclick="UploadVideo" class="btn btn-secondary">Upload</button>
             }
             
         </div>
@@ -153,14 +154,12 @@
     //Properties
     private int ChosenType = 0;
     
-    private string imageName = Guid.NewGuid().ToString();
-    private string ImageURLLocal = string.Empty;
-    private string? ImageURLServer;
+    private string ImageName = Guid.NewGuid().ToString();
+    private string ImageURL = string.Empty;
     private IBrowserFile? ImageFile;
     
     private string VideoName = Guid.NewGuid().ToString();
-    private string VideoURLLocal = string.Empty;
-    private string? VideoURLServer;
+    private string VideoURL = string.Empty;
     private IBrowserFile? VideoFile;
     
     
@@ -198,7 +197,7 @@
             var bytes = new byte[ImageFile.Size];
             await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var contentType = ImageFile.ContentType;
-            ImageURLLocal = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+            ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
     
@@ -214,32 +213,32 @@
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(ImageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", ImageFile.Name);
-            var response = await Http.PostAsync($"api/ImageUpload/{imageName}", content);
+            var response = await Http.PostAsync($"api/ImageUpload/{ImageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                ImageURLServer = response.Headers.Location?.ToString();
+                ImageURL = response.Headers.Location?.ToString();
             }
         }
     }
     
     private void ClearImage()
     {
-        ImageURLLocal = string.Empty;
+        ImageURL = string.Empty;
         ImageFile = null;
     }
     
     //Methods for video upload
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
-        ImageFile = e.GetMultipleFiles().FirstOrDefault();
+        VideoFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (ImageFile != null)
+        if (VideoFile != null)
         {
-            var bytes = new byte[ImageFile.Size];
-            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
-            var contentType = ImageFile.ContentType;
-            ImageURLLocal = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+            var bytes = new byte[VideoFile.Size];
+            await VideoFile.OpenReadStream(1000000000).ReadAsync(bytes);
+            var contentType = VideoFile.ContentType;
+            VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
     
@@ -250,16 +249,17 @@
         if (VideoFile != null)
         {
             var bytes = new byte[VideoFile.Size];
-            await VideoFile.OpenReadStream(100000000).ReadAsync(bytes);
+            await VideoFile.OpenReadStream(1000000000).ReadAsync(bytes);
             var byteContent = new ByteArrayContent(bytes);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(VideoFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", VideoFile.Name);
-            var response = await Http.PostAsync($"api/VideoUpload/{imageName}", content);
+            var response = await Http.PostAsync($"api/VideoUpload/{VideoName}", content);
 
             if (response.IsSuccessStatusCode)
             {
-                VideoURLServer = response.Headers.Location?.ToString();
+                VideoURL = response.Headers.Location?.ToString();
+                Console.WriteLine(VideoURL);
             }
         }
     }
@@ -268,7 +268,7 @@
 
     private void ClearVideo()
     {
-        VideoURLLocal = string.Empty;
+        VideoURL = string.Empty;
         VideoFile = null;
     }
     
@@ -340,6 +340,7 @@
     private async Task PublishArticle()
     {
         await UploadImage();
+        await UploadVideo();
         
         var article = new ArticleCreateDTO
         {
@@ -349,7 +350,8 @@
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
-            ImageURL = ImageURLServer
+            ImageURL = ImageURL,
+            VideoURL = VideoURL
             
         };
         

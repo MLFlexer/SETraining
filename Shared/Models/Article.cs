@@ -29,7 +29,7 @@ public class Article
     [Url] 
     public string? ImageURL { get; set; }
     [Url] 
-    public string? VideoULR { get; set; }
+    public string? VideoURL { get; set; }
     
     public string? Body { get; set; }
 }

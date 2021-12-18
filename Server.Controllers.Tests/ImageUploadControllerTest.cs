@@ -14,9 +14,9 @@ using SETraining.Shared.Models;
 
 namespace Server.Controllers.Tests;
 
-public class UploadControllerTest
+public class ImageUploadControllerTest
 {
-    public UploadControllerTest()
+    public ImageUploadControllerTest()
     {
         
     }

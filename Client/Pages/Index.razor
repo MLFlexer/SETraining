@@ -83,7 +83,7 @@
                         }
                     </div>
                     <div class="col-md-4 text-right">
-                        <RadzenButton Text="Read" Click=@(() => ViewArticle(article)) ButtonStyle="ButtonStyle.Primary"/>
+                        <RadzenButton Text="@(article.Type == ArticleType.Written ? "Read" : "Show")" Click=@(() => ViewArticle(article)) ButtonStyle="ButtonStyle.Primary" />
                     </div>
                 </div>
             </RadzenCard>
