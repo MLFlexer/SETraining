@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Shared;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace SETraining.Server;
 
@@ -19,6 +20,7 @@ public static class Extensions
     public static ActionResult<T> ToActionResult<T>(this Option<T> option) where T : class
         => option.IsSome ? option.Value : new NotFoundResult();
     
-    public static ActionResult<T> NoSearchResultToActionResult<T>(this Option<T> option) where T : class
-        => option.IsSome ? option.Value : new NoContentResult();
+    //TODO: remove if not used at last
+    // public static ActionResult<T> NoSearchResultToActionResult<T>(this Option<T> option) where T : class
+    //     => option.IsSome ? option.Value : new NoContentResult();
 }

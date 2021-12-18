@@ -36,7 +36,7 @@ namespace SETraining.Server.Controllers
         public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
         {
             var res = await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
-            return res.NoSearchResultToActionResult();
+            return res.ToActionResult();
         }
         
         [ProducesResponseType(404)]
