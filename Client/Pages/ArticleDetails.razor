@@ -63,14 +63,15 @@
     }
     else
     {
-        if (article.ImageURL != null)
+        if (article.VideoURL != null)
         {
-            <BlazoredVideo 
-                        class="w-100"
-                        style="max-width:800px;"
-                        controls="controls">
-                        <source src="(@article.ImageURL)" type="video/mp4" />
-                    </BlazoredVideo>
+            <BlazoredVideo
+                class="w-100"
+                style="max-width:800px;"
+                controls="controls">
+                autoplay="autoplay" 
+                <source src="@article.VideoURL" type="video/mp4"/>
+            </BlazoredVideo>
         }
         
     }
