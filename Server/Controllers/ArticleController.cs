@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
@@ -23,17 +24,19 @@ namespace SETraining.Server.Controllers
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet("all")]
-        public async Task<IEnumerable<ArticleDTO>> Get()
+        public async Task<ActionResult<IEnumerable<ArticleDTO>>> Get()
         {
-            return await _repository.ReadAllArticlesAsync();
+            var res = await _repository.ReadAllArticlesAsync();
+            return res.ToActionResult();
         }
 
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet]
-        public async Task<IEnumerable<ArticleDTO>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
+        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
         {
-            return await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
+            var res = await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
+            return res.ToActionResult();
         }
         
         [ProducesResponseType(404)]
@@ -71,3 +74,4 @@ namespace SETraining.Server.Controllers
             => (await _repository.DeleteArticleAsync(id)).ToActionResult();
     }
 }
+

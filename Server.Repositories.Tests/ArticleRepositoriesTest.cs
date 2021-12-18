@@ -67,7 +67,7 @@ public class ArticleRepositoriesTest : IDisposable
     {
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAllArticlesAsync();
-        var listContents = contentsFromDB.ToList();
+        var listContents = contentsFromDB.Value.ToList();
         var expected_1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(){"Java 4", "Java 5"}, DifficultyLevel.Expert, null, "<b>Test<b/>", null);
         var expected_2 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
         var expected_3 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
