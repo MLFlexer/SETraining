@@ -18,9 +18,9 @@
     <div class="col-12">
         <h1>Create a new article</h1>
         <h4>Choose article type</h4>
-        <RadzenRadioButtonList @bind-Value=@chosenType TValue="int" Change=@((args) => onChooseType(args))>
+        <RadzenRadioButtonList @bind-Value=@ChosenType TValue="int" Change=@((args) => OnChooseType(args))>
                             <Items>
-                                <RadzenRadioButtonListItem Text="Text" Value="0" />
+                                <RadzenRadioButtonListItem Text="Written" Value="0" />
                                 <RadzenRadioButtonListItem Text="Video" Value="1" />
                             </Items>
                         </RadzenRadioButtonList>
@@ -72,29 +72,67 @@
                                    <div><img src="@ImageURLLocal" alt="Character Image" class="img-thumbnail"></div>
                                }
                                
-                               @if (chosenType == 0)
+                               @if (ChosenType == 0)
                                {
                                      <h4 style="margin-top: 20px;">Add image</h4>
                                       <label for="Image">Image</label>  
                                }
                                else
                                {
-                                   <h4 style="margin-top: 20px;">Add video</h4>
-                                   <label for="Image">Video</label>  
+                                   <h4 style="margin-top: 20px;">Add thumbnail to your video</h4>
+                                   <label for="Image">Thumbnail</label>  
                                }
                            
                            </div>
                            <div class="form-group input-group">
-                               <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
+                               <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
                                <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
                                </div>
         
                                    
         <div style="margin-top: 20px;">
-            @if (chosenType == 0)
+            @if (ChosenType == 0)
             {
                 <h4>Content of the article</h4>
-                            <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute/>
+                <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" Change=@OnHtmlChange Paste=@OnPaste>
+                      <RadzenHtmlEditorUndo />
+                      <RadzenHtmlEditorRedo />
+                      <RadzenHtmlEditorFontName />
+                      <RadzenHtmlEditorFontSize />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorBold />
+                      <RadzenHtmlEditorItalic />
+                      <RadzenHtmlEditorUnderline />
+                      <RadzenHtmlEditorStrikeThrough />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorAlignLeft />
+                      <RadzenHtmlEditorAlignCenter />
+                      <RadzenHtmlEditorAlignRight />
+                      <RadzenHtmlEditorJustify />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorIndent />
+                      <RadzenHtmlEditorOutdent />
+                      <RadzenHtmlEditorUnorderedList />
+                      <RadzenHtmlEditorOrderedList />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorColor />
+                      <RadzenHtmlEditorBackground />
+                      <RadzenHtmlEditorRemoveFormat />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorSubscript />
+                      <RadzenHtmlEditorSuperscript />
+                      <RadzenHtmlEditorSeparator />
+                      <RadzenHtmlEditorFormatBlock />
+                </RadzenHtmlEditor>
+            }
+            else
+            {
+                <h4 style="margin-top: 20px;">Add video</h4>
+                <label for="Image">Video</label>  
+                <div class="form-group input-group">
+                    <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
+                    <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
+                </div>
             }
             
         </div>
@@ -112,30 +150,19 @@
 
 @code {
     
-    //Error boundary
-    private ErrorBoundary? errorBoundary;
-
-    protected override void OnParametersSet()
-    {
-        errorBoundary?.Recover();
-    }
+    //Properties
+    private int ChosenType = 0;
     
-    //
-    private int chosenType = 0;
-
-    private void onChooseType(int type)
-    {
-        chosenType = type;
-    }
-
-    //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
-
     private string ImageURLLocal = string.Empty;
-
     private string? ImageURLServer;
-
-    private IBrowserFile? imageFile;
+    private IBrowserFile? ImageFile;
+    
+    private string VideoName = Guid.NewGuid().ToString();
+    private string VideoURLLocal = string.Empty;
+    private string? VideoURLServer;
+    private IBrowserFile? VideoFile;
+    
     
     string HtmlInput;
     string TitleInput;
@@ -148,78 +175,122 @@
     IEnumerable<int> ChosenLanguages = new List<int>();
     int ChosenDifficulty = 0;
     
-    //***Methods***
-    
+    //Methods
+
     //Init method
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
     
-    //Methods for image uploads
-    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    private void OnChooseType(int type)
     {
-        imageFile = e.GetMultipleFiles().FirstOrDefault();
+        ChosenType = type;
+    }
+    
+    //Methods for image uploads
+    private async Task OnImageFileSelection(InputFileChangeEventArgs e)
+    {
+        ImageFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (imageFile != null)
+        if (ImageFile != null)
         {
-            var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
-            var contentType = imageFile.ContentType;
+            var bytes = new byte[ImageFile.Size];
+            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var contentType = ImageFile.ContentType;
             ImageURLLocal = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
     
+    
     private async Task UploadImage()
     {
-    //IMAGE UPLOAD 
-        
-        if (imageFile != null)
+
+        if (ImageFile != null)
         {
-            var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var bytes = new byte[ImageFile.Size];
+            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var byteContent = new ByteArrayContent(bytes);
-            byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue(ImageFile.ContentType);
             var content = new MultipartFormDataContent();
-            content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/upload/{imageName}", content);
+            content.Add(byteContent, "file", ImageFile.Name);
+            var response = await Http.PostAsync($"api/ImageUpload/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
                 ImageURLServer = response.Headers.Location?.ToString();
-                Console.WriteLine(ImageURLServer);
             }
         }
     }
-
+    
     private void ClearImage()
     {
         ImageURLLocal = string.Empty;
-        imageFile = null;
+        ImageFile = null;
+    }
+    
+    //Methods for video upload
+    private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
+    {
+        ImageFile = e.GetMultipleFiles().FirstOrDefault();
+
+        if (ImageFile != null)
+        {
+            var bytes = new byte[ImageFile.Size];
+            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var contentType = ImageFile.ContentType;
+            ImageURLLocal = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+        }
+    }
+    
+    
+    private async Task UploadVideo()
+    {
+
+        if (VideoFile != null)
+        {
+            var bytes = new byte[VideoFile.Size];
+            await VideoFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var byteContent = new ByteArrayContent(bytes);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue(VideoFile.ContentType);
+            var content = new MultipartFormDataContent();
+            content.Add(byteContent, "file", VideoFile.Name);
+            var response = await Http.PostAsync($"api/VideoUpload/{imageName}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                VideoURLServer = response.Headers.Location?.ToString();
+            }
+        }
+    }
+    
+    
+
+    private void ClearVideo()
+    {
+        VideoURLLocal = string.Empty;
+        VideoFile = null;
     }
     
     //HTML Editor and required properties
     
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
-        // console.Log($"Paste: {args.Html}");
+        HtmlInput = args.Html;
     }
     
     void OnTitleChange(string title)
     {
-    // console.Log($"Change: {html}");
         TitleInput = title;
     }
     
     void OnDescriptionChange(string description)
     {
-    // console.Log($"Change: {html}");
         DescriptionInput = description;
     }
     
     void OnHtmlChange(string html)
     {
-    // console.Log($"Change: {html}");
         HtmlInput = html;
     }
     
@@ -227,12 +298,7 @@
     {
         ChosenDifficulty = value;
     }
-    
-    void OnExecute(HtmlEditorExecuteEventArgs args)
-    {
-        // console.Log($"Execute: {args.CommandName}");
-    }
-    
+
     void OnChooseLanguages(IEnumerable<int> value)
     {
         ChosenLanguages = value;
@@ -279,6 +345,7 @@
         {
             Body = HtmlInput,
             Title = TitleInput,
+            Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),

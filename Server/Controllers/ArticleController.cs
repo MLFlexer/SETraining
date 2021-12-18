@@ -30,7 +30,7 @@ namespace SETraining.Server.Controllers
             return res.ToActionResult();
         }
 
-        [ProducesResponseType(typeof(ArticleDTO), 204)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ArticleDTO), 200)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)

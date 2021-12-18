@@ -31,67 +31,92 @@ public static class SeedExtensions
     private static void SeedArticles(SETrainingContext context)
     {
         context.Database.Migrate();
-        //context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-        if (context.Articles.Any()) return;
+        //if (context.Articles.Any()) return;
+        
         var java = new ProgrammingLanguage("Java");
-        var csharp = new ProgrammingLanguage("C#");
-        var javascript = new ProgrammingLanguage("Javascript");
-        var fsharp = new ProgrammingLanguage("F#");
+        var csharp = new ProgrammingLanguage("CSharp");
+        var javascript = new ProgrammingLanguage("JavaScript");
+        var fsharp = new ProgrammingLanguage("FSharp");
+        var go = new ProgrammingLanguage("Go");
+        var rust = new ProgrammingLanguage("Rust");
+        var typescript = new ProgrammingLanguage("TypeScript");
+        
+        
+        var JavaArticleHTML1 = File.ReadAllText(@"./SeedData/JavaArticle1.txt");
+        var JavaArticleHTML2 = File.ReadAllText(@"./SeedData/JavaArticle2.txt");
+        var CSharpArticleHTML = File.ReadAllText(@"./SeedData/CSharpArticle.txt");
+        var CSharpVsJavaArticleHTML = File.ReadAllText(@"./SeedData/CSharpVsJava.txt");
+        var JavasScriptArticleHTML = File.ReadAllText(@"./SeedData/JavaScriptArticle1.txt");
 
-        // Text below was copied from Wikipedia: https://en.wikipedia.org/wiki/Java_(programming_language)
-        var javaArticleText1 = "Java is a high-level, class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible. It is a general-purpose programming language intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation. Java applications are typically compiled to bytecode that can run on any Java virtual machine (JVM) regardless of the underlying computer architecture.";
-        var videolink = "https://www.youtube.com/watch?v=eIrMbAQSU34";
         var wikipedia = new Moderator("Wikipedia");
         var jkof = new Moderator("jkof");
 
-        var invalidFilePath = "*invalid filepath, used for testing*";
-
         context.Articles.AddRange(
-            new Article("Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
-                Description = "The Wikipedia page about the programming language Java",
-                Difficulty = DifficultyLevel.Novice,
+            new Article("New Java trends", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
+                Description = "Essential Java features to learn in 2022",
                 Creator = wikipedia,
-                ProgrammingLanguages = new[] { java }
+                Body = JavaArticleHTML1,
+                ProgrammingLanguages = new[] { java },
+                AvgRating = 3
             },
-            new Article("C# Article", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
-                Description = "An Article about C#",
-                Difficulty = DifficultyLevel.Intermediate,
+            
+            new Article("Why Log4j won’t go away", ArticleType.Written, DateTime.Now.ToUniversalTime(),DifficultyLevel.Intermediate)
+            {
+                Description = "Essential Java features to learn in 2022",
+                Creator = wikipedia,
+                Body = JavaArticleHTML2,
+                ProgrammingLanguages = new[] { java },
+                AvgRating = 2
+            },
+            
+            new Article("Welcome to CSharp 10", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Novice) {
+                Description = "An Article about CSharp",
+                Body = CSharpArticleHTML,
                 Creator = jkof,
                 ProgrammingLanguages = new[] { csharp },
+                AvgRating = 5
+            },
+            new Article("CSharp or Java?", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
+                Description = "A head to head comparison",
+                Body = CSharpVsJavaArticleHTML,
+                Creator = jkof,
+                ProgrammingLanguages = new[] { csharp, java },
                 AvgRating = 4
-                    
             },
-            new Article("Better Article", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
-                ProgrammingLanguages = new[] { java, csharp, fsharp },
-                Description = "An Article about Java and C#"
+            new Article("Javascript 101", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
+                Description = "A beginners introduction",
+                Body = JavasScriptArticleHTML,
+                Creator = jkof,
+                ProgrammingLanguages = new[] { javascript, typescript },
+                AvgRating = 4
             },
-            new Article("Javascript Introduction", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert) {
+            new Article("Rust vs Go", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Expert) {
+                Description = "Which is Better and Why?",
+                Creator = wikipedia,
+                VideoULR = "", //Video found at https://www.youtube.com/watch?v=ZJ6dVVobjaI all credit to author 
+                ProgrammingLanguages = new[] { rust, go },
+                AvgRating = 3,
+            },
+            new Article("What is ASP.NET?",  ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice ) {
+                Description = "A brief introduction",
+                Creator = jkof,
+                VideoULR = "", //Found at https://www.youtube.com/watch?v=hsFm1oG2XTg all credit to author 
+                ProgrammingLanguages = new[] { csharp },
+                AvgRating = 4
+            },
+            new Article("What is FSharp?", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Intermediate) {
+                Description = "F for fun?",
+                Creator = jkof,
+                VideoULR = "", //Found at https://www.youtube.com/watch?v=9Vk9o9cRZ9I all credit to author 
+                ProgrammingLanguages = new[] { fsharp },
+                AvgRating = 5
+            },
+            new Article("JavaScript bind method", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice) {
+                Description = "Bind methods simply explained",
+                Creator = jkof,
+                VideoULR = "", //Found at https://www.youtube.com/watch?v=nYeMGnLdXkw all credit to author 
                 ProgrammingLanguages = new[] { javascript },
-                AvgRating = 1,
-                Description = "An introduction to the Javascript language"
-            },
-            new Article("Java Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice) {
-                Description = "The Wikipedia page about the programming language Java",
-                Difficulty = DifficultyLevel.Novice,
-                Creator = wikipedia,
-                ProgrammingLanguages = new[] { java }
-            },
-            new Article("C# Video",  ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Expert ) {
-                Description = "An Video about C#",
-                Difficulty = DifficultyLevel.Intermediate,
-                Creator = jkof,
-                ProgrammingLanguages = new[] { csharp },
-                AvgRating = 4
-                    
-            },
-            new Article("Better Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Intermediate) {
-                ProgrammingLanguages = new[] { java, csharp },
-                Description = "A Video about Java and C#"
-            },
-            new Article("Javascript Introduction Video", ArticleType.Video, DateTime.Now.ToUniversalTime(), DifficultyLevel.Novice) {
-                ProgrammingLanguages = new[] { javascript, fsharp },
-                AvgRating = 1,
-                Description = "An introduction to the Javascript language"
+                AvgRating = 1
             }
             
         );

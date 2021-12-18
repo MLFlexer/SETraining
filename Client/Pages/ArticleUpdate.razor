@@ -15,6 +15,13 @@
     <div class="col-12">
         <RadzenButton style="right:0px; position: absolute;" Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
         <h1>Edit article</h1>
+        <h4>Choose article type</h4>
+                <RadzenRadioButtonList @bind-Value=@ChosenType TValue="int" Change=@((args) => OnChooseType(args))>
+                                    <Items>
+                                        <RadzenRadioButtonListItem Text="Written" Value="0" />
+                                        <RadzenRadioButtonListItem Text="Video" Value="1" />
+                                    </Items>
+                                </RadzenRadioButtonList>
         <h4>Title</h4>
         <RadzenTextBox Value="@TitleInput" Change=@(args => OnTitleChange(args.ToString())) />
         <h4>Description</h4>
@@ -53,22 +60,35 @@
         <div class="form-group">
             @if (!string.IsNullOrWhiteSpace(ImageURL))
             {
-                <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
+                <div style="margin-top: 20px;"><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
             }
             
             
-            <h4 style="margin-top: 20px;">Add image</h4>
-            <label for="Image">Image</label>
+             @if (ChosenType == 0)
+             {
+                 <h4 style="margin-top: 20px;">Add image</h4>
+                 <label for="Image">Image</label>  
+             }
+             else
+             {
+                 <h4 style="margin-top: 20px;">Add video</h4>
+                 <label for="Image">Video</label>  
+             }
+            
         </div>
         <div class="form-group input-group">
             <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
             <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
         </div>
 
-
+        
         <div style="margin-top: 20px;">
-            <h4>Content of the article</h4>
-            <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />
+             @if (ChosenType == 0)
+             {
+                 <h4>Content of the article</h4>
+                 <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute/>  
+             }
+            
         </div>
         
     </div>
@@ -85,6 +105,14 @@
         
 
 @code {
+    
+    private int ChosenType = 0;
+
+    private void OnChooseType(int type)
+    {
+        ChosenType = type;
+    }
+    
     //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
@@ -115,6 +143,7 @@
         article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
         HtmlInput = article.Body;
         TitleInput = article.Title;
+        ChosenType = (int) article.Type - 1;
         DescriptionInput = article.Description;
         ChosenDifficulty = (int) article.Difficulty -1;
         LoadProgrammingLanguages();
@@ -171,7 +200,7 @@
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/upload/{imageName}", content);
+            var response = await Http.PostAsync($"api/ImageUpload/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -274,6 +303,7 @@
         {
             Body = HtmlInput,
             Title = TitleInput,
+            Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),

@@ -31,21 +31,19 @@ public class ProgrammingLanguagesControllerTest
         Assert.Equal(expected, actual);
     }
 
-    //TODO: Fix test after adding ToActionResult
-    /* [Fact]
-    public async void Get_given_non_existing_name_returns_NotFound(){
-        //Arrange
-        var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
-        var repository = new Mock<IProgrammingLanguagesRepository>();
-        repository.Setup(m => m.ReadAsync("NotALanguage")).ReturnsAsync(default(ProgrammingLanguageDTO));
-        var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
+     [Fact]
+     public async void Get_given_non_existing_name_returns_NotFound(){
+         //Arrange
+         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
+         var repository = new Mock<IProgrammingLanguagesRepository>();
+         repository.Setup(m => m.ReadAsync("NotALanguage")).ReturnsAsync(default(ProgrammingLanguageDTO));
+         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
 
-        //Act
-        var response = await controller.Get("NotALanguage");
+         //Act
+         var response = await controller.Get("NotALanguage");
 
-        //Assert
-        //Assert.IsType<NotFoundResult>(response);
-    } */
+         Assert.IsType<NotFoundResult>(response);
+     } 
 
     [Fact]
     public async void Get_given_existing_name_returns_ProgrammingLanguage()

@@ -26,7 +26,9 @@ public class ArticleRepository : IArticleRepository
             Difficulty = article.Difficulty,
             AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
-            Created = DateTime.Now.ToUniversalTime()
+            Created = DateTime.Now.ToUniversalTime(),
+            Body = article.Body
+            
         };
         _context.Articles.Add(entity);
         
