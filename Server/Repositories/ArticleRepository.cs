@@ -294,6 +294,8 @@ public class ArticleRepository : IArticleRepository
         return Status.Updated;
     }
 
+    
+    //Heavily inspired by github.com/ondfisk/BDSA2021, credit to Author 
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.

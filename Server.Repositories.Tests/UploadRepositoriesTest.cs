@@ -62,6 +62,8 @@ public class UploadRepositoriesTest : IDisposable
         Assert.Equal(result.status, ExpectedResult); 
     }
     
+    
+    //TODO: ikke færdig
     [Fact]
     public async Task Uploaded_has_correct_media_type()
     {
