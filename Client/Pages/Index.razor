@@ -38,8 +38,6 @@
  
 
 
-
-
 @if (Articles == null)
 {
     <div>Loading...</div>
@@ -90,7 +88,15 @@
                 </div>
             </RadzenCard>
         }
-    
+
+        if (Articles.Length == 0)
+        {
+            <div class="container h-100">
+                <div class="d-flex justify-content-md-center align-items-center vh-100">
+                    <p>No results matching your search. Try again with other parameters!</p>
+                </div>     
+            </div> 
+        }
     }
     
 </div>
@@ -131,14 +137,19 @@
 
     private async Task Search(string title)
     {
-        searchedTitle = title;
-        var URIParams = BuildURIString();
+        try
+        {
+            searchedTitle = title;
+            var URIParams = BuildURIString();
+        
+            Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article{URIParams}");
 
-        Console.WriteLine("New articles loaded");
+        }
+        catch (Exception e)
+        {
+            Articles = Array.Empty<ArticleDTO>();
+        }
         
-        Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article{URIParams}");
-        
-                
         StateHasChanged();
     }
 

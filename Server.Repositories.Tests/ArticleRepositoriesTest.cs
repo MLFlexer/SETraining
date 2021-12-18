@@ -59,6 +59,7 @@ public class ArticleRepositoriesTest : IDisposable
         Assert.Equal(5, created.Id);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs,created.ProgrammingLanguages);
+        
     }
 
     //TODO: testen fejler

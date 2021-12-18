@@ -5,6 +5,7 @@
 @inject IHttpClientFactory _httpClientFactory
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
@@ -27,9 +28,11 @@
     <div>
         <RadzenImage Path="@(article.ImageURL?? "placeholder_small.jpg")" Class="img-fluid" Style="margin-top: 100px; border-radius: 5px;"/>
         <h1 class="mb-0">@(article.Title)</h1>
-
         <div>
-            Article
+            @article.Created.ToString("D")
+        </div>
+        <div>
+            @article.Type
         </div>
         <div style="font-size: .8em">@article.Description
         </div>

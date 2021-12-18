@@ -27,12 +27,11 @@ public class UploadRepositoriesTest : IDisposable
         _mockUserName = "devstoreaccount1";
         _mockContainerName = "images";
         
-        //Using Azurite from Docker Image to mock Azure Blob Storage
+        //Using Azurite from Docker Image to mock Azure Blob Storage, a default connecionsstring
         _serviceClient = new BlobServiceClient(
             "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;");
         
         _containerClient = _serviceClient.CreateBlobContainer("imagetest");
-        
         _repository = new UploadRepository(_containerClient);
     }
 

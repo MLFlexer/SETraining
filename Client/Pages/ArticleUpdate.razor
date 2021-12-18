@@ -8,6 +8,7 @@
 @inject HttpClient Http
 @inject DialogService DialogService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @attribute [Authorize]
 
 <div class="row">
@@ -170,7 +171,7 @@
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/image/{imageName}", content);
+            var response = await Http.PostAsync($"api/upload/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -246,7 +247,13 @@
         
         if (response.IsSuccessStatusCode)
         {
+            JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
             ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        }
+        else
+        {
+            JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
+
         }
     }
 

@@ -8,6 +8,7 @@
 @inject HttpClient Http
 @inject DialogService DialogService
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 @attribute [Authorize]
 
 <PageTitle>Create new article</PageTitle>
@@ -15,7 +16,14 @@
 
 <div class="row">
     <div class="col-12">
-        <h1>Add new article</h1>
+        <h1>Create a new article</h1>
+        <h4>Choose article type</h4>
+        <RadzenRadioButtonList @bind-Value=@chosenType TValue="int" Change=@((args) => onChooseType(args))>
+                            <Items>
+                                <RadzenRadioButtonListItem Text="Text" Value="0" />
+                                <RadzenRadioButtonListItem Text="Video" Value="1" />
+                            </Items>
+                        </RadzenRadioButtonList>
         <h4>Title</h4>
         <RadzenTextBox Change=@(args => OnTitleChange(args.ToString())) />
         <h4>Description</h4>
@@ -63,20 +71,32 @@
                                {
                                    <div><img src="@ImageURLLocal" alt="Character Image" class="img-thumbnail"></div>
                                }
-                               <h4 style="margin-top: 20px;">Add image</h4>
-                               <label for="Image">Image</label>
+                               
+                               @if (chosenType == 0)
+                               {
+                                     <h4 style="margin-top: 20px;">Add image</h4>
+                                      <label for="Image">Image</label>  
+                               }
+                               else
+                               {
+                                   <h4 style="margin-top: 20px;">Add video</h4>
+                                   <label for="Image">Video</label>  
+                               }
+                           
                            </div>
                            <div class="form-group input-group">
                                <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
                                <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
                                </div>
         
-            
-        <button type="button" @onclick="UploadImage" class="btn btn-secondary">UPLOAD IMAGE (NIKO)</button>
                                    
         <div style="margin-top: 20px;">
-          <h4>Content of the article</h4>
-                  <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute />  
+            @if (chosenType == 0)
+            {
+                <h4>Content of the article</h4>
+                            <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute/>
+            }
+            
         </div>
         
                   
@@ -92,7 +112,22 @@
 
 @code {
     
+    //Error boundary
+    private ErrorBoundary? errorBoundary;
+
+    protected override void OnParametersSet()
+    {
+        errorBoundary?.Recover();
+    }
     
+    //
+    private int chosenType = 0;
+
+    private void onChooseType(int type)
+    {
+        chosenType = type;
+    }
+
     //***Properties*** 
     private string imageName = Guid.NewGuid().ToString();
 
@@ -147,16 +182,12 @@
             byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
             var content = new MultipartFormDataContent();
             content.Add(byteContent, "file", imageFile.Name);
-            var response = await Http.PostAsync($"api/image/{imageName}", content);
+            var response = await Http.PostAsync($"api/upload/{imageName}", content);
 
             if (response.IsSuccessStatusCode)
             {
                 ImageURLServer = response.Headers.Location?.ToString();
                 Console.WriteLine(ImageURLServer);
-            }
-            else
-            {
-                Console.WriteLine(response);
             }
         }
     }
@@ -224,7 +255,13 @@
         
         if (response.IsSuccessStatusCode)
         {
+            JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
             ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+        }
+        else
+        {
+            //TODO tjek dette
+            JSRuntime.InvokeAsync<bool>("alert", "En error occurred, try again.");
         }
     }
 
