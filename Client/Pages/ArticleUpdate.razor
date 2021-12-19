@@ -83,6 +83,10 @@
              }
              else
              {
+                 @if (!string.IsNullOrWhiteSpace(VideoURL))
+                 {
+                     <div><img src="@VideoURL" alt="Character Image" class="img-thumbnail"></div>
+                 }
                  <h4 style="margin-top: 20px;">Edit video</h4>
                  <label for="Image">Video</label>  
                  <div class="form-group input-group">

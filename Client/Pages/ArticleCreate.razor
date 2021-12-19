@@ -67,24 +67,26 @@
         </div>
        
         <div class="form-group">
-                               @if (!string.IsNullOrWhiteSpace(ImageURL))
-                               {
-                                   <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
-                               }
+            @if (!string.IsNullOrWhiteSpace(ImageURL))
+            {
+                <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
+            }
                                
-                               @if (ChosenType != 0)
-                               {
-                                     <h4 style="margin-top: 20px;">Add image</h4>
-                                      <label for="Image">Image</label>  
-                               }
-                               else
-                               {
-                                   <h4 style="margin-top: 20px;">Add thumbnail to your video</h4>
-                                   <label for="Image">Image</label>  
-                               }
+            @if (ChosenType != 0)
+            {
+                <h4 style="margin-top: 20px;">Add image</h4>
+                <label for="Image">Image</label>  
+            }
+            else
+            {
+                <h4 style="margin-top: 20px;">Add thumbnail to your video</h4>
+                <label for="Image">Image</label>  
+            }
                            
-                           </div>
-                           <div class="form-group input-group">
+        </div>
+        
+        
+        <div class="form-group input-group">
                                <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
                                <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
                                </div>
@@ -127,6 +129,11 @@
             }
             else
             {
+                @if (!string.IsNullOrWhiteSpace(VideoURL))
+                {
+                    <div><img src="@VideoURL" alt="Character Image" class="img-thumbnail"></div>
+                }
+                
                 <h4 style="margin-top: 20px;">Add video</h4>
                 <label for="Image">Video</label>  
                 <div class="form-group input-group">
