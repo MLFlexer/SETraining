@@ -20,41 +20,41 @@ using SETraining.Shared.Models;
 
 namespace Server.Controllers.Tests;
 
-public class UploadControllerTest
+public class ImageUploadControllerTest
 {
-    private UploadController _controller;
-    public UploadControllerTest()
-    {
-        var repository = new Mock<IUploadRepository>();
-        //Instantiate a IFormFile
-        repository.Setup(m => m.CreateUploadAsync("imageTest", "image.jpg", new MemoryStream()));
-        _controller = new UploadController(repository.Object);
-
-    }
-
-    [Fact]
-    public async Task Post_returns_uri_response()
-    {
-        
-        
-    }
-    
-    [Fact]
-    public async Task Post_returns_Created_Status()
-    {
-        
-        /*//Arrange
-        var stream = File.OpenRead("/Users/nikolajworsoelarsen/Desktop/billede.png");
-        IFormFile formFile = new FormFile(new MemoryStream(), 0, stream.Length, "billede.png", "test");
-        //content.Add();
-        
-        
-        
-        var posted = await _controller.Post("billede.png", formFile);
-        
-        ActionResult a = new BadRequestResult();
-        Assert.Equal(a, posted);*/
-        
-    }
+    // private ImageUploadController _controller;
+    // public ImageUploadControllerTest()
+    // {
+    //     var repository = new Mock<IUploadRepository>();
+    //     //Instantiate a IFormFile
+    //     repository.Setup(m => m.CreateUploadAsync("imageTest", "image.jpg", new MemoryStream()));
+    //     _controller = new ImageUploadController(repository.Object);
+    //
+    // }
+    //
+    // [Fact]
+    // public async Task Post_returns_uri_response()
+    // {
+    //     
+    //     
+    // }
+    //
+    // [Fact]
+    // public async Task Post_returns_Created_Status()
+    // {
+    //     
+    //     /*//Arrange
+    //     var stream = File.OpenRead("/Users/nikolajworsoelarsen/Desktop/billede.png");
+    //     IFormFile formFile = new FormFile(new MemoryStream(), 0, stream.Length, "billede.png", "test");
+    //     //content.Add();
+    //     
+    //     
+    //     
+    //     var posted = await _controller.Post("billede.png", formFile);
+    //     
+    //     ActionResult a = new BadRequestResult();
+    //     Assert.Equal(a, posted);*/
+    //     
+    // }
     
 }

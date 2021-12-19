@@ -96,7 +96,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
 
         var enumerator = expected.GetEnumerator();
 
-        foreach (var item in actual)
+        foreach (var item in actual.Value)
         {
             enumerator.MoveNext();
             Assert.Equal(enumerator.Current, item);

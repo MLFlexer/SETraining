@@ -41,7 +41,7 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<ProgrammingLanguageDTO>> ReadAsync()
+    public async Task<Option<IEnumerable<ProgrammingLanguageDTO>>> ReadAsync()
     {
         return await _context.ProgrammingLanguages.Select(language =>
             new ProgrammingLanguageDTO(language.Name)).ToListAsync();

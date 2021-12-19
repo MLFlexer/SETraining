@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SETraining.Server;
 using SETraining.Server.Controllers;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
@@ -28,7 +29,7 @@ public class ProgrammingLanguagesControllerTest
         var actual = await controller.Get();
 
         //Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.Value);
     }
 
      [Fact]
@@ -41,8 +42,7 @@ public class ProgrammingLanguagesControllerTest
 
          //Act
          var response = await controller.Get("NotALanguage");
-
-         Assert.IsType<NotFoundResult>(response);
+         Assert.IsType<NotFoundResult>(response.Result);
      } 
 
     [Fact]
@@ -60,6 +60,7 @@ public class ProgrammingLanguagesControllerTest
         Assert.Equal(expected, actual.Value);
     }
 
+    //TODO: fix
     //[Fact]
     public async void Create_creates_ProgrammingLanguage()
     {

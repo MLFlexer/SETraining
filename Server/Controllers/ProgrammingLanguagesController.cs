@@ -22,17 +22,18 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<ProgrammingLanguageDTO>> Get()
+        public async Task<ActionResult<IEnumerable<ProgrammingLanguageDTO>>>Get()
         {
-            return await _repository.ReadAsync();
+            var res = await _repository.ReadAsync();
+            return res.ToActionResult();
         }
 
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ProgrammingLanguageDTO), 200)]
         [HttpGet("{name}")]
-        public async Task<Option<ProgrammingLanguageDTO>> Get(string name)
+        public async Task<ActionResult<ProgrammingLanguageDTO>> Get(string name)
         {
-            return await _repository.ReadAsync(@name);
+            return (await _repository.ReadAsync(@name)).ToActionResult();
         }
 
         [Authorize]

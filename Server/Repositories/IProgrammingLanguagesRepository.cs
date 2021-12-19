@@ -8,5 +8,5 @@ public interface IProgrammingLanguagesRepository
 {
     Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageCreateDTO language);
     Task<Option<ProgrammingLanguageDTO>> ReadAsync(string name);
-    Task<IEnumerable<ProgrammingLanguageDTO>> ReadAsync();
+    Task<Option<IEnumerable<ProgrammingLanguageDTO>>> ReadAsync();
 }
