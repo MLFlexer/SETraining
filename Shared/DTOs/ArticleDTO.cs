@@ -10,7 +10,7 @@ public record ArticleDTO(int Id, string Title, ArticleType Type, DateTime Create
 public record ArticleCreateDTO
 {
     public string Title { get; init; }
-    public string Body {get; init; }
+    public string? Body {get; init; }
 
     public ArticleType Type { get; set; }
     public string? Description { get; init; }  

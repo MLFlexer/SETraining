@@ -133,7 +133,6 @@
                     <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
                     <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
                 </div>
-                <button type="button" @onclick="UploadVideo" class="btn btn-secondary">Upload</button>
             }
             
         </div>
@@ -363,6 +362,10 @@
             var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
 
             NavigationManager.NavigateTo(uri);
+        }
+        else
+        {
+            JSRuntime.InvokeAsync<bool>("alert", response.Content.Headers.ToString());
         }
     }
 }

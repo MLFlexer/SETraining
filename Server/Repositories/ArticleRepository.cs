@@ -27,7 +27,8 @@ public class ArticleRepository : IArticleRepository
             AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
             Created = DateTime.Now.ToUniversalTime(),
-            Body = article.Body
+            Body = article.Body,
+            VideoURL = article.VideoURL
             
         };
         _context.Articles.Add(entity);
@@ -307,6 +308,7 @@ public class ArticleRepository : IArticleRepository
         entity.AvgRating = article.AvgRating;
         entity.ImageURL = article.ImageURL;
         entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
+        entity.VideoURL = article.VideoURL;
         
         
         _context.Articles.Add(entity);
