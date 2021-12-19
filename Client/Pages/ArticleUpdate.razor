@@ -15,13 +15,6 @@
     <div class="col-12">
         <RadzenButton style="right:0px; position: absolute;" Click=@(() => Back()) Text="Go Back" ButtonStyle="ButtonStyle.Secondary" />
         <h1>Edit article</h1>
-        <h4>Choose article type</h4>
-                <RadzenRadioButtonList @bind-Value=@ChosenType TValue="int" Change=@((args) => OnChooseType(args))>
-                                    <Items>
-                                        <RadzenRadioButtonListItem Text="Written" Value="0" />
-                                        <RadzenRadioButtonListItem Text="Video" Value="1" />
-                                    </Items>
-                                </RadzenRadioButtonList>
         <h4>Title</h4>
         <RadzenTextBox Value="@TitleInput" Change=@(args => OnTitleChange(args.ToString())) />
         <h4>Description</h4>
@@ -144,7 +137,7 @@
         article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
         HtmlInput = article.Body;
         TitleInput = article.Title;
-        ChosenType = (int) article.Type - 1;
+        ChosenType = (int) article.Type;
         DescriptionInput = article.Description;
         ChosenDifficulty = (int) article.Difficulty -1;
         LoadProgrammingLanguages();
@@ -305,7 +298,7 @@
         var article = new ArticleUpdateDTO
         {
             Body = HtmlInput,
-            Title = TitleInput,
+            Title = String.IsNullOrEmpty(TitleInput) ? null : TitleInput,
             Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
