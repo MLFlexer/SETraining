@@ -22,18 +22,18 @@ namespace SETraining.Server.Controllers
         }
 
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [ProducesResponseType(typeof(ArticlePreviewDTO), 200)]
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<ArticlePreviewDTO>>> Get()
         {
             var res = await _repository.ReadAllArticlesAsync();
             return res.ToActionResult();
         }
 
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ArticleDTO), 200)]
+        [ProducesResponseType(typeof(ArticlePreviewDTO), 200)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ArticleDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
+        public async Task<ActionResult<IEnumerable<ArticlePreviewDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
         {
             var res = await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!);
             return res.ToActionResult();

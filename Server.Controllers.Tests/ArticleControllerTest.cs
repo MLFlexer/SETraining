@@ -42,7 +42,7 @@ public class ArticleControllerTest
     public async void GetAll_given_existing_returns_articles(){
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var expected = Array.Empty<ArticleDTO>();
+        var expected = Array.Empty<ArticlePreviewDTO>();
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.ReadAllArticlesAsync()).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -105,7 +105,7 @@ public class ArticleControllerTest
        //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
-        var created = new List<ArticleDTO> { new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, "Article", null, null)};
+        var created = new List<ArticlePreviewDTO> { new (1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, null)};
         repository.Setup(m => m.ReadAllArticlesFromParametersAsync("DOES_NOT_EXIST", "2", new string[]{"java"})).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
@@ -122,7 +122,7 @@ public class ArticleControllerTest
        {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, new string[]{"Java"}, DifficultyLevel.Expert, 3, "Article", null, null)};
+        var expected = new List<ArticlePreviewDTO> {new ArticlePreviewDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, new string[]{"Java"}, DifficultyLevel.Expert, 3,  null)};
         var repository = new Mock <IArticleRepository>();
         repository.Setup(m => m.ReadAllArticlesFromParametersAsync("title", "3", new string[]{"Java"})).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
