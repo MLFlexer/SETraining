@@ -26,7 +26,9 @@ public class ArticleRepository : IArticleRepository
             Difficulty = article.Difficulty,
             AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
-            Created = DateTime.Now.ToUniversalTime()
+            Created = DateTime.Now.ToUniversalTime(),
+            Body = article.Body
+            
         };
         _context.Articles.Add(entity);
         
@@ -42,7 +44,8 @@ public class ArticleRepository : IArticleRepository
                 entity.Difficulty,
                 entity.AvgRating,
                 entity.Body,
-                entity.ImageURL
+                entity.ImageURL,
+                entity.VideoURL
         ); 
     }
 
@@ -74,7 +77,8 @@ public class ArticleRepository : IArticleRepository
                         c.Difficulty,
                         c.AvgRating,
                         c.Body,
-                        c.ImageURL
+                        c.ImageURL,
+                        c.VideoURL
                     ))
                     .FirstOrDefaultAsync();
     }
@@ -94,7 +98,9 @@ public class ArticleRepository : IArticleRepository
                 c.Difficulty,
                 c.AvgRating,
                 c.Body,
-                c.ImageURL)).ToListAsync();
+                c.ImageURL,
+                c.VideoURL
+                )).ToListAsync();
     }
 
     public async Task<Option<IEnumerable<ArticleDTO>>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
@@ -133,7 +139,8 @@ public class ArticleRepository : IArticleRepository
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body,
-                                content.ImageURL
+                                content.ImageURL,
+                                content.VideoURL
                                 )
                     ).ToListAsync();
         
@@ -155,7 +162,9 @@ public class ArticleRepository : IArticleRepository
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body,
-                                content.ImageURL)
+                                content.ImageURL,
+                                content.VideoURL
+                                )
                     ).ToListAsync();
         
         return result.Any() ? result : null;
@@ -180,7 +189,9 @@ public class ArticleRepository : IArticleRepository
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body,
-                                content.ImageURL)
+                                content.ImageURL,
+                                content.VideoURL
+                                )
                     ).ToListAsync();
         
         return result.Any() ? result : null;
@@ -203,7 +214,9 @@ public class ArticleRepository : IArticleRepository
                         content.Difficulty,
                         content.AvgRating,
                         content.Body,
-                        content.ImageURL)
+                        content.ImageURL,
+                        content.VideoURL
+                        )
             ).ToListAsync();
 
         var result =  all.Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
@@ -218,7 +231,9 @@ public class ArticleRepository : IArticleRepository
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body,
-                                content.ImageURL)
+                                content.ImageURL,
+                                content.VideoURL
+                                )
                     ).ToList();
         
         return result.Any() ? result : null;
@@ -243,7 +258,10 @@ public class ArticleRepository : IArticleRepository
                             content.Difficulty,
                             content.AvgRating,
                             content.Body,
-                            content.ImageURL)
+                            content.ImageURL,
+                            content.VideoURL
+                            
+                            )
                 ).ToListAsync();
 
         var result = allWithDifficulty
@@ -259,7 +277,10 @@ public class ArticleRepository : IArticleRepository
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.Body,
-                                content.ImageURL)
+                                content.ImageURL,
+                                content.VideoURL
+                                
+                                )
                     ).ToList();
 
         return result.Any() ? result : null;
@@ -294,6 +315,8 @@ public class ArticleRepository : IArticleRepository
         return Status.Updated;
     }
 
+    
+    //Heavily inspired by github.com/ondfisk/BDSA2021, credit to Author 
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.

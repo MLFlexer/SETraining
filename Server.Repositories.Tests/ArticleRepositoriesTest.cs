@@ -140,10 +140,10 @@ public class ArticleRepositoriesTest : IDisposable
         //TODO: Hvorfor bliver der sorteret på Article her?
         var contentsFromDB = await _repository.ReadAllArticlesAsync();
         var listContents = contentsFromDB.Value.ToList();
-        var expected_1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(){"Java"}, DifficultyLevel.Expert, null, "<b>Test<b/>", null);
-        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
-        var expected_3 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
-        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null);
+        var expected_1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(){"Java"}, DifficultyLevel.Expert, null, "<b>Test<b/>", null, null);
+        var expected_2 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null, null);
+        var expected_3 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null,null);
+        var expected_4 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today,null, new List<string>(), DifficultyLevel.Expert, null, "<b>Test<b/>", null, null);
         
         //Using string equality, because record equality does not seem to work somehow...
         Assert.Equal(expected_1.ToString(), listContents[0].ToString());
@@ -174,7 +174,7 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task Read_given_existing_id_returns_Article()
     {
         //Arrange
-        var expected = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);
+        var expected = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null, null);
         
         //Act
         var contentFromDB = await _repository.ReadArticleFromIdAsync(1);
@@ -191,8 +191,8 @@ public class ArticleRepositoriesTest : IDisposable
     public async void Read_given_exsiting_title_returns_ArticleList()
     {
         //Arrange
-        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today, null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1, "Coding is fun", null);
-        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today, "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3, "Learning", null);
+        var expected_1 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today, null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1, "Coding is fun", null, null);
+        var expected_2 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today, "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3, "Learning", null, null);
 
         //Act
         var actual = await _repository.ReadArticlesFromTitleAsync("CSharp");
@@ -302,9 +302,9 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_existing_title_AND_no_matching_parameter_on_difficulty_and_language_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 2, "Text", null);      
-        var expected2 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 3, "Text", null);        
-        var expected3 = new ArticleDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, 2, "Read this article", null);        
+        var expected1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 2, "Text", null, null);      
+        var expected2 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 3, "Text", null, null);        
+        var expected3 = new ArticleDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, 2, "Read this article", null, null);        
 
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("Java", "", null);   
@@ -353,8 +353,8 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_difficulty_AND_no_matching_parameter_on_title_and_language_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, 2, "Read this article", null);
-        var expected2 = new ArticleDTO(6, "Golang", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is a description", new string[]{"Golang"}, DifficultyLevel.Novice, 1, "Learn how to write in go", null);
+        var expected1 = new ArticleDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, 2, "Read this article", null, null);
+        var expected2 = new ArticleDTO(6, "Golang", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is a description", new string[]{"Golang"}, DifficultyLevel.Novice, 1, "Learn how to write in go", null, null);
 
 
         //Act
@@ -390,8 +390,8 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_language_AND_no_matching_parameter_on_title_and_difficulty_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1, "Coding is fun", null);
-        var expected2 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today.ToUniversalTime(), "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3, "Learning", null);
+        var expected1 = new ArticleDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1, "Coding is fun", null, null);
+        var expected2 = new ArticleDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today.ToUniversalTime(), "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3, "Learning", null, null);
     
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("", "", new string[]{"CSharp"});   
@@ -427,7 +427,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_title_and_difficulty_AND_no_matching_parameter_on_language_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(8, "Python", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is python", new string[]{"Python"}, DifficultyLevel.Intermediate, 1, "Learn how to write in the very popular language Python", null);  
+        var expected1 = new ArticleDTO(8, "Python", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is python", new string[]{"Python"}, DifficultyLevel.Intermediate, 1, "Learn how to write in the very popular language Python", null, null);  
 
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("Python", "2", null);   
@@ -452,8 +452,8 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_title_and_language_AND_no_matching_parameter_on_difficulty_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 2, "Text", null);      
-        var expected2 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 3, "Text", null);        
+        var expected1 = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 2, "Text", null, null);      
+        var expected2 = new ArticleDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, 3, "Text", null, null);        
 
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("Java", "", new string[]{"Java"});   
@@ -488,7 +488,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_difficulty_and_language_AND_no_matching_parameter_on_title_returns_article(){
         //Arrange
-         var expected1 = new ArticleDTO(9, "Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(), "This a written article", new string[]{"Python"}, DifficultyLevel.Expert, 3, "Very interesting", null); 
+         var expected1 = new ArticleDTO(9, "Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(), "This a written article", new string[]{"Python"}, DifficultyLevel.Expert, 3, "Very interesting", null, null); 
 
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("", "3", new string[]{"Python"});   
@@ -513,7 +513,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Get_given_title_difficulty_languages_returns_article(){
         //Arrange
-        var expected1 = new ArticleDTO(7, "Learn how to write Go", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Golang"}, DifficultyLevel.Intermediate, 3, "Read this article", null);
+        var expected1 = new ArticleDTO(7, "Learn how to write Go", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Golang"}, DifficultyLevel.Intermediate, 3, "Read this article", null, null);
 
         //Act
         var actual = await _repository.ReadAllArticlesFromParametersAsync("Go", "2", new string[]{"Golang"});   

@@ -23,7 +23,7 @@ public class ArticleControllerTest
     {
         var logger = new Mock<ILogger<ArticleController>>();
         var toCreate = new ArticleCreateDTO();
-        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);        
+        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null, null);        
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.CreateArticleAsync(toCreate)).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -87,7 +87,7 @@ public class ArticleControllerTest
        {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var expected = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null);
+        var expected = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today,null, null, DifficultyLevel.Expert, null, "Article", null, null);
         var repository = new Mock<IArticleRepository>();
         repository.Setup(m => m.ReadArticleFromIdAsync(1)).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -105,7 +105,7 @@ public class ArticleControllerTest
        //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
-        var created = new List<ArticleDTO> { new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, "Article", null)};
+        var created = new List<ArticleDTO> { new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, "Article", null, null)};
         repository.Setup(m => m.ReadAllArticlesFromParametersAsync("DOES_NOT_EXIST", "2", new string[]{"java"})).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
         //Act
@@ -122,7 +122,7 @@ public class ArticleControllerTest
        {
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
-        var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, new string[]{"Java"}, DifficultyLevel.Expert, 3, "Article", null)};
+        var expected = new List<ArticleDTO> {new ArticleDTO(1, "This is a title", ArticleType.Written, DateTime.Today, null, new string[]{"Java"}, DifficultyLevel.Expert, 3, "Article", null, null)};
         var repository = new Mock <IArticleRepository>();
         repository.Setup(m => m.ReadAllArticlesFromParametersAsync("title", "3", new string[]{"Java"})).ReturnsAsync(expected);
         var controller = new ArticleController(logger.Object, repository.Object);
@@ -205,7 +205,7 @@ public class ArticleControllerTest
         //Arrange
         var logger = new Mock<ILogger<ArticleController>>();
         var repository = new Mock<IArticleRepository>();
-        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, null, "Article", null);        
+        var created = new ArticleDTO(1, "Dette er en title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, null, "Article", null, null);        
         repository.Setup(m => m.DeleteArticleAsync(created.Id)).ReturnsAsync(Status.Deleted);
         var controller = new ArticleController(logger.Object, repository.Object);
 

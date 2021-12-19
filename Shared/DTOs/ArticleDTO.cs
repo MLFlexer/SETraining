@@ -5,7 +5,7 @@ namespace SETraining.Shared.DTOs;
 
 
 
-public record ArticleDTO(int Id, string Title, ArticleType Type, DateTime Created, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel Difficulty, int? AvgRating, string Body, string? ImageURL);
+public record ArticleDTO(int Id, string Title, ArticleType Type, DateTime Created, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel Difficulty, int? AvgRating, string Body, string? ImageURL, string? VideoURL);
 
 public record ArticleCreateDTO
 {
@@ -18,6 +18,8 @@ public record ArticleCreateDTO
     public DifficultyLevel Difficulty { get; init; }
 
     public string? ImageURL { get; set; }
+    
+    public string? VideoURL { get; set; }
 
     public int? AvgRating { get; init; }
 }

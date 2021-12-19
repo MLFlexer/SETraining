@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SETraining.Server;
 using SETraining.Server.Controllers;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
@@ -28,24 +29,21 @@ public class ProgrammingLanguagesControllerTest
         var actual = await controller.Get();
 
         //Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.Value);
     }
 
-    //TODO: Fix test after adding ToActionResult
-    /* [Fact]
-    public async void Get_given_non_existing_name_returns_NotFound(){
-        //Arrange
-        var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
-        var repository = new Mock<IProgrammingLanguagesRepository>();
-        repository.Setup(m => m.ReadAsync("NotALanguage")).ReturnsAsync(default(ProgrammingLanguageDTO));
-        var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
+     [Fact]
+     public async void Get_given_non_existing_name_returns_NotFound(){
+         //Arrange
+         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
+         var repository = new Mock<IProgrammingLanguagesRepository>();
+         repository.Setup(m => m.ReadAsync("NotALanguage")).ReturnsAsync(default(ProgrammingLanguageDTO));
+         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
 
-        //Act
-        var response = await controller.Get("NotALanguage");
-
-        //Assert
-        //Assert.IsType<NotFoundResult>(response);
-    } */
+         //Act
+         var response = await controller.Get("NotALanguage");
+         Assert.IsType<NotFoundResult>(response.Result);
+     } 
 
     [Fact]
     public async void Get_given_existing_name_returns_ProgrammingLanguage()
@@ -62,6 +60,7 @@ public class ProgrammingLanguagesControllerTest
         Assert.Equal(expected, actual.Value);
     }
 
+    //TODO: fix
     //[Fact]
     public async void Create_creates_ProgrammingLanguage()
     {

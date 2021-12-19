@@ -28,7 +28,9 @@ builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguages
 builder.Services.AddSwaggerGen();
 
 var blobContainerConns = builder.Configuration.GetConnectionString("AzureBlob");
+Console.WriteLine(blobContainerConns);
 builder.Services.AddScoped<BlobContainerClient>(_ => new BlobContainerClient(blobContainerConns, "setrainingupload"));
+
 
 var app = builder.Build();
 
@@ -64,3 +66,6 @@ app.MapFallbackToFile("index.html");
 app.Seed();
 
 app.Run();
+
+
+

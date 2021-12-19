@@ -5,6 +5,8 @@
 @inject IHttpClientFactory _httpClientFactory
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Globalization
+@using SETraining.Shared.Models
 
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
@@ -27,9 +29,11 @@
     <div>
         <RadzenImage Path="@(article.ImageURL?? "placeholder_small.jpg")" Class="img-fluid" Style="margin-top: 100px; border-radius: 5px;"/>
         <h1 class="mb-0">@(article.Title)</h1>
-
         <div>
-            Article
+            @article.Created.ToString("D")
+        </div>
+        <div>
+            @article.Type
         </div>
         <div style="font-size: .8em">@article.Description
         </div>
@@ -51,10 +55,27 @@
     
     <hr/>
     
-    
-    <div style="width: 100%; height: 500px; margin-top: 10px">
-        @((MarkupString) article.Body)
-    </div>
+    if (article.Type == ArticleType.Written)
+    {
+         <div style="width: 100%; height: 500px; margin-top: 10px">
+                @((MarkupString) article.Body)
+            </div>
+    }
+    else
+    {
+        if (article.VideoURL != null)
+        {
+            <BlazoredVideo
+                class="w-100"
+                style="max-width:800px;"
+                controls="controls">
+                autoplay="autoplay" 
+                <source src="@article.VideoURL" type="video/mp4"/>
+            </BlazoredVideo>
+        }
+        
+    }
+
 
 }
 </div>

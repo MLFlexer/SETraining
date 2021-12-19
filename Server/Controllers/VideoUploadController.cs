@@ -10,19 +10,16 @@ namespace SETraining.Server.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]
-public class UploadController : Controller
+public class VideoUploadController : Controller
 {
     private readonly IUploadRepository _repository;
     
-    private readonly IReadOnlyCollection<string> _allowedContentTypes = new[]
+    private readonly IReadOnlyCollection<string> _allowedContent = new[]
     {
-        "image/gif",
-        "image/jpeg",
-        "image/png",
         "video/mp4"
     };
 
-    public UploadController(IUploadRepository repository)
+    public VideoUploadController(IUploadRepository repository)
     {
         _repository = repository;
     }
@@ -32,13 +29,17 @@ public class UploadController : Controller
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post(string name, [FromForm] IFormFile file)
     {
-        if (!_allowedContentTypes.Contains(file.ContentType))
+        if (!_allowedContent.Contains(file.ContentType))
         {
-            return BadRequest("Content type not allowed");
+            return BadRequest("This content type is not permitted");
         }
 
+        
         var (status, uri) = await _repository.CreateUploadAsync(name.ToString(), file.ContentType, file.OpenReadStream());
 
+        Console.WriteLine(status.ToString());
+        Console.WriteLine(uri);
+        
         return status == Status.Created
             ? new CreatedResult(uri, null)
             : status.ToActionResult();
