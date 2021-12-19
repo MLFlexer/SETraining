@@ -57,32 +57,39 @@
             }
             
             
-             @if (ChosenType == 0)
+             @if (ChosenType != 0)
              {
-                 <h4 style="margin-top: 20px;">Add image</h4>
+                 <h4 style="margin-top: 20px;">Edit image</h4>
                  <label for="Image">Image</label>  
              }
              else
              {
-                 <h4 style="margin-top: 20px;">Add video</h4>
-                 <label for="Image">Video</label>  
+                 <h4 style="margin-top: 20px;">Edit thumbnail image</h4>
+                 <label for="Image">Image</label>  
              }
             
         </div>
         <div class="form-group input-group">
-            <InputFile id="Image" OnChange="@OnFileSelection" class="form-control" />
+            <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
             <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
-            <button type="button" @onclick="UploadImage" class="btn btn-secondary">UPLOAD</button>
         </div>
 
         
         <div style="margin-top: 20px;">
-             @if (ChosenType == 0)
+             @if (ChosenType != 0)
              {
                  <h4>Content of the article</h4>
-                 <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste Execute=@OnExecute/>  
+                 <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste />  
              }
-            
+             else
+             {
+                 <h4 style="margin-top: 20px;">Edit video</h4>
+                 <label for="Image">Video</label>  
+                 <div class="form-group input-group">
+                     <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
+                     <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
+                     </div>
+             }
         </div>
         
     </div>
@@ -100,18 +107,16 @@
 
 @code {
     
-    private int ChosenType = 0;
-
-    private void OnChooseType(int type)
-    {
-        ChosenType = type;
-    }
-    
     //***Properties*** 
+    private int ChosenType;
     private string ImageName = Guid.NewGuid().ToString();
+    private string? ImageURL;
+    private IBrowserFile? ImageFile;
+    
+    private string VideoName = Guid.NewGuid().ToString();
+    private string? VideoURL;
+    private IBrowserFile? VideoFile;
 
-    private string ImageURL = string.Empty;
-    private IBrowserFile? imageFile;
     
     string HtmlInput;
     string TitleInput;
@@ -142,6 +147,12 @@
         ChosenDifficulty = (int) article.Difficulty -1;
         LoadProgrammingLanguages();
         LoadImage();
+
+        Console.WriteLine(ChosenType);
+        if (article.Type == ArticleType.Video)
+        {
+            LoadVideo();
+        }
     }
 
     void LoadProgrammingLanguages()
@@ -156,7 +167,7 @@
         ChosenLanguages = temp;
     }
 
-    void LoadImage()
+    private void LoadImage()
     {
         if (!string.IsNullOrWhiteSpace(article.ImageURL))
         {
@@ -166,17 +177,17 @@
     }
 
     //Methods for image uploads
-    private async Task OnFileSelection(InputFileChangeEventArgs e)
+    private async Task OnImageFileSelection(InputFileChangeEventArgs e)
     {
         ClearImage();
         
-        imageFile = e.GetMultipleFiles().FirstOrDefault();
+        ImageFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (imageFile != null)
+        if (ImageFile != null)
         {
-            var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
-            var contentType = imageFile.ContentType;
+            var bytes = new byte[ImageFile.Size];
+            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var contentType = ImageFile.ContentType;
             ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
 
         }
@@ -186,14 +197,14 @@
     {
     //IMAGE UPLOAD 
         
-        if (imageFile != null)
+        if (ImageFile != null)
         {
-            var bytes = new byte[imageFile.Size];
-            await imageFile.OpenReadStream(100000000).ReadAsync(bytes);
+            var bytes = new byte[ImageFile.Size];
+            await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var byteContent = new ByteArrayContent(bytes);
-            byteContent.Headers.ContentType = new MediaTypeHeaderValue(imageFile.ContentType);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue(ImageFile.ContentType);
             var content = new MultipartFormDataContent();
-            content.Add(byteContent, "file", imageFile.Name);
+            content.Add(byteContent, "file", ImageFile.Name);
             var response = await Http.PostAsync($"api/ImageUpload/{ImageName}", content);
 
             if (response.IsSuccessStatusCode)
@@ -212,31 +223,87 @@
     {
         ImageName = Guid.NewGuid().ToString();
         ImageURL = null;
-        imageFile = null;
+        ImageFile = null;
     }
+    
+    
+    //Methods for video upload
+    private void LoadVideo()
+    {
+        if (!string.IsNullOrWhiteSpace(article.VideoURL))
+        {
+            VideoURL = $"{article.VideoURL}?nocache={Guid.NewGuid()}";
+            VideoName = VideoURL.Split("/").Last();
+        }
+    } 
+    
+    
+    private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
+    {
+        ClearVideo();
+        VideoFile = e.GetMultipleFiles().FirstOrDefault();
+        
+        if (VideoFile != null)
+        {
+            var bytes = new byte[VideoFile.Size];
+            await VideoFile.OpenReadStream(1000000000).ReadAsync(bytes);
+            var contentType = VideoFile.ContentType;
+            VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
+        }
+    }
+    
+    
+    private async Task UploadVideo()
+    {
+
+        if (VideoFile != null)
+        {
+            var bytes = new byte[VideoFile.Size];
+            await VideoFile.OpenReadStream(1000000000).ReadAsync(bytes);
+            var byteContent = new ByteArrayContent(bytes);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue(VideoFile.ContentType);
+            var content = new MultipartFormDataContent();
+            content.Add(byteContent, "file", VideoFile.Name);
+            var response = await Http.PostAsync($"api/VideoUpload/{VideoName}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                VideoURL = response.Headers.Location?.ToString();
+                Console.WriteLine(VideoURL);
+            }
+        }
+    }
+    
+    
+
+    private void ClearVideo()
+    {
+        VideoName = Guid.NewGuid().ToString();
+        VideoURL = null;
+        VideoFile = null;
+    }
+    
+    
     
     //HTML Editor and required properties
     
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
-        // console.Log($"Paste: {args.Html}");
+        HtmlInput = args.Html;
     }
     
     void OnTitleChange(string title)
     {
-    // console.Log($"Change: {html}");
         TitleInput = title;
     }
     
     void OnDescriptionChange(string description)
     {
-    // console.Log($"Change: {html}");
         DescriptionInput = description;
     }
     
     void OnHtmlChange(string html)
     {
-    // console.Log($"Change: {html}");
         HtmlInput = html;
     }
     
@@ -245,10 +312,6 @@
         ChosenDifficulty = value;
     }
     
-    void OnExecute(HtmlEditorExecuteEventArgs args)
-    {
-        // console.Log($"Execute: {args.CommandName}");
-    }
     
     void OnChooseLanguages(IEnumerable<int> value)
     {
@@ -290,10 +353,8 @@
     //Update article
     private async Task UpdateArticle()
     {
-        Console.WriteLine(ImageURL);
         await UploadImage();
-
-        Console.WriteLine(ImageURL);
+        await UploadVideo();
         
         var article = new ArticleUpdateDTO
         {
@@ -303,7 +364,8 @@
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
-            ImageURL = ImageURL
+            ImageURL = ImageURL,
+            VideoURL = VideoURL
             
         };
         

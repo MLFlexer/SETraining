@@ -20,8 +20,8 @@
         <h4>Choose article type</h4>
         <RadzenRadioButtonList @bind-Value=@ChosenType TValue="int" Change=@((args) => OnChooseType(args))>
                             <Items>
-                                <RadzenRadioButtonListItem Text="Written" Value="0" />
-                                <RadzenRadioButtonListItem Text="Video" Value="1" />
+                                <RadzenRadioButtonListItem Text="Video" Value="0" />
+                                <RadzenRadioButtonListItem Text="Written" Value="1" />
                             </Items>
                         </RadzenRadioButtonList>
         <h4>Title</h4>
@@ -72,7 +72,7 @@
                                    <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
                                }
                                
-                               @if (ChosenType == 0)
+                               @if (ChosenType != 0)
                                {
                                      <h4 style="margin-top: 20px;">Add image</h4>
                                       <label for="Image">Image</label>  
@@ -80,7 +80,7 @@
                                else
                                {
                                    <h4 style="margin-top: 20px;">Add thumbnail to your video</h4>
-                                   <label for="Image">Thumbnail</label>  
+                                   <label for="Image">Image</label>  
                                }
                            
                            </div>
@@ -91,7 +91,7 @@
         
                                    
         <div style="margin-top: 20px;">
-            @if (ChosenType == 0)
+            @if (ChosenType != 0)
             {
                 <h4>Content of the article</h4>
                 <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" Change=@OnHtmlChange Paste=@OnPaste>
@@ -151,14 +151,14 @@
 @code {
     
     //Properties
-    private int ChosenType = 0;
+    private int ChosenType;
     
     private string ImageName = Guid.NewGuid().ToString();
-    private string ImageURL = string.Empty;
+    private string? ImageURL;
     private IBrowserFile? ImageFile;
     
     private string VideoName = Guid.NewGuid().ToString();
-    private string VideoURL = string.Empty;
+    private string? VideoURL;
     private IBrowserFile? VideoFile;
     
     
@@ -189,6 +189,7 @@
     //Methods for image uploads
     private async Task OnImageFileSelection(InputFileChangeEventArgs e)
     {
+        ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
 
         if (ImageFile != null)
@@ -223,13 +224,15 @@
     
     private void ClearImage()
     {
-        ImageURL = string.Empty;
+        ImageName = Guid.NewGuid().ToString();
+        ImageURL = null;
         ImageFile = null;
     }
     
     //Methods for video upload
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
+        ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
 
         if (VideoFile != null)
@@ -267,7 +270,8 @@
 
     private void ClearVideo()
     {
-        VideoURL = string.Empty;
+        VideoName = Guid.NewGuid().ToString();
+        VideoURL = null;
         VideoFile = null;
     }
     
@@ -345,7 +349,7 @@
         {
             Body = HtmlInput,
             Title = TitleInput,
-            Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
+            Type = ChosenType == 0 ? ArticleType.Video : ArticleType.Written,
             Description = DescriptionInput,
             ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
             Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),

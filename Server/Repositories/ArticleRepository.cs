@@ -19,11 +19,10 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<ArticleDTO> CreateArticleAsync(ArticleCreateDTO article)
     {
-        var entity = new Article(article.Title, article.Type, DateTime.Today, DifficultyLevel.Expert)
+        var entity = new Article(article.Title, article.Type, DateTime.Today, article.Difficulty)
         {
             Description = article.Description,
             ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync(),
-            Difficulty = article.Difficulty,
             AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
             Created = DateTime.Now.ToUniversalTime(),
