@@ -22,39 +22,81 @@ namespace Server.Controllers.Tests;
 
 public class ImageUploadControllerTest
 {
-    // private ImageUploadController _controller;
-    // public ImageUploadControllerTest()
-    // {
-    //     var repository = new Mock<IUploadRepository>();
-    //     //Instantiate a IFormFile
-    //     repository.Setup(m => m.CreateUploadAsync("imageTest", "image.jpg", new MemoryStream()));
-    //     _controller = new ImageUploadController(repository.Object);
-    //
-    // }
-    //
-    // [Fact]
-    // public async Task Post_returns_uri_response()
-    // {
-    //     
-    //     
-    // }
-    //
-    // [Fact]
-    // public async Task Post_returns_Created_Status()
-    // {
-    //     
-    //     /*//Arrange
-    //     var stream = File.OpenRead("/Users/nikolajworsoelarsen/Desktop/billede.png");
-    //     IFormFile formFile = new FormFile(new MemoryStream(), 0, stream.Length, "billede.png", "test");
-    //     //content.Add();
-    //     
-    //     
-    //     
-    //     var posted = await _controller.Post("billede.png", formFile);
-    //     
-    //     ActionResult a = new BadRequestResult();
-    //     Assert.Equal(a, posted);*/
-    //     
-    // }
+    private ImageUploadController _controller;
+    
+    [Fact]
+    public async Task Create_With_Invalid_ContentType_Returns_BadResult () {
+        //Arrange
+        
+        //Setup mock file using a memory stream
+        var Content = "Hello World from a Fake File";
+        Uri ReturnURI = new Uri("https://localhost:7021/mock_video"); 
+        var FileName = "test.mp4";
+        var ContentType = "video/mp4";
+        var Stream = new MemoryStream();
+        var Writer = new StreamWriter(Stream);
+        await Writer.WriteAsync(Content);
+        await Writer.FlushAsync();
+        Stream.Position = 0;
+        
+        var response = (Status.Created, ReturnURI);
+
+        //create FormFile with desired data
+        IFormFile file = new FormFile(Stream, 0, Stream.Length, "id_from_form", FileName)
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = ContentType
+        };
+        
+        
+        var repository = new Mock<IUploadRepository>();
+        repository.Setup(m => m.CreateUploadAsync(FileName, ContentType, Stream )).ReturnsAsync(response);
+        var controller = new ImageUploadController(repository.Object);
+        
+        
+        //Act
+        var actual = await controller.Post(FileName, file);
+
+        //Assert
+        Assert.IsType<BadRequestObjectResult>(actual);
+    }
+    
+    [Fact]
+    public async Task Create_With_Right_ContentType_Returns_Created () {
+        //Arrange
+        
+        //Setup mock file using a memory stream
+        var Content = "Hello World from a Fake File";
+        var ReturnURI = new Uri("https://localhost:7021/mock_img"); 
+        var FileName = "test.jpeg";
+        var ContentType = "image/jpeg";
+        var Stream = new MemoryStream();
+        var Writer = new StreamWriter(Stream);
+        await Writer.WriteAsync(Content);
+        await Writer.FlushAsync();
+        Stream.Position = 0;
+        
+        var response = (Status.Created, ReturnURI);
+
+        //Create FormFile with desired data
+        IFormFile file = new FormFile(Stream, 0, Stream.Length, "id_from_form", FileName)
+        {
+            Headers = new HeaderDictionary(),
+            ContentType = ContentType
+        };
+        
+        
+        var repository = new Mock<IUploadRepository>();
+        repository.Setup(m => m.CreateUploadAsync(FileName, ContentType, Stream )).ReturnsAsync(response);
+        var controller = new ImageUploadController(repository.Object);
+        
+        
+        //Act
+        var actual = await controller.Post(FileName, file);
+
+        //Assert
+        Assert.IsType<BadRequestObjectResult>(actual);
+    }
     
 }
+

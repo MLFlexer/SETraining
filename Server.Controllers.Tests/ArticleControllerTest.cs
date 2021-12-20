@@ -53,20 +53,19 @@ public class ArticleControllerTest
         Assert.Equal(expected, actual.Value);
     }
 
-    // TODO: skal lige laves færdig, rammer et problem ift default(ArticleDTO) og tror det omhandler den der option klasse.
-    //  [Fact]
-    // public async void Get_given_non_existing_returns_notfound(){
-    //     //Arrange
-    //     var logger = new Mock<ILogger<ArticleController>>();
-    //     var repository = new Mock<IArticleRepository>();
-    //     repository.Setup(m => m.ReadAllArticlesAsync()).ReturnsAsync(default(ArticleDTO));
-    //     var controller = new ArticleController(logger.Object, repository.Object);
-    //     //Act
-    //     var actual = await controller.Get();
+     [Fact]
+    public async void Get_given_non_existing_returns_notfound(){
+        //Arrange
+        var logger = new Mock<ILogger<ArticleController>>();
+        var repository = new Mock<IArticleRepository>();
+        repository.Setup(m => m.ReadAllArticlesAsync()).ReturnsAsync(default(Option<IEnumerable<ArticlePreviewDTO>>));
+        var controller = new ArticleController(logger.Object, repository.Object);
+        //Act
+        var actual = await controller.Get();
         
-    //     //Assert
-    //     Assert.Equal(expected, actual);
-    // }
+        //Assert
+        Assert.IsType<NotFoundResult>(actual.Result);;
+    }
    
     [Fact]
     public async void Get_given_non_existing_id_returns_notfound()
@@ -97,8 +96,7 @@ public class ArticleControllerTest
         Assert.Equal(expected, actual.Value);
         
     }
-
-    //TODO, denne test skal måske skrives om så den retunerer NotFound.
+       
     [Fact]
     public async void Get_given_non_existing_paramerets_returns_null()
     {
@@ -108,11 +106,11 @@ public class ArticleControllerTest
         var created = new List<ArticlePreviewDTO> { new (1, "This is a title", ArticleType.Written, DateTime.Today, null, null, DifficultyLevel.Expert, 4, null)};
         repository.Setup(m => m.ReadAllArticlesFromParametersAsync("DOES_NOT_EXIST", "2", new string[]{"java"})).ReturnsAsync(created);
         var controller = new ArticleController(logger.Object, repository.Object);
+        
         //Act
-        //var actual = await controller.GetFromTitle("DOES_NOT_EXIST");
         var actual = await controller.GetFromParameters("DOES_NOT_EXIST", "2", null);
+        
         //Assert
-
         Assert.IsType<NotFoundResult>(actual.Result);
     } 
 
@@ -132,37 +130,7 @@ public class ArticleControllerTest
         Assert.Equal(expected, actual.Value);
         
        }
-
-    //TODO : alle disse er navne på test som skal ind i repo!!
-    // [Fact]
-    // public async void Get_given_existing_title_AND_no_matching_parameter_on_difficulty_and_language_returns_article(){
-
-    // }
-    // [Fact]
-    // public async void Get_given_difficulty_AND_no_matching_parameter_on_title_and_language_returns_article(){
-    // }
        
-    // [Fact]
-    // public async void Get_given_language_AND_no_matching_parameter_on_title_and_difficulty_returns_article(){
-    // }
-    
-
-    // [Fact]
-    // public async void Get_given_title_and_difficulty_AND_no_matching_parameter_on_language_returns_article(){}
-
-
-    // [Fact]
-    // public async void Get_given_title_and_language_AND_no_matching_parameter_on_difficulty_returns_article(){}
-
-
-    // [Fact]
-    // public async void Get_given_difficulty_and_language_AND_no_matching_parameter_on_title_returns_article(){}
-
-    // [Fact]
-    // public async void Get_given_one_language_returns_article(){}
-
-       
-
 
     [Fact]
     public async void Put_given_exisiting_article_updates_article()
