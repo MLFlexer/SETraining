@@ -1,9 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
-using SETraining.Shared;
 
 namespace SETraining.Server.Controllers
 {
@@ -22,7 +20,7 @@ namespace SETraining.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProgrammingLanguageDTO>>>Get()
+        public async Task<ActionResult<IEnumerable<ProgrammingLanguageDTO>>> Get()
         {
             var res = await _repository.ReadAsync();
             return res.ToActionResult();
