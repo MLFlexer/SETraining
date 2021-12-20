@@ -110,7 +110,7 @@
     IEnumerable<string> SelectedProgrammingLanguages = new List<string>();
     string? SelectedDifficultyLevel;
     
-    ArticleDTO[]? Articles;
+    ArticlePreviewDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
     string searchedTitle = "";
     
@@ -120,13 +120,13 @@
     protected override async Task OnInitializedAsync()
     {
         anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
-        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
+        Articles =  await anonymous.GetFromJsonAsync<ArticlePreviewDTO[]>("api/Article/all");
         ProgrammingLanguages = await anonymous.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
 
     private async Task ClearResult()
     {
-        Articles =  await anonymous.GetFromJsonAsync<ArticleDTO[]>("api/Article/all");
+        Articles =  await anonymous.GetFromJsonAsync<ArticlePreviewDTO[]>("api/Article/all");
         searchedTitle = "";
         SelectedDifficultyLevel = null;
         SelectedProgrammingLanguages = new List<string>();
@@ -141,18 +141,18 @@
             searchedTitle = title;
             var URIParams = BuildURIString();
         
-            Articles = await anonymous.GetFromJsonAsync<ArticleDTO[]>($"api/Article{URIParams}");
+            Articles = await anonymous.GetFromJsonAsync<ArticlePreviewDTO[]>($"api/Article{URIParams}");
 
         }
         catch (Exception e)
         {
-            Articles = Array.Empty<ArticleDTO>();
+            Articles = Array.Empty<ArticlePreviewDTO>();
         }
         
         StateHasChanged();
     }
 
-    private void ViewArticle(ArticleDTO article)
+    private void ViewArticle(ArticlePreviewDTO article)
     {
         var uri = $"{NavigationManager.BaseUri}ArticleDetails/{article.Id}";
 

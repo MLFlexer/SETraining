@@ -4,8 +4,9 @@ using SETraining.Shared.Models;
 namespace SETraining.Shared.DTOs;
 
 
+public record ArticlePreviewDTO(int Id, string Title, ArticleType Type, DateTime Created, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel Difficulty, int? AvgRating, string? ImageURL);
 
-public record ArticleDTO(int Id, string Title, ArticleType Type, DateTime Created, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel Difficulty, int? AvgRating, string Body, string? ImageURL, string? VideoURL);
+public record ArticleDTO(int Id, string Title, ArticleType Type, DateTime Created, string? Description, ICollection<string>? ProgrammingLanguages, DifficultyLevel Difficulty, int? AvgRating, string? Body, string? ImageURL, string? VideoURL);
 
 public record ArticleCreateDTO
 {

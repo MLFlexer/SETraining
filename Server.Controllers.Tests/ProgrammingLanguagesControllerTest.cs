@@ -61,7 +61,7 @@ public class ProgrammingLanguagesControllerTest
     }
 
     //TODO: fix
-    //[Fact]
+    [Fact]
     public async void Create_creates_ProgrammingLanguage()
     {
         //TODO FIX LOGIC
@@ -71,13 +71,12 @@ public class ProgrammingLanguagesControllerTest
         var repository = new Mock<IProgrammingLanguagesRepository>();
         repository.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(created);
         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
-
+        
         // Act
-        var result = await controller.Post(toCreate) as CreatedAtRouteResult;
+        var result = await controller.Post(toCreate) as CreatedAtActionResult;
 
-        // Assert
         Assert.Equal(created, result?.Value);
-        Assert.Equal("Get", result?.RouteName);
+        Assert.Equal("Get", result?.ActionName);
         Assert.Equal(KeyValuePair.Create("Name", (object?)"NewLanguage"), result?.RouteValues?.Single());
     }
 }
