@@ -9,7 +9,7 @@ public class ProgrammingLanguage
         Name = name;
     }
 
-    [Key]        
+    [Key]
     public string Name { get; set; }
 
     public ICollection<Article>? Articles { get; set; }

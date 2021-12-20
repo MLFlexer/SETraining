@@ -15,8 +15,6 @@ public class UploadRepository : IUploadRepository
 
     public async Task<(Status status, Uri uri)> CreateUploadAsync(string name, string contentType, Stream stream)
     {
-
-        
         var client = _client.GetBlockBlobClient(name);
         
         await client.UploadAsync(stream);

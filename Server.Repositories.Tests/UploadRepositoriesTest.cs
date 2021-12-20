@@ -1,12 +1,4 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
-using Azure.Identity;
-using Azure.Storage;
 using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using SETraining.Server.Repositories;
 using SETraining.Shared;
 using Xunit;
@@ -42,7 +34,7 @@ public class UploadRepositoriesTest : IDisposable
         var ExpectedResult = Status.Created;
         
         //Act
-        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
+        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg", new MemoryStream());
 
         //Assert
         Assert.Equal(ExpectedResult, result.status); 
@@ -55,10 +47,10 @@ public class UploadRepositoriesTest : IDisposable
         var ExpectedURI = new Uri("http://127.0.0.1:10000/devstoreaccount1/imagetest/tester.jpg");
 
         //Act
-        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
+        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg", new MemoryStream());
         
         //Assert
-        Assert.Equal(ExpectedURI,result.uri); 
+        Assert.Equal(ExpectedURI, result.uri); 
     }
     
     public void Dispose()
