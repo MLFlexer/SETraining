@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
-using SETraining.Shared.ExtensionMethods;
 
 namespace SETraining.Server.Controllers
 {
