@@ -34,19 +34,6 @@ public class UploadRepositoriesTest : IDisposable
         _containerClient = _serviceClient.CreateBlobContainer("imagetest");
         _repository = new UploadRepository(_containerClient);
     }
-
-    [Fact]
-    public async Task CreateUploadAsync_returns_status_uri()
-    {
-        //Arrange
-        var ExpectedResult = Status.Created;
-        
-        //Act
-        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
-
-        //Assert
-        Assert.NotNull(result.uri);
-    }
     
     [Fact]
     public async Task CreateUploadAsync_returns_status_Created()
@@ -58,26 +45,22 @@ public class UploadRepositoriesTest : IDisposable
         var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
 
         //Assert
-        Assert.Equal(result.status, ExpectedResult); 
+        Assert.Equal(ExpectedResult, result.status); 
     }
-    
-    
-    //TODO: ikke færdig
+
     [Fact]
-    public async Task Uploaded_has_correct_media_type()
+    public async Task CreateUploadAsync_returns_status_URI_On_Success()
     {
         //Arrange
-        var ExpectedResult = Status.Created;
-        
+        var ExpectedURI = new Uri("http://127.0.0.1:10000/devstoreaccount1/imagetest/tester.jpg");
+
         //Act
-        var result = await _repository.CreateUploadAsync("tester.jpg", "mp4",  new MemoryStream());
+        var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg",  new MemoryStream());
         
         //Assert
-        Assert.Equal(result.status, ExpectedResult); 
+        Assert.Equal(ExpectedURI,result.uri); 
     }
     
-    //TODO: Lav test med data fra stream
-
     public void Dispose()
     {
          _containerClient.Delete();
