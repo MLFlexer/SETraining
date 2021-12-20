@@ -19,40 +19,32 @@
         <h1>Create a new article</h1>
         <h4>Choose article type</h4>
         <RadzenRadioButtonList @bind-Value=@ChosenType TValue="int" Change=@((args) => OnChooseType(args))>
-                            <Items>
-                                <RadzenRadioButtonListItem Text="Written" Value="0" />
-                                <RadzenRadioButtonListItem Text="Video" Value="1" />
-                            </Items>
-                        </RadzenRadioButtonList>
+            <Items>
+                <RadzenRadioButtonListItem Text="Written" Value="0" />
+                <RadzenRadioButtonListItem Text="Video" Value="1" />
+            </Items>
+        </RadzenRadioButtonList>
         <h4>Title</h4>
         <RadzenTextBox Change=@(args => OnTitleChange(args.ToString())) />
         <h4>Description</h4>
         <RadzenTextBox Change=@(args => OnDescriptionChange(args.ToString())) />
-
+        
         @if (ProgrammingLanguages != null)
-       {
+        {
            <div style="margin-top: 20px;">
                <h4>Choose existing languages</h4>
-             
-                      
-                       
-                             <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
-                                 <Items>
-                                      @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
-                                      {
-                                          <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
-                                      }
-                                 </Items>
-                                 </RadzenCheckBoxList>                     
-       
-               <div style="margin-top: 10px; margin-left: 5px;">Or add new language</div>
-                <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-20" />
-                <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+               <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
+                    <Items>
+                        @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
+                        {
+                            <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
+                        }
+                    </Items>
+                    </RadzenCheckBoxList>
+                    <div style="margin-top: 10px; margin-left: 5px;">Or add new language</div>
+                    <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-20" />
+                    <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
            </div>
-       
-       
-       
-       
        }
         
         <div style="margin-top: 20px;">
@@ -141,7 +133,8 @@
     </div>
   
 </div>
-  <RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
+
+<RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
 
   
         
@@ -320,13 +313,13 @@
         
         if (response.IsSuccessStatusCode)
         {
-            JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
+            await JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
             ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
         }
         else
         {
             //TODO tjek dette
-            JSRuntime.InvokeAsync<bool>("alert", "En error occurred, try again.");
+            await JSRuntime.InvokeAsync<bool>("alert", "An error occurred, try again.");
         }
     }
 
@@ -338,34 +331,42 @@
     //Publish article
     private async Task PublishArticle()
     {
-        await UploadImage();
-        await UploadVideo();
-        
-        var article = new ArticleCreateDTO
+        try
         {
-            Body = HtmlInput,
-            Title = TitleInput,
-            Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
-            Description = DescriptionInput,
-            ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
-            ImageURL = ImageURL,
-            VideoURL = VideoURL
+            if(string.IsNullOrWhiteSpace(TitleInput))
+            {
+                var str = String.Format("Title is required.");
+                await JSRuntime.InvokeAsync<bool>("alert", str);
+            }
             
-        };
-        
-        var response = await Http.PostAsJsonAsync("api/Article", article);
-        if (response.IsSuccessStatusCode)
-        {
-            var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
+            await UploadImage();
+            await UploadVideo();
 
-            var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+            var article = new ArticleCreateDTO
+            {
+                Body = HtmlInput,
+                Title = TitleInput,
+                Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
+                Description = DescriptionInput,
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
+                ImageURL = ImageURL,
+                VideoURL = VideoURL
+            };
 
-            NavigationManager.NavigateTo(uri);
+            var response = await Http.PostAsJsonAsync("api/Article", article);
+            if (response.IsSuccessStatusCode)
+            {
+                var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
+
+                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+
+                NavigationManager.NavigateTo(uri);
+            }
         }
-        else
+        catch(Exception e)
         {
-            JSRuntime.InvokeAsync<bool>("alert", response.Content.Headers.ToString());
-        }
+            Console.WriteLine(e.Message);
+        }   
     }
 }

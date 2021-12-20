@@ -33,7 +33,7 @@ namespace SETraining.Server.Controllers
         [HttpGet("{name}")]
         public async Task<ActionResult<ProgrammingLanguageDTO>> Get(string name)
         {
-            return (await _repository.ReadAsync(@name)).ToActionResult();
+            return (await _repository.ReadAsync(name)).ToActionResult();
         }
 
         [Authorize]
