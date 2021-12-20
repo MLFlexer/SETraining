@@ -36,9 +36,9 @@ public class SETrainingContext : DbContext, ISETrainingContext
             .Property(a => a.Difficulty)
             .HasConversion(new EnumToStringConverter<DifficultyLevel>());
         
-        modelBuilder.Entity<Article>()
-            .Property(a => a.Type)
-            .HasConversion(new EnumToStringConverter<ArticleType>());
+        // modelBuilder.Entity<Article>()
+        //     .Property(a => a.Type)
+        //     .HasConversion(new EnumToStringConverter<ArticleType>());
     }
 }
 
