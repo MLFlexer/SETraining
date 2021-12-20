@@ -56,7 +56,6 @@ namespace SETraining.Server.Controllers
             return CreatedAtAction(nameof(Get), new { created.Id }, created);
         }
 
-        //put = update
         [Authorize]
         [HttpPut ("{id}")]
         [ProducesResponseType(204)]
@@ -65,7 +64,6 @@ namespace SETraining.Server.Controllers
             => (await _repository.UpdateArticleAsync(id, article)).ToActionResult();
         
 
-        //delete
         [Authorize]
         [HttpDelete ("{id}")]
         [ProducesResponseType(204)]
