@@ -290,31 +290,45 @@
     //Update article
     private async Task UpdateArticle()
     {
-        Console.WriteLine(ImageURL);
-        await UploadImage();
-
-        Console.WriteLine(ImageURL);
-        
-        var article = new ArticleUpdateDTO
+        try
         {
-            Body = HtmlInput,
-            Title = String.IsNullOrEmpty(TitleInput) ? null : TitleInput,
-            Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
-            Description = DescriptionInput,
-            ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
-            ImageURL = ImageURL
+            if(string.IsNullOrWhiteSpace(TitleInput))
+            {
+                var str = String.Format("Title is required.");
+                await JSRuntime.InvokeAsync<bool>("alert", str);
+            }
+
+            Console.WriteLine(ImageURL);
+            await UploadImage();
+
+            Console.WriteLine(ImageURL);
             
-        };
-        
-        var response = await Http.PutAsJsonAsync($"api/Article/{ArticleId}", article);
-        if (response.IsSuccessStatusCode)
+            var article = new ArticleUpdateDTO
+            {
+                Body = HtmlInput,
+                Title = String.IsNullOrEmpty(TitleInput) ? null : TitleInput,
+                Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
+                Description = DescriptionInput,
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
+                ImageURL = ImageURL
+                
+            };
+            
+            var response = await Http.PutAsJsonAsync($"api/Article/{ArticleId}", article);
+            if (response.IsSuccessStatusCode)
+            {
+
+                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}";
+
+                NavigationManager.NavigateTo(uri);
+            }
+        }
+        catch(Exception e)
         {
 
-            var uri = $"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}";
-
-            NavigationManager.NavigateTo(uri);
         }
+        
     }
 
     private async Task DeleteArticle()
