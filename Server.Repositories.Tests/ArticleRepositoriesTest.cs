@@ -214,8 +214,10 @@ public class ArticleRepositoriesTest : IDisposable
     public async Task ReadArticlesFromTitleAsync_given_existing_title_returns_articles()
     {
         //Arrange
-        var expected_1 = new ArticlePreviewDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today, null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1,  null);
-        var expected_2 = new ArticlePreviewDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today, "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3,  null);
+        var expectedArr = new ArticlePreviewDTO[] {
+            new ArticlePreviewDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), null, new string[]{"CSharp"}, DifficultyLevel.Expert, 1,  null),
+            new ArticlePreviewDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today.ToUniversalTime(), "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, 3,  null)
+        };
 
         //Act
         var actual = await _repository.ReadArticlesFromTitleAsync("CSharp");
@@ -223,19 +225,17 @@ public class ArticleRepositoriesTest : IDisposable
 
         var actualArray = actualValue.ToArray();
 
-        Assert.Equal(expected_1.Id, actualArray[0].Id);
-        Assert.Equal(expected_1.Title, actualArray[0].Title);
-        Assert.Equal(expected_1.Description, actualArray[0].Description);
-        Assert.Equal(expected_1.ProgrammingLanguages, actualArray[0].ProgrammingLanguages);
-        Assert.Equal(expected_1.Difficulty, actualArray[0].Difficulty);
-        Assert.Equal(expected_1.AvgRating, actualArray[0].AvgRating);
-
-        Assert.Equal(expected_2.Id, actualArray[1].Id);
-        Assert.Equal(expected_2.Title, actualArray[1].Title);
-        Assert.Equal(expected_2.Description, actualArray[1].Description);
-        Assert.Equal(expected_2.ProgrammingLanguages, actualArray[1].ProgrammingLanguages);
-        Assert.Equal(expected_2.Difficulty, actualArray[1].Difficulty);
-        Assert.Equal(expected_2.AvgRating, actualArray[1].AvgRating);
+        for(var i = 0; i < expectedArr.Length; i++)
+        {
+            Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
+            Assert.Equal(expectedArr[i].Title, actualArray[i].Title);
+            Assert.Equal(expectedArr[i].Type, actualArray[i].Type);
+            Assert.Equal(expectedArr[i].Created.Date, actualArray[i].Created.Date);
+            Assert.Equal(expectedArr[i].Description, actualArray[i].Description);
+            Assert.Equal(expectedArr[i].ProgrammingLanguages, actualArray[i].ProgrammingLanguages);
+            Assert.Equal(expectedArr[i].Difficulty, actualArray[i].Difficulty);
+            Assert.Equal(expectedArr[i].AvgRating, actualArray[i].AvgRating);
+        }
     }
     
     [Fact]
@@ -243,6 +243,7 @@ public class ArticleRepositoriesTest : IDisposable
     {
         var content = new ArticleUpdateDTO
         {
+            Id = 42,
             Title ="Introduction to Java", 
             Description = "Description", 
             ProgrammingLanguages = new List<string>(){"Java 4", "Java 5"}, 
@@ -261,6 +262,7 @@ public class ArticleRepositoriesTest : IDisposable
     {
         var content = new ArticleUpdateDTO
         {
+            Id = 1,
             Title ="Introduction to Java2", 
             Description = "This is updated", 
             ProgrammingLanguages = new List<string>(){}, 

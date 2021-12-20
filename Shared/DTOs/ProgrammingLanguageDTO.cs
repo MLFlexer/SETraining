@@ -7,8 +7,3 @@ public record ProgrammingLanguageCreateDTO
 {
     public string Name { get; init; }
 }
-
-public record ProgrammingLanguageUpdateDTO : ProgrammingLanguageCreateDTO
-{
-    public int Id { get; init; }
-}

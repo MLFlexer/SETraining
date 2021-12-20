@@ -271,7 +271,6 @@ public class ArticleRepository : IArticleRepository
         return result.Any() ? result : null;
     }
     
-
     public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
     { 
         var entity = _context.Articles.ToList().Find(c => c.Id == id);
@@ -284,7 +283,6 @@ public class ArticleRepository : IArticleRepository
         _context.Articles.Remove(entity);
         await _context.SaveChangesAsync();
         
-        
         entity.Description = article.Description;
         entity.Difficulty = article.Difficulty;
         entity.Title = article.Title;
@@ -293,7 +291,6 @@ public class ArticleRepository : IArticleRepository
         entity.ImageURL = article.ImageURL;
         entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
         entity.VideoURL = article.VideoURL;
-        
         
         _context.Articles.Add(entity);
         await _context.SaveChangesAsync();

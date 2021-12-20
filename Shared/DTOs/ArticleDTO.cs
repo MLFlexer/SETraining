@@ -13,14 +13,14 @@ public record ArticleCreateDTO
     public string Title { get; init; }
     public string? Body {get; init; }
 
-    public ArticleType Type { get; set; }
+    public ArticleType Type { get; init; }
     public string? Description { get; init; }  
     public IEnumerable<string>? ProgrammingLanguages { get; init; }
     public DifficultyLevel Difficulty { get; init; }
 
-    public string? ImageURL { get; set; }
+    public string? ImageURL { get; init; }
     
-    public string? VideoURL { get; set; }
+    public string? VideoURL { get; init; }
 
     public int? AvgRating { get; init; }
 }
