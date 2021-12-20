@@ -116,6 +116,12 @@
     private string ImageName = Guid.NewGuid().ToString();
     private string? ImageURL;
     private IBrowserFile? ImageFile;
+    private readonly IReadOnlyCollection<string> AllowedImageContent = new[]
+    {
+        "image/gif",
+        "image/jpeg",
+        "image/png"
+    };
     
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
@@ -186,6 +192,18 @@
         ClearImage();
         
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
+        
+        if (VideoFile.ContentType != "video/mp4")
+        {
+            ClearVideo();
+            JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
+        }
+        
+        if (!AllowedImageContent.Contains(ImageFile.ContentType))
+        {
+            ClearImage();
+            JSRuntime.InvokeAsync<bool>("alert", "Images can only be in JPEG, PNG or GIF format");
+        }
 
         if (ImageFile != null)
         {

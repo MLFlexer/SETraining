@@ -69,7 +69,7 @@
         <div class="form-group">
             @if (!string.IsNullOrWhiteSpace(ImageURL))
             {
-                <div><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
+                <div><img src="@ImageURL" alt="Article Image" class="img-thumbnail"></div>
             }
                                
             @if (ChosenType != 0)
@@ -131,7 +131,7 @@
             {
                 @if (!string.IsNullOrWhiteSpace(VideoURL))
                 {
-                    <div><img src="@VideoURL" alt="Character Image" class="img-thumbnail"></div>
+                    <div><img src="@VideoURL" alt="Article Video" class="img-thumbnail"></div>
                 }
                 
                 <h4 style="margin-top: 20px;">Add video</h4>
@@ -163,6 +163,12 @@
     private string ImageName = Guid.NewGuid().ToString();
     private string? ImageURL;
     private IBrowserFile? ImageFile;
+    private readonly IReadOnlyCollection<string> AllowedImageContent = new[]
+    {
+        "image/gif",
+        "image/jpeg",
+        "image/png"
+    };
     
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
@@ -190,6 +196,7 @@
     
     private void OnChooseType(int type)
     {
+        Console.WriteLine(type);
         ChosenType = type;
     }
     
@@ -198,6 +205,12 @@
     {
         ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
+        
+        if (!AllowedImageContent.Contains(ImageFile.ContentType))
+        {
+            ClearImage();
+            JSRuntime.InvokeAsync<bool>("alert", "Images can only be in JPEG, PNG or GIF format");
+        }
 
         if (ImageFile != null)
         {
@@ -211,6 +224,7 @@
     
     private async Task UploadImage()
     {
+
 
         if (ImageFile != null)
         {
@@ -241,6 +255,12 @@
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
+
+        if (VideoFile.ContentType != "video/mp4")
+        {
+            ClearVideo();
+            JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
+        }
 
         if (VideoFile != null)
         {
