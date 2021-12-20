@@ -1,6 +1,4 @@
-﻿
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
 using SETraining.Shared;
 using SETraining.Shared.DTOs;
