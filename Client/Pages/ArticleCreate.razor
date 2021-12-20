@@ -354,7 +354,6 @@
             {
                 JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
                 ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
-                NewLang = null; StateHasChanged();
             }
             else
             {
@@ -363,8 +362,6 @@
         }
         catch
         {
-            NewLang = null;
-            StateHasChanged();
         }
     }
 
