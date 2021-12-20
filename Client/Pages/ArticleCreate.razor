@@ -179,8 +179,8 @@
     string TitleInput;
     string DescriptionInput;
     
-    bool? checkBoxValue;
-    string? newLang;
+    bool? CheckBoxValue;
+    string? NewLang;
     
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
@@ -196,7 +196,6 @@
     
     private void OnChooseType(int type)
     {
-        Console.WriteLine(type);
         ChosenType = type;
     }
     
@@ -337,66 +336,80 @@
     //Add new language
     private async Task OnAddLanguage()
     {
-        if (newLang == null || newLang.Trim() == "")
+        if (NewLang == null || NewLang.Trim() == "")
         {
             return;
         }
         
-        var langToPost = new ProgrammingLanguageCreateDTO
+        try
         {
-            Name = newLang
-        };
-        
-        var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
-        
-        if (response.IsSuccessStatusCode)
-        {
-            JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
-            ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+            var langToPost = new ProgrammingLanguageCreateDTO
+            {
+                Name = NewLang
+            };
+            
+            var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
+
+            if (response.IsSuccessStatusCode)
+            {
+                JSRuntime.InvokeAsync<bool>("alert", "Congrats, you just uploaded a new language!");
+                ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
+                NewLang = null; StateHasChanged();
+            }
+            else
+            {
+                JSRuntime.InvokeAsync<bool>("alert", "Something went wrong, make sure the programming language is not already added");
+            }
         }
-        else
+        catch
         {
-            //TODO tjek dette
-            JSRuntime.InvokeAsync<bool>("alert", "En error occurred, try again.");
+            NewLang = null;
+            StateHasChanged();
         }
     }
 
     void OnNewLanguageValue(string val)
     {
-        newLang = val;
+        NewLang = val;
     }
 
     //Publish article
     private async Task PublishArticle()
     {
-        await UploadImage();
-        await UploadVideo();
-        
-        var article = new ArticleCreateDTO
+        try
         {
-            Body = HtmlInput,
-            Title = TitleInput,
-            Type = ChosenType == 0 ? ArticleType.Video : ArticleType.Written,
-            Description = DescriptionInput,
-            ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
-            Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
-            ImageURL = ImageURL,
-            VideoURL = VideoURL
-            
-        };
-        
-        var response = await Http.PostAsJsonAsync("api/Article", article);
-        if (response.IsSuccessStatusCode)
-        {
-            var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
+            if (string.IsNullOrWhiteSpace(TitleInput))
+            {
+                JSRuntime.InvokeAsync<bool>("alert", "Title is required");
+            }
 
-            var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+            await UploadImage();
+            await UploadVideo();
 
-            NavigationManager.NavigateTo(uri);
+            var article = new ArticleCreateDTO
+            {
+                Body = HtmlInput,
+                Title = TitleInput,
+                Type = ChosenType == 0 ? ArticleType.Video : ArticleType.Written,
+                Description = DescriptionInput,
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
+                ImageURL = ImageURL,
+                VideoURL = VideoURL
+            };
+
+            var response = await Http.PostAsJsonAsync("api/Article", article);
+            if (response.IsSuccessStatusCode)
+            {
+                var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
+
+                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+
+                NavigationManager.NavigateTo(uri);
+            }
         }
-        else
+        catch (Exception)
         {
-            JSRuntime.InvokeAsync<bool>("alert", response.Content.Headers.ToString());
         }
     }
 }
