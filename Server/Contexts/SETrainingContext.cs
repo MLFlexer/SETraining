@@ -21,10 +21,24 @@ public class SETrainingContext : DbContext, ISETrainingContext
         //     .HasDiscriminator(c => c.Type)
         //     .HasValue<Article>("Article")
         //     .HasValue<Video>("Video");
+
+        // modelBuilder.Entity<Article>()
+        //     .HasDiscriminator(a => a.Type);
+        //     
+        //
+        // modelBuilder.Entity<Article>()
+        //     .Property(a => a.Type)
+        //     .HasMaxLength(200)
+        //     .HasColumnName("blog_type");
+        //     
             
         modelBuilder.Entity<Article>()
-            .Property(c => c.Difficulty)
+            .Property(a => a.Difficulty)
             .HasConversion(new EnumToStringConverter<DifficultyLevel>());
+        
+        modelBuilder.Entity<Article>()
+            .Property(a => a.Type)
+            .HasConversion(new EnumToStringConverter<ArticleType>());
     }
 }
 

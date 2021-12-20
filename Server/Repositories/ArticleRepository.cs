@@ -87,7 +87,7 @@ public class ArticleRepository : IArticleRepository
     //ReadAsync on a string
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadArticlesFromTitleAsync(string contentTitle)
     {
-        return await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower().Trim()))
+        var result =  await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower().Trim()))
             .Select(c => new ArticlePreviewDTO(
                 c.Id,
                 c.Title,
@@ -99,6 +99,9 @@ public class ArticleRepository : IArticleRepository
                 c.AvgRating,
                 c.ImageURL
                 )).ToListAsync();
+        
+        return result.Any() ? result : null;
+
     }
 
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
