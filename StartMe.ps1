@@ -46,6 +46,7 @@ if ($Azure) {
 }
 
 Write-Host "Updating Database"
+dotnet ef migrations add init --project $project
 dotnet ef database update --project $project
 
 Write-Host "Starting SETraining App"
