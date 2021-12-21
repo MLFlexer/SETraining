@@ -1,42 +1,28 @@
 ﻿@page "/"
 @using SETraining.Shared.DTOs
-@using SETraining.Shared.DTOs
-@using System.Net
-@using SETraining.Shared.DTOs
-@using System.Net
-@using Microsoft.EntityFrameworkCore.Diagnostics
-@using SETraining.Shared
-@using SETraining.Shared.DTOs
 @using SETraining.Shared.Models
-@using System.ComponentModel.Design
 @using System.Text
-@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject IHttpClientFactory _httpClientFactory
-@using System.Net.Http.Headers
-
 
 <PageTitle>Home</PageTitle>
 
 <RadzenTextBox style="width: 85%; margin-left: 5px;" Placeholder="Search..." @bind-Value=@searchedTitle @oninput=@(args => Search(args.Value.ToString())) /> 
 <RadzenButton style="width: calc(14% - 5px);" Click="ClearResult" Text="Clear" ButtonStyle="ButtonStyle.Light" />
 
-
-
-    <div style="height: 30px; width: 100%; margin-top: 10px; margin-bottom: 10px; margin-left: 5px; flex-direction: row">
-        <RadzenDropDown style="margin-top: 0px"
-                        @bind-Value=@SelectedDifficultyLevel Multiple="false" AllowClear="true" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
-                        Change=@(args => OnSelectedDifficultyLevel(args))  />
-       @if(ProgrammingLanguages != null) { 
-           <RadzenDropDown style="margin-top: 0px" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+<div style="height: 30px; width: 100%; margin-top: 10px; margin-bottom: 10px; margin-left: 5px; flex-direction: row">
+    <RadzenDropDown style="margin-top: 0px"
+                    @bind-Value=@SelectedDifficultyLevel Multiple="false" AllowClear="true" Placeholder="Difficulty..." Data=@Enum.GetNames(typeof(DifficultyLevel)) TextProperty="Name" ValueProperty="Name"
+                    Change=@(() => OnSelectedDifficultyLevel())  />
+    
+    @if(ProgrammingLanguages != null) 
+    { 
+        <RadzenDropDown style="margin-top: 0px" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                            @bind-Value=@SelectedProgrammingLanguages Multiple="true" Placeholder="Programming Languages..." Data=@ProgrammingLanguages TextProperty="Name" ValueProperty="Name"
-                           Change=@(args => OnSelectedProgrammingLanguages(args))  />
-       }
-        
-    </div>
- 
-
+                           Change=@(() => OnSelectedProgrammingLanguages())  />
+    }
+</div>
 
 @if (Articles == null)
 {
@@ -46,15 +32,12 @@
 @if (Articles != null)
 {
     <div style="margin-left: 20px; margin-top: 20px; ">Results: @(Articles.Length) articles</div>
-       
 }
-
 
 <div class="w-100 d-flex align-content-around flex-wrap" >
     @if (Articles != null)
     {
         foreach (var article in Articles)
-            
         {
             <RadzenCard class="flex-fill m-2" Style="width:300px;">
                 <div class="d-flex flex-row align-items-center">
@@ -66,7 +49,6 @@
                         <div>@article.Type.ToString()</div>
                         <div style="font-size: .8em">@article.Description</div>
                         <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
-
                     </div>
                 </div>
                 <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>
@@ -98,13 +80,9 @@
             </div> 
         }
     }
-    
 </div>
 
-
 @code {
-    
-    //Properties
     HttpClient anonymous = new ();
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<string> SelectedProgrammingLanguages = new List<string>();
@@ -113,10 +91,7 @@
     ArticlePreviewDTO[]? Articles;
     DifficultyLevel? DifficultyLevel;
     string searchedTitle = "";
-    
 
-    //Methods 
-    
     protected override async Task OnInitializedAsync()
     {
         anonymous = _httpClientFactory.CreateClient("SETraining.ServerAPI.Anonymous"); 
@@ -131,7 +106,6 @@
         SelectedDifficultyLevel = null;
         SelectedProgrammingLanguages = new List<string>();
         StateHasChanged();
-
     }
 
     private async Task Search(string title)
@@ -142,9 +116,8 @@
             var URIParams = BuildURIString();
         
             Articles = await anonymous.GetFromJsonAsync<ArticlePreviewDTO[]>($"api/Article{URIParams}");
-
         }
-        catch (Exception e)
+        catch (Exception)
         {
             Articles = Array.Empty<ArticlePreviewDTO>();
         }
@@ -154,28 +127,16 @@
 
     private void ViewArticle(ArticlePreviewDTO article)
     {
-        var uri = $"{NavigationManager.BaseUri}ArticleDetails/{article.Id}";
-
-        NavigationManager.NavigateTo(uri);
+        NavigationManager.NavigateTo($"{NavigationManager.BaseUri}ArticleDetails/{article.Id}");
     }
     
-    void OnSelectedProgrammingLanguages(object value)
+    void OnSelectedProgrammingLanguages()
     {
-        Console.WriteLine("Programming language selected");
-        var str = value is IEnumerable<object> ? string.Join(", ", (IEnumerable<object>)value) : value;
-        
-         Search(searchedTitle);
-
-        foreach (var lang in SelectedProgrammingLanguages)
-        {
-            Console.WriteLine(lang);
-        }
-       
+        Search(searchedTitle);
     }
     
-    void OnSelectedDifficultyLevel(object value)
+    void OnSelectedDifficultyLevel()
     {
-        Console.WriteLine("Diff level selected");
         Search(searchedTitle);
     }
 
@@ -185,7 +146,6 @@
 
         if (searchedTitle.Trim() != "")
         {
-            //Add title
             URI.Append("title=");
             URI.Append(searchedTitle);
             URI.Append("&");
@@ -193,13 +153,11 @@
 
         if (SelectedDifficultyLevel != null)
         {
-            //Add difficultylevel
             URI.Append("difficulty=");
             URI.Append(SelectedDifficultyLevel);
             URI.Append("&");
         }
 
-        //Add Programminglanguages 
         foreach (var lang in SelectedProgrammingLanguages)
         {
             URI.Append("languages=");
@@ -218,8 +176,5 @@
         }
         
         return URI.ToString();
-
-        
     }
-
 }

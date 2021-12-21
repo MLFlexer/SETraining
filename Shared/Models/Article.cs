@@ -20,10 +20,7 @@ public class Article
     public DifficultyLevel Difficulty { get; set; }
     [StringLength(50)] 
     public string? Description { get; set; }
-    public Moderator? Creator { get; set; }
     public ICollection<ProgrammingLanguage>? ProgrammingLanguages { get; set; } = null!;
-    
-    public ICollection<ArticleRating>? ArticleRatings { get; set; }
     [Range(0, 5)]
     public int? AvgRating { get; set; }
     [Url] 
