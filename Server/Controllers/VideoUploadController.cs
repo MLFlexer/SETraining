@@ -24,6 +24,7 @@ public class VideoUploadController : Controller
         _repository = repository;
     }
 
+    [Authorize]
     [HttpPost("{name}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

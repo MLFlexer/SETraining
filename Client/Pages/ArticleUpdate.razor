@@ -182,12 +182,6 @@
         ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (VideoFile?.ContentType != "video/mp4")
-        {
-            ClearVideo();
-            JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
-        }
-
         if (!AllowedImageContent.Contains(ImageFile.ContentType))
         {
             ClearImage();
@@ -247,6 +241,12 @@
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
+        
+        if (VideoFile?.ContentType != "video/mp4")
+        {
+            ClearVideo();
+            JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
+        }
 
         if (VideoFile != null)
         {

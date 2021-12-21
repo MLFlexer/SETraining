@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using SETraining.Shared.Models;
 using SETraining.Server.Contexts;
 using SETraining.Server.Repositories;
 
 namespace SETraining.Server;
+[ExcludeFromCodeCoverage]
 
 public static class SeedExtensions
 {
