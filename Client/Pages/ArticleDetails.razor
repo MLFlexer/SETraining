@@ -42,7 +42,6 @@
                     <RadzenBadge BadgeStyle="BadgeStyle.Light" Text=@($"{String.Format(new System.Globalization.CultureInfo("en-US"), "{0:C}", article.Difficulty.ToString())}") />
                 }
                 <br/>
-                <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
             </div>
         </div>
         <hr/>

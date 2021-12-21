@@ -48,7 +48,6 @@
                         <h4 class="mb-0">@(article.Title)</h4>
                         <div>@article.Type.ToString()</div>
                         <div style="font-size: .8em">@article.Description</div>
-                        <RadzenRating ReadOnly="true" Stars="5" Value=@(article.AvgRating == null ? 0 : article.AvgRating.Value) />
                     </div>
                 </div>
                 <hr style="border: none; background-color: rgba(0,0,0,.08); height: 1px; margin: 1rem 0;"/>

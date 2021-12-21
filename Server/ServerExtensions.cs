@@ -3,7 +3,7 @@ using SETraining.Shared;
 
 namespace SETraining.Server;
 
-public static class Extensions
+public static class ServerExtensions
 {
     // This method was written by ITU lecturer Rasmus Lystrøm. 
     public static IActionResult ToActionResult(this Status status) => status switch {

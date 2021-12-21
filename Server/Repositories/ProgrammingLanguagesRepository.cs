@@ -18,7 +18,7 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 
     public async Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageCreateDTO language)
     {
-        if (String.IsNullOrWhiteSpace(language.Name))
+        if (string.IsNullOrWhiteSpace(language.Name))
         {
             return null!;
         }
