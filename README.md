@@ -3,7 +3,7 @@
 
 ##Run the system for demonstration purposes
 
-The following command is only provided in order to show the system to examiners. It contains a key which should never be in any for of VCS.
+The following command is only provided in order to show the system to examiners. It contains a key which should never be in any form of VCS.
 1. Clone the directory.
 2. Run the following command from `root`directory..
 ```markdown
