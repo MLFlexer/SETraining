@@ -33,12 +33,8 @@ public class VideoUploadController : Controller
         {
             return BadRequest("This content type is not permitted");
         }
-
         
         var (status, uri) = await _repository.CreateUploadAsync(name.ToString(), file.ContentType, file.OpenReadStream());
-
-        Console.WriteLine(status.ToString());
-        Console.WriteLine(uri);
         
         return status == Status.Created
             ? new CreatedResult(uri, null)

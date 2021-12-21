@@ -35,7 +35,6 @@ public class ImageUploadController : Controller
         {
             return BadRequest("This content type is not permitted");
         }
-
         
         var (status, uri) = await _repository.CreateUploadAsync(name.ToString(), file.ContentType, file.OpenReadStream());
         
