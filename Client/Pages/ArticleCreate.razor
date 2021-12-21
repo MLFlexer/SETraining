@@ -131,7 +131,13 @@
             {
                 @if (!string.IsNullOrWhiteSpace(VideoURL))
                 {
-                    <div><img src="@VideoURL" alt="Article Video" class="img-thumbnail"></div>
+                    <BlazoredVideo
+                        class="w-100"
+                        style="max-width:800px;"
+                        controls="controls">
+                        autoplay="autoplay" 
+                        <source src="@VideoURL" type="video/mp4"/>
+                    </BlazoredVideo>
                 }
                 
                 <h4 style="margin-top: 20px;">Add video</h4>

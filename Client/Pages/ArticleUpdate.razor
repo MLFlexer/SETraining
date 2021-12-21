@@ -53,7 +53,7 @@
         <div class="form-group">
             @if (!string.IsNullOrWhiteSpace(ImageURL))
             {
-                <div style="margin-top: 20px;"><img src="@ImageURL" alt="Character Image" class="img-thumbnail"></div>
+                <div style="margin-top: 20px;"><img src="@ImageURL" alt="Article Image" class="img-thumbnail"></div>
             }
             
             
@@ -85,7 +85,13 @@
              {
                  @if (!string.IsNullOrWhiteSpace(VideoURL))
                  {
-                     <div><img src="@VideoURL" alt="Character Image" class="img-thumbnail"></div>
+                     <BlazoredVideo
+                         class="w-100"
+                         style="max-width:800px;"
+                         controls="controls">
+                         autoplay="autoplay" 
+                         <source src="@VideoURL" type="video/mp4"/>
+                     </BlazoredVideo>
                  }
                  <h4 style="margin-top: 20px;">Edit video</h4>
                  <label for="Image">Video</label>  
