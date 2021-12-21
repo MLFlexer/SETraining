@@ -24,49 +24,48 @@ public class ArticleController : ControllerBase
     [HttpGet("all")]
     public async Task<ActionResult<IEnumerable<ArticlePreviewDTO>>> Get()
     {
-        return (await _repository.ReadAllArticlesAsync()).ToActionResult();
+        return (await _repository.ReadAsync()).ToActionResult();
     }
 
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ArticlePreviewDTO), 200)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ArticlePreviewDTO>>> GetFromParameters([FromQuery]string? title, [FromQuery]string? difficulty, [FromQuery]string[]? languages)
+    public async Task<ActionResult<IEnumerable<ArticlePreviewDTO>>> GetFromParameters([FromQuery] string? title, [FromQuery] string? difficulty, [FromQuery] string[]? languages)
     {
-        return (await _repository.ReadAllArticlesFromParametersAsync(title!, difficulty!, languages!)).ToActionResult();
+        return (await _repository.ReadFromParametersAsync(title!, difficulty!, languages!)).ToActionResult();
     }
-    
+
     [ProducesResponseType(404)]
     [ProducesResponseType(typeof(ArticleDTO), 200)]
     [HttpGet("id={id}")]
     public async Task<ActionResult<ArticleDTO>> GetFromId(int id)
     {
-        return (await _repository.ReadArticleFromIdAsync(id)).ToActionResult();
+        return (await _repository.ReadFromIdAsync(id)).ToActionResult();
     }
 
     [HttpPost]
     [ProducesResponseType(typeof(ArticleDTO), 201)]
     public async Task<IActionResult> Post(ArticleCreateDTO article)
     {
-        var created = await _repository.CreateArticleAsync(article);
+        var created = await _repository.CreateAsync(article);
         return CreatedAtAction(nameof(Get), new { created.Id }, created);
     }
 
     [Authorize]
-    [HttpPut ("{id}")]
+    [HttpPut("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public async Task <IActionResult> Put(int id, [FromBody] ArticleUpdateDTO article)
+    public async Task<IActionResult> Put(int id, [FromBody] ArticleUpdateDTO article)
     {
-        return (await _repository.UpdateArticleAsync(id, article)).ToActionResult();
+        return (await _repository.UpdateAsync(id, article)).ToActionResult();
     }
 
     [Authorize]
-    [HttpDelete ("{id}")]
+    [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
-    public async Task <IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        return (await _repository.DeleteArticleAsync(id)).ToActionResult();
+        return (await _repository.DeleteAsync(id)).ToActionResult();
     }
 }
-

@@ -1,9 +1,8 @@
 namespace SETraining.Shared;
 
-
-//Class written by Rasmus Lystrøm, used for updating the list of programmingLanguages in a content
-public static class Extensions
+public static class SharedExtensions
 {
+    // This method was written by Rasmus Lystrøm
     public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> items,
         CancellationToken cancellationToken = default)
     {
@@ -13,6 +12,6 @@ public static class Extensions
             results.Add(item);
         return results;
     }
-    
-    
+
+    public static bool IsNullOrEmpty<T>(this ICollection<T> col) => (col == null || col.Count == 0);
 }

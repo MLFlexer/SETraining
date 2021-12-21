@@ -2,7 +2,6 @@
 using SETraining.Server.Contexts;
 using SETraining.Shared;
 using SETraining.Shared.DTOs;
-using SETraining.Shared.ExtensionMethods;
 using SETraining.Shared.Models;
 
 namespace SETraining.Server.Repositories;
@@ -15,20 +14,19 @@ public class ArticleRepository : IArticleRepository
         _context = context;
     }
 
-    public async Task<ArticleDTO> CreateArticleAsync(ArticleCreateDTO article)
+    public async Task<ArticleDTO> CreateAsync(ArticleCreateDTO article)
     {
         var entity = new Article(article.Title, article.Type, DateTime.Today, article.Difficulty)
         {
             Description = article.Description,
             ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages!).ToListAsync(),
-            AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
             Created = DateTime.Now.ToUniversalTime(),
             Body = article.Body,
             VideoURL = article.VideoURL
         };
         _context.Articles.Add(entity);
-        
+
         await _context.SaveChangesAsync();
 
         return new ArticleDTO(
@@ -39,14 +37,13 @@ public class ArticleRepository : IArticleRepository
                 entity.Description,
                 entity.ProgrammingLanguages.Select(p => p.Name).ToList(),
                 entity.Difficulty,
-                entity.AvgRating,
                 entity.Body,
                 entity.ImageURL,
                 entity.VideoURL
-        ); 
+        );
     }
 
-    public async Task<Status> DeleteArticleAsync(int articleId)
+    public async Task<Status> DeleteAsync(int articleId)
     {
         var entity = await _context.Articles.FindAsync(articleId);
 
@@ -60,7 +57,7 @@ public class ArticleRepository : IArticleRepository
         return Status.Deleted;
     }
 
-    public async Task<Option<ArticleDTO>> ReadArticleFromIdAsync(int articleId)
+    public async Task<Option<ArticleDTO>> ReadFromIdAsync(int articleId)
     {
         return await _context.Articles
                     .Where(c => c.Id == articleId)
@@ -72,7 +69,6 @@ public class ArticleRepository : IArticleRepository
                         c.Description,
                         c.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                         c.Difficulty,
-                        c.AvgRating,
                         c.Body,
                         c.ImageURL,
                         c.VideoURL
@@ -80,9 +76,9 @@ public class ArticleRepository : IArticleRepository
                     .FirstOrDefaultAsync();
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadArticlesFromTitleAsync(string articleTitle)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadFromTitleAsync(string articleTitle)
     {
-        var result =  await _context.Articles.Where(c => c.Title.ToLower().Contains(articleTitle.ToLower().Trim()))
+        var result = await _context.Articles.Where(c => c.Title.ToLower().Contains(articleTitle.ToLower().Trim()))
             .Select(c => new ArticlePreviewDTO(
                 c.Id,
                 c.Title,
@@ -91,38 +87,37 @@ public class ArticleRepository : IArticleRepository
                 c.Description,
                 c.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                 c.Difficulty,
-                c.AvgRating,
                 c.ImageURL
                 )).ToListAsync();
-        
+
         return result.Any() ? result : null;
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadFromParametersAsync(string title, string difficulty, string[] languages)
     {
         if (!string.IsNullOrWhiteSpace(difficulty) && !(languages!.IsNullOrEmpty()))
         {
-            return await ReadAllArticlesAsync(title, difficulty, languages);
+            return await ReadAsync(title, difficulty, languages);
         }
         else if (string.IsNullOrWhiteSpace(difficulty) && !(languages!.IsNullOrEmpty()))
         {
-            return await ReadAllArticlesAsync(title, languages);
+            return await ReadAsync(title, languages);
         }
         else if (!string.IsNullOrWhiteSpace(difficulty) && languages!.IsNullOrEmpty())
         {
-            return await ReadAllArticlesAsync(title, difficulty);
+            return await ReadAsync(title, difficulty);
         }
         else if (!string.IsNullOrWhiteSpace(title))
         {
-            return await ReadAllArticlesAsync(title);
+            return await ReadAsync(title);
         }
 
-        return await ReadAllArticlesAsync();
+        return await ReadAsync();
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync()
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAsync()
     {
-        var result =  await _context.Articles
+        var result = await _context.Articles
                     .Select(article =>
                         new ArticlePreviewDTO(
                                 article.Id,
@@ -132,17 +127,16 @@ public class ArticleRepository : IArticleRepository
                                 article.Description,
                                 article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 article.Difficulty,
-                                article.AvgRating,
                                 article.ImageURL
                                 )
                     ).ToListAsync();
-        
+
         return result.Any() ? result : null;
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAsync(string title)
     {
-        var result =  await _context.Articles
+        var result = await _context.Articles
                     .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
                     .Select(article =>
                         new ArticlePreviewDTO(
@@ -153,20 +147,19 @@ public class ArticleRepository : IArticleRepository
                                 article.Description,
                                 article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 article.Difficulty,
-                                article.AvgRating,
                                 article.ImageURL
                                 )
                     ).ToListAsync();
-        
+
         return result.Any() ? result : null;
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string difficulty)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAsync(string title, string difficulty)
     {
         if (string.IsNullOrWhiteSpace(title)) title = "";
-        var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
+        var diffycultyToEnum = (DifficultyLevel)Enum.Parse(typeof(DifficultyLevel), difficulty);
 
-        var result =  await _context.Articles
+        var result = await _context.Articles
                     .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
                     .Where(article => article.Difficulty == diffycultyToEnum)
                     .Select(article =>
@@ -178,15 +171,14 @@ public class ArticleRepository : IArticleRepository
                                 article.Description,
                                 article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 article.Difficulty,
-                                article.AvgRating,
                                 article.ImageURL
                                 )
                     ).ToListAsync();
-        
+
         return result.Any() ? result : null;
     }
-    
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string[] languages)
+
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAsync(string title, string[] languages)
     {
         if (string.IsNullOrWhiteSpace(title)) title = "";
 
@@ -201,12 +193,11 @@ public class ArticleRepository : IArticleRepository
                         article.Description,
                         article.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
                         article.Difficulty,
-                        article.AvgRating,
                         article.ImageURL
                         )
             ).ToListAsync();
 
-        var result =  all.Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
+        var result = all.Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
                   .Select(article =>
                         new ArticlePreviewDTO(
                                 article.Id,
@@ -216,18 +207,17 @@ public class ArticleRepository : IArticleRepository
                                 article.Description,
                                 article.ProgrammingLanguages,
                                 article.Difficulty,
-                                article.AvgRating,
                                 article.ImageURL
                                 )
                     ).ToList();
-        
+
         return result.Any() ? result : null;
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string difficulty, string[] languages)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAsync(string title, string difficulty, string[] languages)
     {
         if (string.IsNullOrWhiteSpace(title)) title = "";
-        var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
+        var diffycultyToEnum = (DifficultyLevel)Enum.Parse(typeof(DifficultyLevel), difficulty);
 
         var allWithDifficulty = await _context.Articles
                 .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
@@ -241,9 +231,8 @@ public class ArticleRepository : IArticleRepository
                             article.Description,
                             article.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
                             article.Difficulty,
-                            article.AvgRating,
                             article.ImageURL
-                            
+
                             )
                 ).ToListAsync();
 
@@ -258,17 +247,16 @@ public class ArticleRepository : IArticleRepository
                                 article.Description,
                                 article.ProgrammingLanguages,
                                 article.Difficulty,
-                                article.AvgRating,
                                 article.ImageURL
-                            
+
                                 )
                     ).ToList();
 
         return result.Any() ? result : null;
     }
-    
-    public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
-    { 
+
+    public async Task<Status> UpdateAsync(int id, ArticleUpdateDTO article)
+    {
         var entity = _context.Articles.ToList().Find(c => c.Id == id);
 
         if (entity == null)
@@ -278,16 +266,15 @@ public class ArticleRepository : IArticleRepository
 
         _context.Articles.Remove(entity);
         await _context.SaveChangesAsync();
-        
+
         entity.Description = article.Description;
         entity.Difficulty = article.Difficulty;
         entity.Title = article.Title;
         entity.Body = article.Body;
-        entity.AvgRating = article.AvgRating;
         entity.ImageURL = article.ImageURL;
         entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages!).ToListAsync();
         entity.VideoURL = article.VideoURL;
-        
+
         _context.Articles.Add(entity);
         await _context.SaveChangesAsync();
 
@@ -298,7 +285,7 @@ public class ArticleRepository : IArticleRepository
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);
-        
+
         foreach (var language in languages)
         {
             yield return existing.TryGetValue(language, out var p) ? p : new ProgrammingLanguage(language);

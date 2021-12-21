@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SETraining.Shared.DTOs
-@using SETraining.Shared.ExtensionMethods
 @using SETraining.Shared.Models
 @using System.Net.Http.Headers
 @inject HttpClient Http
@@ -56,68 +55,58 @@
                 <div style="margin-top: 20px;"><img src="@ImageURL" alt="Article Image" class="img-thumbnail"></div>
             }
             
-            
-             @if (ChosenType != 0)
-             {
-                 <h4 style="margin-top: 20px;">Edit image</h4>
-                 <label for="Image">Image</label>  
-             }
-             else
-             {
-                 <h4 style="margin-top: 20px;">Edit thumbnail image</h4>
-                 <label for="Image">Image</label>  
-             }
-            
+            @if (ChosenType != 0)
+            {
+                <h4 style="margin-top: 20px;">Edit image</h4>
+                <label for="Image">Image</label>  
+            }
+            else
+            {
+                <h4 style="margin-top: 20px;">Edit thumbnail image</h4>
+                <label for="Image">Image</label>  
+            }
         </div>
+        
         <div class="form-group input-group">
             <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
             <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
         </div>
-
         
         <div style="margin-top: 20px;">
-             @if (ChosenType != 0)
-             {
-                 <h4>Content of the article</h4>
-                 <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste />  
-             }
-             else
-             {
-                 @if (!string.IsNullOrWhiteSpace(VideoURL))
-                 {
-                     <BlazoredVideo
-                         class="w-100"
-                         style="max-width:800px;"
-                         controls="controls">
-                         autoplay="autoplay" 
-                         <source src="@VideoURL" type="video/mp4"/>
-                     </BlazoredVideo>
-                 }
-                 <h4 style="margin-top: 20px;">Edit video</h4>
-                 <label for="Image">Video</label>  
-                 <div class="form-group input-group">
-                     <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
-                     <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
-                     </div>
-             }
+            @if (ChosenType != 0)
+            {
+                <h4>Content of the article</h4>
+                <RadzenHtmlEditor @bind-Value=@HtmlInput style="height: 500px; margin-bottom: 1rem;" UploadUrl="upload/image" Change=@OnHtmlChange Paste=@OnPaste />  
+            }
+            else
+            {
+                @if (!string.IsNullOrWhiteSpace(VideoURL))
+                {
+                    <BlazoredVideo
+                        class="w-100"
+                        style="max-width:800px;"
+                        controls="controls">
+                        autoplay="autoplay" 
+                        <source src="@VideoURL" type="video/mp4"/>
+                    </BlazoredVideo>
+                }
+                <h4 style="margin-top: 20px;">Edit video</h4>
+                <label for="Image">Video</label>  
+                <div class="form-group input-group">
+                    <InputFile id="Image" OnChange="@OnVideoFileSelection" class="form-control" />
+                    <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
+                </div>
+            }
         </div>
-        
     </div>
-  
 </div>
+
 <div style="position:relative">
     <RadzenButton style="margin-bottom:10px;"Click=@(UpdateArticle) Text="Confirm Edit" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
     <RadzenButton style="margin-bottom:10px; right:0px; position: absolute ;"Click=@(DeleteArticle) Text="Delete" Icon="delete" ButtonStyle="ButtonStyle.Danger" />
 </div>
 
-  
-        
-
-        
-
 @code {
-    
-    //***Properties*** 
     private int ChosenType;
     private string ImageName = Guid.NewGuid().ToString();
     private string? ImageURL;
@@ -128,43 +117,39 @@
         "image/jpeg",
         "image/png"
     };
-    
+
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
     private IBrowserFile? VideoFile;
 
-    
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    bool? CheckBoxValue;
+    string? HtmlInput;
+    string? TitleInput;
+    string? DescriptionInput;
+
     string? NewLang;
-    
-    public ArticleDTO? article;
+
+    ArticleDTO? article;
+
     [Parameter]
     public int ArticleId { get; set; }
-    
+
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
     int ChosenDifficulty;
-    
-    //***Methods***
-    
-    //Init method
+
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
         article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
-        HtmlInput = article.Body;
-        TitleInput = article.Title;
-        ChosenType = (int) article.Type;
+        HtmlInput = article?.Body;
+        TitleInput = article?.Title;
+        ChosenType = (int) article?.Type!;
         DescriptionInput = article.Description;
         ChosenDifficulty = (int) article.Difficulty -1;
+
         LoadProgrammingLanguages();
         LoadImage();
 
-        Console.WriteLine(ChosenType);
         if (article.Type == ArticleType.Video)
         {
             LoadVideo();
@@ -173,11 +158,11 @@
 
     void LoadProgrammingLanguages()
     {
-        var ProgrammingLanguagesToStrings = ProgrammingLanguages.Select(p => p.Name).ToList();
+        var ProgrammingLanguagesToStrings = ProgrammingLanguages!.Select(p => p.Name).ToList();
         var temp = new List<int>();
-        foreach (var l in article.ProgrammingLanguages)
+        foreach (var l in article?.ProgrammingLanguages!)
         {
-           var i =  ProgrammingLanguagesToStrings.IndexOf(l);
+            var i =  ProgrammingLanguagesToStrings.IndexOf(l);
             temp.Add(i);
         }
         ChosenLanguages = temp;
@@ -185,7 +170,7 @@
 
     private void LoadImage()
     {
-        if (!string.IsNullOrWhiteSpace(article.ImageURL))
+        if (!string.IsNullOrWhiteSpace(article?.ImageURL))
         {
             ImageURL = $"{article.ImageURL}?nocache={Guid.NewGuid()}";
             ImageName = ImageURL.Split("/").Last();
@@ -196,15 +181,14 @@
     private async Task OnImageFileSelection(InputFileChangeEventArgs e)
     {
         ClearImage();
-        
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
-        
-        if (VideoFile.ContentType != "video/mp4")
+
+        if (VideoFile?.ContentType != "video/mp4")
         {
             ClearVideo();
             JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
         }
-        
+
         if (!AllowedImageContent.Contains(ImageFile.ContentType))
         {
             ClearImage();
@@ -217,14 +201,11 @@
             await ImageFile.OpenReadStream(100000000).ReadAsync(bytes);
             var contentType = ImageFile.ContentType;
             ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
-
         }
     }
-    
+
     private async Task UploadImage()
     {
-    //IMAGE UPLOAD 
-        
         if (ImageFile != null)
         {
             var bytes = new byte[ImageFile.Size];
@@ -253,24 +234,22 @@
         ImageURL = null;
         ImageFile = null;
     }
-    
-    
+
     //Methods for video upload
     private void LoadVideo()
     {
-        if (!string.IsNullOrWhiteSpace(article.VideoURL))
+        if (!string.IsNullOrWhiteSpace(article?.VideoURL))
         {
             VideoURL = $"{article.VideoURL}?nocache={Guid.NewGuid()}";
             VideoName = VideoURL.Split("/").Last();
         }
     } 
-    
-    
+
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
-        
+
         if (VideoFile != null)
         {
             var bytes = new byte[VideoFile.Size];
@@ -279,11 +258,9 @@
             VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
-    
+
     private async Task UploadVideo()
     {
-
         if (VideoFile != null)
         {
             var bytes = new byte[VideoFile.Size];
@@ -301,8 +278,6 @@
             }
         }
     }
-    
-    
 
     private void ClearVideo()
     {
@@ -310,54 +285,42 @@
         VideoURL = null;
         VideoFile = null;
     }
-    
-    
-    
-    //HTML Editor and required properties
-    
+
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         HtmlInput = args.Html;
     }
-    
+
     void OnTitleChange(string title)
     {
         TitleInput = title;
     }
-    
+
     void OnDescriptionChange(string description)
     {
         DescriptionInput = description;
     }
-    
+
     void OnHtmlChange(string html)
     {
         HtmlInput = html;
     }
-    
+
     void OnChosenDifficultyLevelChange(int value)
     {
         ChosenDifficulty = value;
     }
-    
-    
+
     void OnChooseLanguages(IEnumerable<int> value)
     {
         ChosenLanguages = value;
     }
-    
-    //Add new language
+
     private async Task OnAddLanguage()
     {
-        if (NewLang == null || NewLang.Trim() == "")
-        {
-            return;
-        }
-        
-        var langToPost = new ProgrammingLanguageCreateDTO
-        {
-            Name = NewLang
-        };
+        if (NewLang == null || NewLang.Trim() == "") return;
+
+        var langToPost = new ProgrammingLanguageDTO(NewLang);
         
         try
         {
@@ -383,7 +346,6 @@
         NewLang = val;
     }
 
-    //Update article
     private async Task UpdateArticle()
     {
         try
@@ -398,47 +360,37 @@
             var article = new ArticleUpdateDTO
             {
                 Body = HtmlInput,
-                Title = String.IsNullOrEmpty(TitleInput) ? null : TitleInput,
+                Title = (String.IsNullOrEmpty(TitleInput) ? null : TitleInput)!,
                 Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
                 Description = DescriptionInput,
-                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages![lang].Name).ToList(),
                 Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
                 ImageURL = ImageURL,
                 VideoURL = VideoURL
-
             };
 
             var response = await Http.PutAsJsonAsync($"api/Article/{ArticleId}", article);
             if (response.IsSuccessStatusCode)
             {
-
-                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}";
-
-                NavigationManager.NavigateTo(uri);
+                NavigationManager.NavigateTo($"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}");
             }
         }
         catch (Exception)
         {
         }
     }
-            
     
-
     private async Task DeleteArticle()
     {
         var response = await Http.DeleteAsync($"api/Article/{ArticleId}");
         if (response.IsSuccessStatusCode)
         {
-            var uri = $"{NavigationManager.BaseUri}/";
-            NavigationManager.NavigateTo(uri);
+            NavigationManager.NavigateTo($"{NavigationManager.BaseUri}/");
         }
     }
 
     private void Back()
     {
-        var uri = $"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}";
-
-        NavigationManager.NavigateTo(uri);
+        NavigationManager.NavigateTo($"{NavigationManager.BaseUri}ArticleDetails/{ArticleId}");
     }
-    
 }

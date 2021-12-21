@@ -1,8 +1,6 @@
 @page "/CreateArticle"
 @using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using SETraining.Shared.DTOs
-@using SETraining.Shared.ExtensionMethods
 @using SETraining.Shared.Models
 @using System.Net.Http.Headers
 @inject HttpClient Http
@@ -12,7 +10,6 @@
 @attribute [Authorize]
 
 <PageTitle>Create new article</PageTitle>
-
 
 <div class="row">
     <div class="col-12">
@@ -33,37 +30,28 @@
        {
            <div style="margin-top: 20px;">
                <h4>Choose existing languages</h4>
-             
-                      
-                       
-                             <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
-                                 <Items>
-                                      @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
-                                      {
-                                          <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
-                                      }
-                                 </Items>
-                                 </RadzenCheckBoxList>                     
-       
+               <RadzenCheckBoxList @bind-Value=@ChosenLanguages TValue="int" Orientation="Orientation.Horizontal" Change=@(args => OnChooseLanguages(args))>
+                   <Items>
+                       @foreach (var (language, i) in ProgrammingLanguages.Select((value, i) => (value, i)))
+                       {
+                           <RadzenCheckBoxListItem Text="@language.Name" Value="@i"/>
+                       }
+                       </Items>
+                   </RadzenCheckBoxList>
                <div style="margin-top: 10px; margin-left: 5px;">Or add new language</div>
                 <RadzenTextBox Placeholder="Typescript..." Change=@(args => OnNewLanguageValue(args)) Class="w-20" />
                 <RadzenButton Click=@(args => OnAddLanguage()) Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
            </div>
-       
-       
-       
-       
        }
-        
         <div style="margin-top: 20px;">
             <h4>Pick difficulty level</h4>
-                   <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args))>
-                                 <Items>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="0"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="1"/>
-                                     <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="2"/>
-                                 </Items>
-                             </RadzenRadioButtonList> 
+            <RadzenRadioButtonList @bind-Value=@ChosenDifficulty TValue="int" Change=@(args => OnChosenDifficultyLevelChange(args))>
+                <Items>
+                    <RadzenRadioButtonListItem Text="@DifficultyLevel.Novice.ToString()" Value="0"/>
+                    <RadzenRadioButtonListItem Text="@DifficultyLevel.Intermediate.ToString()" Value="1"/>
+                    <RadzenRadioButtonListItem Text="@DifficultyLevel.Expert.ToString()" Value="2"/>
+                </Items>
+            </RadzenRadioButtonList> 
         </div>
        
         <div class="form-group">
@@ -82,16 +70,13 @@
                 <h4 style="margin-top: 20px;">Add thumbnail to your video</h4>
                 <label for="Image">Image</label>  
             }
-                           
         </div>
         
-        
         <div class="form-group input-group">
-                               <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
-                               <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
-                               </div>
-        
-                                   
+            <InputFile id="Image" OnChange="@OnImageFileSelection" class="form-control" />
+            <button type="button" @onclick="ClearImage" class="btn btn-secondary">Clear</button>
+        </div>
+
         <div style="margin-top: 20px;">
             @if (ChosenType != 0)
             {
@@ -147,25 +132,13 @@
                     <button type="button" @onclick="ClearVideo" class="btn btn-secondary">Clear</button>
                 </div>
             }
-            
         </div>
-        
-                  
     </div>
-  
 </div>
-  <RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
-
-  
-        
-
-        
+<RadzenButton style="margin-bottom:10px;"Click=@(PublishArticle) Text="Publish" Icon="check_circle" ButtonStyle="ButtonStyle.Success" />
 
 @code {
-    
-    //Properties
     private int ChosenType;
-    
     private string ImageName = Guid.NewGuid().ToString();
     private string? ImageURL;
     private IBrowserFile? ImageFile;
@@ -175,42 +148,37 @@
         "image/jpeg",
         "image/png"
     };
-    
+
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
     private IBrowserFile? VideoFile;
-    
-    
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    bool? CheckBoxValue;
+
+    string? HtmlInput;
+    string? TitleInput;
+    string? DescriptionInput;
+
     string? NewLang;
-    
+
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
     int ChosenDifficulty = 0;
-    
-    //Methods
 
-    //Init method
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
-    
+
     private void OnChooseType(int type)
     {
         ChosenType = type;
     }
-    
+
     //Methods for image uploads
     private async Task OnImageFileSelection(InputFileChangeEventArgs e)
     {
         ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
-        
+
         if (!AllowedImageContent.Contains(ImageFile.ContentType))
         {
             ClearImage();
@@ -225,12 +193,9 @@
             ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
-    
+
     private async Task UploadImage()
     {
-
-
         if (ImageFile != null)
         {
             var bytes = new byte[ImageFile.Size];
@@ -247,21 +212,21 @@
             }
         }
     }
-    
+
     private void ClearImage()
     {
         ImageName = Guid.NewGuid().ToString();
         ImageURL = null;
         ImageFile = null;
     }
-    
+
     //Methods for video upload
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (VideoFile.ContentType != "video/mp4")
+        if (VideoFile?.ContentType != "video/mp4")
         {
             ClearVideo();
             JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
@@ -275,11 +240,9 @@
             VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
-    
+
     private async Task UploadVideo()
     {
-
         if (VideoFile != null)
         {
             var bytes = new byte[VideoFile.Size];
@@ -297,8 +260,6 @@
             }
         }
     }
-    
-    
 
     private void ClearVideo()
     {
@@ -306,29 +267,27 @@
         VideoURL = null;
         VideoFile = null;
     }
-    
-    //HTML Editor and required properties
-    
+
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         HtmlInput = args.Html;
     }
-    
+
     void OnTitleChange(string title)
     {
         TitleInput = title;
     }
-    
+
     void OnDescriptionChange(string description)
     {
         DescriptionInput = description;
     }
-    
+
     void OnHtmlChange(string html)
     {
         HtmlInput = html;
     }
-    
+
     void OnChosenDifficultyLevelChange(int value)
     {
         ChosenDifficulty = value;
@@ -338,22 +297,15 @@
     {
         ChosenLanguages = value;
     }
-    
-    //Add new language
+
     private async Task OnAddLanguage()
     {
-        if (NewLang == null || NewLang.Trim() == "")
-        {
-            return;
-        }
-        
+        if (NewLang == null || NewLang.Trim() == "") return;
+
         try
         {
-            var langToPost = new ProgrammingLanguageCreateDTO
-            {
-                Name = NewLang
-            };
-            
+            var langToPost = new ProgrammingLanguageDTO(NewLang);
+
             var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
 
             if (response.IsSuccessStatusCode)
@@ -366,7 +318,7 @@
                 JSRuntime.InvokeAsync<bool>("alert", "Something went wrong, make sure the programming language is not already added");
             }
         }
-        catch
+        catch(Exception)
         {
         }
     }
@@ -376,7 +328,6 @@
         NewLang = val;
     }
 
-    //Publish article
     private async Task PublishArticle()
     {
         try
@@ -392,10 +343,10 @@
             var article = new ArticleCreateDTO
             {
                 Body = HtmlInput,
-                Title = TitleInput,
+                Title = TitleInput!,
                 Type = ChosenType == 0 ? ArticleType.Video : ArticleType.Written,
                 Description = DescriptionInput,
-                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages![lang].Name).ToList(),
                 Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
                 ImageURL = ImageURL,
                 VideoURL = VideoURL
@@ -406,7 +357,7 @@
             {
                 var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
 
-                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created?.Id}";
 
                 NavigationManager.NavigateTo(uri);
             }

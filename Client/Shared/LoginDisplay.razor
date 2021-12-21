@@ -8,12 +8,10 @@
     <Authorized>
         <div style="margin-right: 10px;">
             @context.User.Identity?.Name
-        </div> 
-        @* <button class="nav-link btn btn-link" @onclick="BeginLogout">Log out</button> *@
+        </div>
         <RadzenButton Text="Log out" Click=@(BeginLogout) ButtonStyle="ButtonStyle.Secondary"></RadzenButton>
     </Authorized>
     <NotAuthorized>
-       
         <a href="authentication/login">
              <RadzenButton Text="Log in" ButtonStyle="ButtonStyle.Secondary"></RadzenButton>
         </a>

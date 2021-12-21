@@ -1,5 +1,3 @@
-
-using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -26,9 +24,7 @@ builder.Services.AddScoped<IProgrammingLanguagesRepository, ProgrammingLanguages
 builder.Services.AddSwaggerGen();
 
 var blobContainerConns = builder.Configuration.GetConnectionString("AzureBlob");
-Console.WriteLine(blobContainerConns);
 builder.Services.AddScoped<BlobContainerClient>(_ => new BlobContainerClient(blobContainerConns, "setrainingupload"));
-
 
 var app = builder.Build();
 
@@ -56,7 +52,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-
 app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
@@ -64,6 +59,3 @@ app.MapFallbackToFile("index.html");
 app.Seed();
 
 app.Run();
-
-
-
