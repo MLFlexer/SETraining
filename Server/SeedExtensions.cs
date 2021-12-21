@@ -21,9 +21,6 @@ public static class SeedExtensions
             _articleRepository = new ArticleRepository(context);
 
             SeedArticles(context);
-            SeedLearners(context);
-            SeedArticleRatings(context);
-            SeedHistoryEntries(context);
         }
         return host;
     }
@@ -133,72 +130,6 @@ public static class SeedExtensions
         context.SaveChanges();
     }
 
-    private static void SeedLearners(SETrainingContext context)
-    {
-        context.Database.Migrate();
-        if (context.Learners.Any()) return;
-        
-        var joachimak = new Learner("Joachim Alexander Kofoed") { Level = DifficultyLevel.Expert };
-        var joachimdf = new Learner("Joachim de Fries") { Level = DifficultyLevel.Novice };
-        var testLearner = new Learner("Test Learner") { Level = DifficultyLevel.Intermediate };
-        var testLearner2 = new Learner("Another Test Learner");
 
-        context.Learners.AddRange(
-            testLearner,
-            testLearner2,
-            joachimdf,
-            joachimak
-        );
-
-        context.SaveChanges();
-    }
-
-    private static void SeedArticleRatings(SETrainingContext context)
-    {
-        context.Database.Migrate();
-        if (context.ArticleRatings.Any()) return;
-        
-        var articles = context.Articles.ToList();
     
-        var learners = context.Learners.ToList();
-    
-        for (var i = 0; i < articles.Count/2; i++)
-        {
-            var rand = new Random();
-            int randomRating = rand.Next(1, 6);
-    
-            context.ArticleRatings.Add(new ArticleRating(
-                randomRating,
-                learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner(""),
-                articles.ElementAtOrDefault(i) ?? new Article("", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert)
-            ));
-        }
-    
-        context.SaveChanges();
-    }
-    
-    
-    private static void SeedHistoryEntries(SETrainingContext context)
-    {
-        context.Database.Migrate();
-
-        if (!context.ArticleHistoryEntries.Any())
-        {
-            var contents = context.Articles.ToList();
-
-            var learners = context.Learners.ToList();
-
-            for (var i = 0; i < contents.Count; i++)
-            {
-                context.ArticleHistoryEntries.Add(new ArticleHistoryEntry(
-                    DateTime.UtcNow.ToUniversalTime(),
-                    contents.ElementAtOrDefault(i) ?? new Article("", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert),
-                    learners.ElementAtOrDefault(Math.Min(i, learners.Count - 1)) ?? new Learner("")
-                ));
-            }
-
-            context.SaveChanges();
-        }
-   
-    }
 }
