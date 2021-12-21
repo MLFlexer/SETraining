@@ -13,7 +13,7 @@ public class UploadRepositoriesTest : IDisposable
     
     public UploadRepositoriesTest()
     {
-        //Using Azurite from Docker Image to mock Azure Blob Storage, a default connecionsstring
+        // Using Azurite from Docker Image to mock Azure Blob Storage, a default connecionsstring.
         _serviceClient = new BlobServiceClient(
             "AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;DefaultEndpointsProtocol=http;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;");
         
@@ -24,26 +24,26 @@ public class UploadRepositoriesTest : IDisposable
     [Fact]
     public async Task CreateUploadAsync_returns_status_Created()
     {
-        //Arrange
+        // Arrange.
         var ExpectedResult = Status.Created;
         
-        //Act
+        // Act.
         var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg", new MemoryStream());
 
-        //Assert
+        // Assert.
         Assert.Equal(ExpectedResult, result.status); 
     }
 
     [Fact]
     public async Task CreateUploadAsync_returns_status_URI_On_Success()
     {
-        //Arrange
+        // Arrange.
         var ExpectedURI = new Uri("http://127.0.0.1:10000/devstoreaccount1/imagetest/tester.jpg");
 
-        //Act
+        // Act.
         var result = await _repository.CreateUploadAsync("tester.jpg", "jpeg", new MemoryStream());
         
-        //Assert
+        // Assert.
         Assert.Equal(ExpectedURI, result.uri); 
     }
     

@@ -2,7 +2,7 @@ namespace SETraining.Shared;
 
 public static class SharedExtensions
 {
-    // This method was written by Rasmus Lystrøm
+    // This method was written by Rasmus Lystrøm.
     public static async Task<List<T>> ToListAsync<T>(this IAsyncEnumerable<T> items,
         CancellationToken cancellationToken = default)
     {
