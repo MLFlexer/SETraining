@@ -1,6 +1,4 @@
-﻿
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
 using SETraining.Shared;
 using SETraining.Shared.DTOs;
@@ -22,7 +20,7 @@ public class ArticleRepository : IArticleRepository
         var entity = new Article(article.Title, article.Type, DateTime.Today, article.Difficulty)
         {
             Description = article.Description,
-            ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync(),
+            ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages!).ToListAsync(),
             AvgRating = article.AvgRating,
             ImageURL = article.ImageURL,
             Created = DateTime.Now.ToUniversalTime(),
@@ -73,7 +71,7 @@ public class ArticleRepository : IArticleRepository
                         c.Type,
                         c.Created.ToUniversalTime(),
                         c.Description,
-                        c.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                        c.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                         c.Difficulty,
                         c.AvgRating,
                         c.Body,
@@ -83,8 +81,6 @@ public class ArticleRepository : IArticleRepository
                     .FirstOrDefaultAsync();
     }
 
-
-    //ReadAsync on a string
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadArticlesFromTitleAsync(string contentTitle)
     {
         var result =  await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower().Trim()))
@@ -94,31 +90,30 @@ public class ArticleRepository : IArticleRepository
                 c.Type,
                 c.Created.ToUniversalTime(),
                 c.Description,
-                c.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                c.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                 c.Difficulty,
                 c.AvgRating,
                 c.ImageURL
                 )).ToListAsync();
         
         return result.Any() ? result : null;
-
     }
 
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesFromParametersAsync(string title, string difficulty, string[] languages)
     {
-        if (!String.IsNullOrEmpty(difficulty) && !(languages!.IsNullOrEmpty()))
+        if (!string.IsNullOrWhiteSpace(difficulty) && !(languages!.IsNullOrEmpty()))
         {
             return await ReadAllArticlesAsync(title, difficulty, languages);
         }
-        else if (String.IsNullOrEmpty(difficulty) && !(languages!.IsNullOrEmpty()))
+        else if (string.IsNullOrWhiteSpace(difficulty) && !(languages!.IsNullOrEmpty()))
         {
             return await ReadAllArticlesAsync(title, languages);
         }
-        else if (!String.IsNullOrEmpty(difficulty) && languages!.IsNullOrEmpty())
+        else if (!string.IsNullOrWhiteSpace(difficulty) && languages!.IsNullOrEmpty())
         {
             return await ReadAllArticlesAsync(title, difficulty);
         }
-        else if (!String.IsNullOrEmpty(title))
+        else if (!string.IsNullOrWhiteSpace(title))
         {
             return await ReadAllArticlesAsync(title);
         }
@@ -136,7 +131,7 @@ public class ArticleRepository : IArticleRepository
                                 content.Type,
                                 content.Created.ToUniversalTime(),
                                 content.Description,
-                                content.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.ImageURL
@@ -157,7 +152,7 @@ public class ArticleRepository : IArticleRepository
                                 content.Type,
                                 content.Created.ToUniversalTime(),
                                 content.Description,
-                                content.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.ImageURL
@@ -169,7 +164,7 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string difficulty)
     {
-        if (String.IsNullOrEmpty(title)) title = "";
+        if (string.IsNullOrWhiteSpace(title)) title = "";
         var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
 
         var result =  await _context.Articles
@@ -182,7 +177,7 @@ public class ArticleRepository : IArticleRepository
                                 content.Type,
                                 content.Created.ToUniversalTime(),
                                 content.Description,
-                                content.ProgrammingLanguages.Select(p => p.Name).ToList(),
+                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 content.Difficulty,
                                 content.AvgRating,
                                 content.ImageURL
@@ -194,7 +189,7 @@ public class ArticleRepository : IArticleRepository
     
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string[] languages)
     {
-        if (String.IsNullOrEmpty(title)) title = "";
+        if (string.IsNullOrWhiteSpace(title)) title = "";
 
         var all = await _context.Articles
                 .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
@@ -205,14 +200,14 @@ public class ArticleRepository : IArticleRepository
                         content.Type,
                         content.Created.ToUniversalTime(),
                         content.Description,
-                        content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
+                        content.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
                         content.Difficulty,
                         content.AvgRating,
                         content.ImageURL
                         )
             ).ToListAsync();
 
-        var result =  all.Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
+        var result =  all.Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
                   .Select(content =>
                         new ArticlePreviewDTO(
                                 content.Id,
@@ -232,7 +227,7 @@ public class ArticleRepository : IArticleRepository
 
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync(string title, string difficulty, string[] languages)
     {
-        if (String.IsNullOrEmpty(title)) title = "";
+        if (string.IsNullOrWhiteSpace(title)) title = "";
         var diffycultyToEnum = (DifficultyLevel) Enum.Parse(typeof(DifficultyLevel), difficulty);
 
         var allWithDifficulty = await _context.Articles
@@ -245,7 +240,7 @@ public class ArticleRepository : IArticleRepository
                             content.Type,
                             content.Created.ToUniversalTime(),
                             content.Description,
-                            content.ProgrammingLanguages.Select(p => p.Name).ToList() ?? new List<string>(),
+                            content.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
                             content.Difficulty,
                             content.AvgRating,
                             content.ImageURL
@@ -254,7 +249,7 @@ public class ArticleRepository : IArticleRepository
                 ).ToListAsync();
 
         var result = allWithDifficulty
-                    .Where(article => article.ProgrammingLanguages.Intersect(languages).Any())
+                    .Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
                     .Select(content =>
                         new ArticlePreviewDTO(
                                 content.Id,
@@ -273,7 +268,6 @@ public class ArticleRepository : IArticleRepository
         return result.Any() ? result : null;
     }
     
-
     public async Task<Status> UpdateArticleAsync(int id, ArticleUpdateDTO article)
     { 
         var entity = _context.Articles.ToList().Find(c => c.Id == id);
@@ -286,16 +280,14 @@ public class ArticleRepository : IArticleRepository
         _context.Articles.Remove(entity);
         await _context.SaveChangesAsync();
         
-        
         entity.Description = article.Description;
         entity.Difficulty = article.Difficulty;
         entity.Title = article.Title;
         entity.Body = article.Body;
         entity.AvgRating = article.AvgRating;
         entity.ImageURL = article.ImageURL;
-        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages).ToListAsync();
+        entity.ProgrammingLanguages = await GetProgrammingLanguagesAsync(article.ProgrammingLanguages!).ToListAsync();
         entity.VideoURL = article.VideoURL;
-        
         
         _context.Articles.Add(entity);
         await _context.SaveChangesAsync();
@@ -303,11 +295,9 @@ public class ArticleRepository : IArticleRepository
         return Status.Updated;
     }
 
-    
-    //Heavily inspired by github.com/ondfisk/BDSA2021, credit to Author 
+    //Heavily inspired by github.com/ondfisk/BDSA2021, credit to Author Rasmus Lystrøm
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
-        //TODO: Denne metode er direkte kopieret, skal nok laves lidt om.
         var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);
         
         foreach (var language in languages)

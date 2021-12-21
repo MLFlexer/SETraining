@@ -18,10 +18,9 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 
     public async Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageCreateDTO language)
     {
-        //TODO: skal der returneres en Option her?
         if (String.IsNullOrWhiteSpace(language.Name))
         {
-            return new ProgrammingLanguageDTO("ProgrammingLanguage with empty or null name will not be added to context");
+            return null!;
         }
 
         var entity = new ProgrammingLanguage(language.Name);
@@ -35,6 +34,7 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
 
     public async Task<Option<ProgrammingLanguageDTO>> ReadAsync(string name)
     {
+        if(name is null) return null;
         return await _context.ProgrammingLanguages
             .Where(c => c.Name.ToLower() == name.ToLower().Trim())
             .Select(c => new ProgrammingLanguageDTO(c.Name))

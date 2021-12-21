@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SETraining.Server.Contexts;
@@ -8,7 +5,6 @@ using SETraining.Server.Repositories;
 using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
-using SETraining.Shared;
 
 namespace Server.Repositories.Tests;
 
@@ -41,10 +37,10 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task Create_new_ProgrammingLanguage_returns_Created_Programming_Language()
+    public async Task Create_new_ProgrammingLanguage_returns_Created_ProgrammingLanguage()
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO{Name = "SourcePawn"};
+        var toCreate = new ProgrammingLanguageCreateDTO { Name = "SourcePawn" };
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
@@ -57,29 +53,29 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     public async Task Create_new_ProgrammingLanguage_With_special_Letters()
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO{Name = "C#2"};
+        var toCreate = new ProgrammingLanguageCreateDTO { Name = "Java2" };
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
         
         //Assert
-        Assert.Equal("C#2", created.Name);
+        Assert.Equal("Java2", created.Name);
     }
     
     [Theory]
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(null)]
-    public async Task Create_new_ProgrammingLanguage_Where_Name_isEmpty_or_null_returns_object_with_error_message(string name)
+    public async Task Create_new_ProgrammingLanguage_Where_Name_isEmpty_or_null_returns_null(string name)
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO{Name = name};
+        var toCreate = new ProgrammingLanguageCreateDTO { Name = name };
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
         
         //Assert
-        Assert.Equal("ProgrammingLanguage with empty or null name will not be added to context", created.Name);
+        Assert.Null(created);
     }
 
     [Fact]
@@ -104,12 +100,19 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     }
     
     [Theory]
-    [InlineData("NotALanguage")]
     [InlineData(" ")]
     [InlineData("")]
-    public async Task Read_given_non_existing_name_or_nullOrEmpty_returns_OptionIsNone(string searchName)
+    [InlineData(null)]
+    public async Task Read_given_nullOrEmpty_returns_OptionIsNone(string searchName)
     {
         var actual = await _repository.ReadAsync(searchName);
+        Assert.True(actual.IsNone);
+    }
+
+    [Fact]
+    public async Task Read_given_non_existing_name_returns_OptionIsNone()
+    {
+        var actual = await _repository.ReadAsync("NotALanguage");
         Assert.True(actual.IsNone);
     }
     
@@ -119,7 +122,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     [InlineData("Java")]
     [InlineData("JavaScript")]
     [InlineData("C#")]
-    public async Task Read_given_precisely_existing_name_returns_ProgrammingLanguage(string searchName)
+    public async Task Read_given_existing_name_returns_ProgrammingLanguage(string searchName)
     {
         //Arrange
         var expected = new ProgrammingLanguageDTO(searchName);
@@ -128,16 +131,14 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
         var actual = await _repository.ReadAsync(searchName);
 
         //Assert
-        Assert.Equal(expected.Name, actual.Value.Name);
+        Assert.Equal(expected, actual.Value);
     }
     
     [Theory]
     [InlineData("c#")]
     [InlineData("JAVASCRIPT")]
     [InlineData("jAvA")]
-
-    public async Task Read_Upper_and_LowerCase_returns_ProgrammingLanguage_with_same_Lowercase_letters(
-        string searchName)
+    public async Task Read_Upper_and_LowerCase_returns_ProgrammingLanguage_with_same_Lowercase_letters(string searchName)
     {
         //Arrange
         var expected = new ProgrammingLanguageDTO(searchName);
@@ -147,7 +148,6 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
 
         //Assert
         Assert.Equal(expected.Name.ToLower(), actual.Value.Name.ToLower());
-
     }
     
     [Theory]
@@ -162,7 +162,6 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
         
         Assert.Equal(expected.Name.Trim(), actual.Value.Name);
     }
-
 
     public void Dispose() => _context.Dispose();
 }
