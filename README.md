@@ -1,14 +1,12 @@
-
-
-
-##Run the system for demonstration purposes
+## Run the system for demonstration purposes
 
 The following command is only provided in order to show the system to examiners. It contains a key which should never be in any form of VCS.
 1. Clone the directory.
-2. Run the following command from `root`directory..
+2. Run the following command from `root`directory.
 ```markdown
 ./StartMe.ps1 -Docker -Azure EKA5Ko6vL6oAKFZvGFkPC3oQAJ9vqdCl+19Tudu9aKx5UXDs4eWHKPmF9Ob1h5kZ2XZ1qT6uMMyQsTbEgSkTTQ== 
 ```
+Make sure to run the command from PowerShell. You may need to change the `ExecutionPolicy` setting to `Unrestricted` by typing `Set-ExecutionPolicy Unrestricted`.
 
 -----
 

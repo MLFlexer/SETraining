@@ -281,7 +281,7 @@ public class ArticleRepository : IArticleRepository
         return Status.Updated;
     }
 
-    //Heavily inspired by github.com/ondfisk/BDSA2021, credit to Author Rasmus Lystrøm
+    // This method is heavily inspired by github.com/ondfisk/BDSA2021, credit to Author Rasmus Lystrøm.
     private async IAsyncEnumerable<ProgrammingLanguage> GetProgrammingLanguagesAsync(IEnumerable<string> languages)
     {
         var existing = await _context.ProgrammingLanguages.Where(l => languages.Contains(l.Name)).ToDictionaryAsync(p => p.Name);

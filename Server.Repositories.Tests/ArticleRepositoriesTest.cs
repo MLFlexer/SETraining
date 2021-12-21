@@ -6,7 +6,6 @@ using SETraining.Shared.DTOs;
 using SETraining.Shared.Models;
 using Xunit;
 using SETraining.Shared;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Repositories.Tests;
 
@@ -119,13 +118,13 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Create_creates_new_Article()
     {
-        //Arrange 
+        // Arrange. 
         var programmingLangs = new List<string>() { "Java", "Go" };
         var toCreate = new ArticleCreateDTO { Title = "Introduction to Go", Body = "Article", ProgrammingLanguages = programmingLangs };
-        //Act
+        // Act.
         var created = await _repository.CreateAsync(toCreate);
 
-        //Assert
+        // Assert.
         Assert.Equal(10, created.Id);
         Assert.Equal("Introduction to Go", created.Title);
         Assert.Equal(programmingLangs, created.ProgrammingLanguages);
@@ -134,7 +133,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_returns_all()
     {
-        //Arrange 
+        // Arrange. 
         var expected = new List<ArticlePreviewDTO>()
         {
             new(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description",
@@ -157,10 +156,10 @@ public class ArticleRepositoriesTest : IDisposable
                 "This a written article", new string[] {"Python"}, DifficultyLevel.Expert, _mockImageURL)
         };
 
-        //Act 
+        // Act. 
         var actual = (await _repository.ReadAsync()).Value.ToList();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < actual.Count; i++)
         {
             Assert.Equal(expected[i].Id, actual[i].Id);
@@ -184,13 +183,13 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task ReadArticleFromIdAsync_given_existing_id_returns_Article()
     {
-        //Arrange
+        // Arrange.
         var expected = new ArticleDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today, "Test", null, DifficultyLevel.Expert, null, "Article", null);
 
-        //Act
+        // Act.
         var actual = (await _repository.ReadFromIdAsync(1)).Value;
 
-        //Assert
+        // Assert.
         Assert.Equal(expected.Id, actual.Id);
         Assert.Equal(expected.Title, actual.Title);
     }
@@ -205,13 +204,13 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task ReadArticlesFromTitleAsync_given_existing_title_returns_articles()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[] {
             new ArticlePreviewDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), null, new string[]{"CSharp"}, DifficultyLevel.Expert, null),
             new ArticlePreviewDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today.ToUniversalTime(), "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, null)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromTitleAsync("CSharp");
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
 
@@ -319,20 +318,20 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_existing_title_AND_no_matching_parameter_on_difficulty_and_language_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[] {
             new ArticlePreviewDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, _mockImageURL),
             new ArticlePreviewDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, _mockImageURL),
             new ArticlePreviewDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, _mockImageURL)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("Java", "", null!);
 
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < expectedArr.Length; i++)
         {
             Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
@@ -349,18 +348,18 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_difficulty_AND_no_matching_parameter_on_title_and_language_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[] {
             new ArticlePreviewDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Javascript"}, DifficultyLevel.Novice, _mockImageURL),
             new ArticlePreviewDTO(6, "Golang", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is a description", new string[]{"Golang"}, DifficultyLevel.Novice, _mockImageURL)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("", "1", null!);
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < expectedArr.Length; i++)
         {
             Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
@@ -377,18 +376,18 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_language_AND_no_matching_parameter_on_title_and_difficulty_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[] {
             new ArticlePreviewDTO(2,"Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), null, new string[]{"CSharp"}, DifficultyLevel.Expert, _mockImageURL),
             new ArticlePreviewDTO(4, "Introduction to CSharp", ArticleType.Written,DateTime.Today.ToUniversalTime(), "Learn how to code in CSharp", new string[]{"CSharp"}, DifficultyLevel.Expert, _mockImageURL)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("", "", new string[] { "CSharp" });
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < expectedArr.Length; i++)
         {
             Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
@@ -405,15 +404,15 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_title_and_difficulty_AND_no_matching_parameter_on_language_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expected1 = new ArticlePreviewDTO(8, "Python", ArticleType.Video, DateTime.Today.ToUniversalTime(), "This is python", new string[] { "Python" }, DifficultyLevel.Intermediate, _mockImageURL);
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("Python", "2", null!);
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         Assert.Equal(expected1.Id, actualArray[0].Id);
         Assert.Equal(expected1.Title, actualArray[0].Title);
         Assert.Equal(expected1.Type, actualArray[0].Type);
@@ -427,18 +426,18 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_title_and_language_AND_no_matching_parameter_on_difficulty_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[] {
             new ArticlePreviewDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, _mockImageURL),
             new ArticlePreviewDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[]{"Java"}, DifficultyLevel.Expert, _mockImageURL)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("Java", "", new string[] { "Java" });
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < expectedArr.Length; i++)
         {
             Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
@@ -455,15 +454,15 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_difficulty_and_language_AND_no_matching_parameter_on_title_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expected1 = new ArticlePreviewDTO(9, "Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(), "This a written article", new string[] { "Python" }, DifficultyLevel.Expert, _mockImageURL);
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("", "3", new string[] { "Python" });
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         Assert.Equal(expected1.Id, actualArray[0].Id);
         Assert.Equal(expected1.Title, actualArray[0].Title);
         Assert.Equal(expected1.Type, actualArray[0].Type);
@@ -477,15 +476,15 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_title_difficulty_languages_returns_article()
     {
-        //Arrange
+        // Arrange.
         var expected1 = new ArticlePreviewDTO(7, "Learn how to write Go or FSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), "Description", new string[] { "FSharp", "Golang" }, DifficultyLevel.Intermediate, _mockImageURL);
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync("Go", "2", new string[] { "Golang" });
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         Assert.Equal(expected1.Id, actualArray[0].Id);
         Assert.Equal(expected1.Title, actualArray[0].Title);
         Assert.Equal(expected1.Type, actualArray[0].Type);
@@ -499,7 +498,7 @@ public class ArticleRepositoriesTest : IDisposable
     [Fact]
     public async Task Read_given_no_title_difficulty_languages_returns_all_articles()
     {
-        //Arrange
+        // Arrange.
         var expectedArr = new ArticlePreviewDTO[]
         {
             new ArticlePreviewDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), 
@@ -530,12 +529,12 @@ public class ArticleRepositoriesTest : IDisposable
                                     "This a written article", new[] { "Python" }, DifficultyLevel.Expert, _mockImageURL)
         };
 
-        //Act
+        // Act.
         var actual = await _repository.ReadFromParametersAsync(null!, null!, null!);
         IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
         var actualArray = actualValue.ToArray();
 
-        //Assert
+        // Assert.
         for (var i = 0; i < expectedArr.Length; i++)
         {
             Assert.Equal(expectedArr[i].Id, actualArray[i].Id);

@@ -13,7 +13,7 @@ public class ProgrammingLanguagesControllerTest
     [Fact]
     public async Task Get_returns_ProgrammingLanguages_from_repo()
     {
-        //Arrange 
+        // Arrange. 
         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
         var expected = Array.Empty<ProgrammingLanguageDTO>();
         var repository = new Mock<IProgrammingLanguagesRepository>();
@@ -21,23 +21,23 @@ public class ProgrammingLanguagesControllerTest
 
         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
 
-        //act
+        // Act
         var actual = await controller.Get();
 
-        //Assert
+        // Assert.
         Assert.Equal(expected, actual.Value);
     }
 
     [Fact]
     public async Task Get_given_non_existing_name_returns_NotFound()
     {
-        //Arrange
+        // Arrange.
         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
         var repository = new Mock<IProgrammingLanguagesRepository>();
         repository.Setup(m => m.ReadAsync("NotALanguage")).ReturnsAsync(default(ProgrammingLanguageDTO));
         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
 
-        //Act
+        // Act.
         var response = await controller.Get("NotALanguage");
         Assert.IsType<NotFoundResult>(response.Result);
     }
@@ -45,15 +45,15 @@ public class ProgrammingLanguagesControllerTest
     [Fact]
     public async Task Get_given_existing_name_returns_ProgrammingLanguage()
     {
-        //Arrange
+        // Arrange.
         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
         var expected = new ProgrammingLanguageDTO("Java");
         var repository = new Mock<IProgrammingLanguagesRepository>();
         repository.Setup(m => m.ReadAsync("Java")).ReturnsAsync(expected);
         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
-        //Act
+        // Act.
         var actual = await controller.Get("Java");
-        //Assert
+        // Assert.
         Assert.Equal(expected, actual.Value);
     }
 
@@ -67,7 +67,7 @@ public class ProgrammingLanguagesControllerTest
         repository.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(created);
         var controller = new ProgrammingLanguagesController(logger.Object, repository.Object);
         
-        // Act
+        // Act..
         var result = await controller.Post(toCreate) as CreatedAtActionResult;
 
         Assert.Equal(created, result?.Value);

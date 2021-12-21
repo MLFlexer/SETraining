@@ -4,7 +4,7 @@ using SETraining.Shared;
 
 namespace SETraining.Server.Repositories;
 
-// Credit to Rasmus Lystrøm / github.com/ondfisk/BDSA2021
+// Credit to Rasmus LystrÃ¸m / github.com/ondfisk/BDSA2021.
 public class UploadRepository : IUploadRepository
 {
     private readonly BlobContainerClient _client;

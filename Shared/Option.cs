@@ -1,6 +1,6 @@
 ﻿namespace SETraining.Shared;
 
-// Struct written by Rasmus Lystrøm
+// Struct written by Rasmus Lystrøm.
 public struct Option<T> where T : class
 {
     private readonly T? _value;

@@ -12,10 +12,10 @@ public class VideoUploadControllerTest
 {
     [Fact]
     public async Task Create_New_Video_With_Invalid_ContentType_Returns_BadRequest () {
-        //Arrange
+        // Arrange.
         var FileMock = new Mock<IFormFile>();
         
-        //Setup mock file using a memory stream
+        // Setup mock file using a memory stream.
         var Content = "Hello World from a Fake File";
         var FileName = "test.jpeg";
         var ReturnURI = new Uri($"https://localhost:7021/{FileName}");
@@ -40,19 +40,19 @@ public class VideoUploadControllerTest
 
         var file = FileMock.Object;
         
-        //Act
+        // Act.
         var actual = await controller.Post(FileName, file);
 
-        //Assert
+        // Assert.
         Assert.IsType<BadRequestObjectResult>(actual);
     }
     
     [Fact]
     public async Task Create_Video_With_MP4_ContentType_Returns_Created_And_URI () {
-        //Arrange
+        // Arrange.
         var FileMock = new Mock<IFormFile>();
         
-        //Setup mock file using a memory stream
+        //Setup mock file using a memory stream.
         var Content = "Hello World from a Fake File";
         var FileName = "test.mp4";
         var ReturnURI = new Uri($"https://localhost:7021/{FileName}"); 
@@ -71,17 +71,16 @@ public class VideoUploadControllerTest
         
         var response = (Status.Created, ReturnURI);
         
-        
         var repository = new Mock<IUploadRepository>();
         repository.Setup(m => m.CreateUploadAsync(FileName, ContentType, Stream )).ReturnsAsync(response);
         var controller = new VideoUploadController(repository.Object);
 
         var file = FileMock.Object;
         
-        //Act
+        // Act.
         var actual = await controller.Post(FileName, file) as CreatedResult;
 
-        //Assert
+        // Assert.
         Assert.IsType<CreatedResult>(actual);
         Assert.Equal(ReturnURI.ToString(), actual?.Location);
     }
