@@ -92,21 +92,21 @@ public class ArticleRepositoriesTest : IDisposable
                     ImageURL = _mockImageURL,
 
                 },
-                 new Article("Python", ArticleType.Video, DateTime.Today.ToUniversalTime(), DifficultyLevel.Intermediate)
-                 {
-                     Description = "This is python",
-                     ProgrammingLanguages = new[] { python },
-                     Body = "Learn how to write in the very popular language Python",
-                     ImageURL = _mockImageURL,
-                     VideoURL = _mockVideoURL
-                 },
-                    new Article("Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert)
-                    {
-                        Description = "This a written article",
-                        ProgrammingLanguages = new[] { python },
-                        Body = "Very interesting",
-                        ImageURL = _mockImageURL
-                    }
+                new Article("Python", ArticleType.Video, DateTime.Today.ToUniversalTime(), DifficultyLevel.Intermediate)
+                {
+                    Description = "This is python",
+                    ProgrammingLanguages = new[] { python },
+                    Body = "Learn how to write in the very popular language Python",
+                    ImageURL = _mockImageURL,
+                    VideoURL = _mockVideoURL
+                },
+                new Article("Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert)
+                {
+                    Description = "This a written article",
+                    ProgrammingLanguages = new[] { python },
+                    Body = "Very interesting",
+                    ImageURL = _mockImageURL
+                }
             );
 
         context.SaveChanges();
@@ -239,12 +239,15 @@ public class ArticleRepositoriesTest : IDisposable
             Description = "Description",
             ProgrammingLanguages = new List<string>() { "Java 4", "Java 5" },
             Difficulty = DifficultyLevel.Expert,
-            Body = "Article"
+            Body = "Article",
+            Type = 0,
+            ImageURL = "",
+            VideoURL = ""
         };
 
-        var updated = await _repository.UpdateAsync(42, content);
+        var result = await _repository.UpdateAsync(42, content);
 
-        Assert.Equal(Status.NotFound, updated);
+        Assert.Equal(Status.NotFound, result);
     }
 
     [Fact]
@@ -257,7 +260,10 @@ public class ArticleRepositoriesTest : IDisposable
             Description = "This is updated",
             ProgrammingLanguages = new List<string>() { },
             Difficulty = DifficultyLevel.Expert,
-            Body = "Article"
+            Body = "Article",
+            Type = 0,
+            ImageURL = "",
+            VideoURL = ""
         };
 
         var updated = await _repository.UpdateAsync(1, content);
@@ -267,6 +273,7 @@ public class ArticleRepositoriesTest : IDisposable
         var option = await _repository.ReadFromIdAsync(1);
         var UpdatedContent = option.Value;
 
+        Assert.Equal(1, UpdatedContent.Id);
         Assert.Equal("This is updated", UpdatedContent.Description);
         Assert.Equal("Introduction to Java2", UpdatedContent.Title);
         Assert.Empty(UpdatedContent.ProgrammingLanguages);
@@ -487,6 +494,63 @@ public class ArticleRepositoriesTest : IDisposable
         Assert.Equal(expected1.ProgrammingLanguages, actualArray[0].ProgrammingLanguages);
         Assert.Equal(expected1.Difficulty, actualArray[0].Difficulty);
         Assert.Equal(expected1.ImageURL, actualArray[0].ImageURL);
+    }
+
+    [Fact]
+    public async Task Read_given_no_title_difficulty_languages_returns_all_articles()
+    {
+        //Arrange
+        var expectedArr = new ArticlePreviewDTO[]
+        {
+            new ArticlePreviewDTO(1, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), 
+                                    "Description", new[] { "Java" }, DifficultyLevel.Expert, _mockImageURL),
+
+            new ArticlePreviewDTO(2, "Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(), 
+                                    null, new[] { "CSharp" }, DifficultyLevel.Expert, _mockImageURL),
+
+            new ArticlePreviewDTO(3, "Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(),
+                                    "Description", new[] { "Java" }, DifficultyLevel.Expert, _mockImageURL),
+
+            new ArticlePreviewDTO(4, "Introduction to CSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(),
+                                    "Learn how to code in CSharp", new[] { "CSharp" }, DifficultyLevel.Expert, _mockImageURL),
+
+            new ArticlePreviewDTO(5, "Javascript", ArticleType.Video, DateTime.Today.ToUniversalTime(),
+                                    "Description", new[] { "Javascript" }, DifficultyLevel.Novice, _mockImageURL),
+
+            new ArticlePreviewDTO(6, "Golang", ArticleType.Video, DateTime.Today.ToUniversalTime(),
+                                    "This is a description", new[] { "Golang" }, DifficultyLevel.Novice, _mockImageURL),
+
+            new ArticlePreviewDTO(7, "Learn how to write Go or FSharp", ArticleType.Written, DateTime.Today.ToUniversalTime(),
+                                    "Description", new[] { "Golang", "FSharp" }, DifficultyLevel.Intermediate, _mockImageURL),
+
+            new ArticlePreviewDTO(8, "Python", ArticleType.Video, DateTime.Today.ToUniversalTime(),
+                                    "This is python", new[] { "Python" }, DifficultyLevel.Intermediate, _mockImageURL),
+
+            new ArticlePreviewDTO(9, "Testing with python", ArticleType.Written, DateTime.Today.ToUniversalTime(),
+                                    "This a written article", new[] { "Python" }, DifficultyLevel.Expert, _mockImageURL)
+        };
+
+        //Act
+        var actual = await _repository.ReadFromParametersAsync(null!, null!, null!);
+        IEnumerable<ArticlePreviewDTO> actualValue = actual.Value;
+        var actualArray = actualValue.ToArray();
+
+        //Assert
+        for (var i = 0; i < expectedArr.Length; i++)
+        {
+            Assert.Equal(expectedArr[i].Id, actualArray[i].Id);
+            Assert.Equal(expectedArr[i].Title, actualArray[i].Title);
+            Assert.Equal(expectedArr[i].Type, actualArray[i].Type);
+            Assert.Equal(expectedArr[i].Created.Date, actualArray[i].Created.Date);
+            Assert.Equal(expectedArr[i].Description, actualArray[i].Description);
+            Assert.False(expectedArr[i].ProgrammingLanguages!
+                        .Union(actualArray[i].ProgrammingLanguages!)
+                        .Except(actualArray[i].ProgrammingLanguages!)
+                        .Any()
+                    );
+            Assert.Equal(expectedArr[i].Difficulty, actualArray[i].Difficulty);
+            Assert.Equal(expectedArr[i].ImageURL, actualArray[i].ImageURL);
+        }
     }
 
     public void Dispose()
