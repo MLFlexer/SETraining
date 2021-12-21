@@ -128,7 +128,7 @@ public class ArticleRepository : IArticleRepository
                                 article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
                                 article.Difficulty,
                                 article.ImageURL
-                                )
+                            )
                     ).ToListAsync();
 
         return result.Any() ? result : null;
