@@ -26,7 +26,6 @@ public class ArticleRepository : IArticleRepository
             Created = DateTime.Now.ToUniversalTime(),
             Body = article.Body,
             VideoURL = article.VideoURL
-            
         };
         _context.Articles.Add(entity);
         
@@ -47,9 +46,9 @@ public class ArticleRepository : IArticleRepository
         ); 
     }
 
-    public async Task<Status> DeleteArticleAsync(int contentId)
+    public async Task<Status> DeleteArticleAsync(int articleId)
     {
-        var entity = await _context.Articles.FindAsync(contentId);
+        var entity = await _context.Articles.FindAsync(articleId);
 
         if (entity == null)
         {
@@ -61,10 +60,10 @@ public class ArticleRepository : IArticleRepository
         return Status.Deleted;
     }
 
-    public async Task<Option<ArticleDTO>> ReadArticleFromIdAsync(int contentId)
+    public async Task<Option<ArticleDTO>> ReadArticleFromIdAsync(int articleId)
     {
         return await _context.Articles
-                    .Where(c => c.Id == contentId)
+                    .Where(c => c.Id == articleId)
                     .Select(c => new ArticleDTO(
                         c.Id,
                         c.Title,
@@ -81,9 +80,9 @@ public class ArticleRepository : IArticleRepository
                     .FirstOrDefaultAsync();
     }
 
-    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadArticlesFromTitleAsync(string contentTitle)
+    public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadArticlesFromTitleAsync(string articleTitle)
     {
-        var result =  await _context.Articles.Where(c => c.Title.ToLower().Contains(contentTitle.ToLower().Trim()))
+        var result =  await _context.Articles.Where(c => c.Title.ToLower().Contains(articleTitle.ToLower().Trim()))
             .Select(c => new ArticlePreviewDTO(
                 c.Id,
                 c.Title,
@@ -124,17 +123,17 @@ public class ArticleRepository : IArticleRepository
     public async Task<Option<IEnumerable<ArticlePreviewDTO>>> ReadAllArticlesAsync()
     {
         var result =  await _context.Articles
-                    .Select(content =>
+                    .Select(article =>
                         new ArticlePreviewDTO(
-                                content.Id,
-                                content.Title,
-                                content.Type,
-                                content.Created.ToUniversalTime(),
-                                content.Description,
-                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
-                                content.Difficulty,
-                                content.AvgRating,
-                                content.ImageURL
+                                article.Id,
+                                article.Title,
+                                article.Type,
+                                article.Created.ToUniversalTime(),
+                                article.Description,
+                                article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
+                                article.Difficulty,
+                                article.AvgRating,
+                                article.ImageURL
                                 )
                     ).ToListAsync();
         
@@ -145,17 +144,17 @@ public class ArticleRepository : IArticleRepository
     {
         var result =  await _context.Articles
                     .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
-                    .Select(content =>
+                    .Select(article =>
                         new ArticlePreviewDTO(
-                                content.Id,
-                                content.Title,
-                                content.Type,
-                                content.Created.ToUniversalTime(),
-                                content.Description,
-                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
-                                content.Difficulty,
-                                content.AvgRating,
-                                content.ImageURL
+                                article.Id,
+                                article.Title,
+                                article.Type,
+                                article.Created.ToUniversalTime(),
+                                article.Description,
+                                article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
+                                article.Difficulty,
+                                article.AvgRating,
+                                article.ImageURL
                                 )
                     ).ToListAsync();
         
@@ -170,17 +169,17 @@ public class ArticleRepository : IArticleRepository
         var result =  await _context.Articles
                     .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
                     .Where(article => article.Difficulty == diffycultyToEnum)
-                    .Select(content =>
+                    .Select(article =>
                         new ArticlePreviewDTO(
-                                content.Id,
-                                content.Title,
-                                content.Type,
-                                content.Created.ToUniversalTime(),
-                                content.Description,
-                                content.ProgrammingLanguages!.Select(p => p.Name).ToList(),
-                                content.Difficulty,
-                                content.AvgRating,
-                                content.ImageURL
+                                article.Id,
+                                article.Title,
+                                article.Type,
+                                article.Created.ToUniversalTime(),
+                                article.Description,
+                                article.ProgrammingLanguages!.Select(p => p.Name).ToList(),
+                                article.Difficulty,
+                                article.AvgRating,
+                                article.ImageURL
                                 )
                     ).ToListAsync();
         
@@ -193,32 +192,32 @@ public class ArticleRepository : IArticleRepository
 
         var all = await _context.Articles
                 .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
-                .Select(content =>
+                .Select(article =>
                 new ArticlePreviewDTO(
-                        content.Id,
-                        content.Title,
-                        content.Type,
-                        content.Created.ToUniversalTime(),
-                        content.Description,
-                        content.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
-                        content.Difficulty,
-                        content.AvgRating,
-                        content.ImageURL
+                        article.Id,
+                        article.Title,
+                        article.Type,
+                        article.Created.ToUniversalTime(),
+                        article.Description,
+                        article.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
+                        article.Difficulty,
+                        article.AvgRating,
+                        article.ImageURL
                         )
             ).ToListAsync();
 
         var result =  all.Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
-                  .Select(content =>
+                  .Select(article =>
                         new ArticlePreviewDTO(
-                                content.Id,
-                                content.Title,
-                                content.Type,
-                                content.Created.ToUniversalTime(),
-                                content.Description,
-                                content.ProgrammingLanguages,
-                                content.Difficulty,
-                                content.AvgRating,
-                                content.ImageURL
+                                article.Id,
+                                article.Title,
+                                article.Type,
+                                article.Created.ToUniversalTime(),
+                                article.Description,
+                                article.ProgrammingLanguages,
+                                article.Difficulty,
+                                article.AvgRating,
+                                article.ImageURL
                                 )
                     ).ToList();
         
@@ -233,34 +232,34 @@ public class ArticleRepository : IArticleRepository
         var allWithDifficulty = await _context.Articles
                 .Where(c => c.Title.ToLower().Contains(title.ToLower().Trim()))
                 .Where(article => article.Difficulty == diffycultyToEnum)
-                .Select(content =>
+                .Select(article =>
                     new ArticlePreviewDTO(
-                            content.Id,
-                            content.Title,
-                            content.Type,
-                            content.Created.ToUniversalTime(),
-                            content.Description,
-                            content.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
-                            content.Difficulty,
-                            content.AvgRating,
-                            content.ImageURL
+                            article.Id,
+                            article.Title,
+                            article.Type,
+                            article.Created.ToUniversalTime(),
+                            article.Description,
+                            article.ProgrammingLanguages!.Select(p => p.Name).ToList() ?? new List<string>(),
+                            article.Difficulty,
+                            article.AvgRating,
+                            article.ImageURL
                             
                             )
                 ).ToListAsync();
 
         var result = allWithDifficulty
                     .Where(article => article.ProgrammingLanguages!.Intersect(languages).Any())
-                    .Select(content =>
+                    .Select(article =>
                         new ArticlePreviewDTO(
-                                content.Id,
-                                content.Title,
-                                content.Type,
-                                content.Created.ToUniversalTime(),
-                                content.Description,
-                                content.ProgrammingLanguages,
-                                content.Difficulty,
-                                content.AvgRating,
-                                content.ImageURL
+                                article.Id,
+                                article.Title,
+                                article.Type,
+                                article.Created.ToUniversalTime(),
+                                article.Description,
+                                article.ProgrammingLanguages,
+                                article.Difficulty,
+                                article.AvgRating,
+                                article.ImageURL
                             
                                 )
                     ).ToList();
