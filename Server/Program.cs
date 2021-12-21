@@ -17,9 +17,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var connS = builder.Configuration.GetConnectionString("SETraining");
-Console.WriteLine(connS);
-builder.Services.AddDbContext<SETrainingContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("SETraining")));
+builder.Services.AddDbContext<SETrainingContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("SETrainingDB")));
 
 builder.Services.AddScoped<ISETrainingContext, SETrainingContext>();
 builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
