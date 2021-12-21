@@ -40,7 +40,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     public async Task Create_new_ProgrammingLanguage_returns_Created_ProgrammingLanguage()
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO { Name = "SourcePawn" };
+        var toCreate = new ProgrammingLanguageDTO("SourcePawn");
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
@@ -53,7 +53,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     public async Task Create_new_ProgrammingLanguage_With_special_Letters()
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO { Name = "Java2" };
+        var toCreate = new ProgrammingLanguageDTO("Java2");
 
         //Act
         var created = await _repository.CreateAsync(toCreate);
@@ -69,7 +69,7 @@ public class ProgrammingLanguagesRepositoryTests : IDisposable
     public async Task Create_new_ProgrammingLanguage_Where_Name_isEmpty_or_null_returns_null(string name)
     {
         //Arrange
-        var toCreate = new ProgrammingLanguageCreateDTO { Name = name };
+        var toCreate = new ProgrammingLanguageDTO(name);
 
         //Act
         var created = await _repository.CreateAsync(toCreate);

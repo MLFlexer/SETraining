@@ -36,7 +36,7 @@ public class ProgrammingLanguagesController : ControllerBase
     [Authorize]
     [HttpPost]
     [ProducesResponseType(typeof(ProgrammingLanguageDTO), 201)]
-    public async Task<IActionResult> Post(ProgrammingLanguageCreateDTO language)
+    public async Task<IActionResult> Post(ProgrammingLanguageDTO language)
     {
         var created = await _repository.CreateAsync(language);
         return CreatedAtAction(nameof(Get), new { created.Name }, created);

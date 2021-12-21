@@ -148,38 +148,37 @@
         "image/jpeg",
         "image/png"
     };
-    
+
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
     private IBrowserFile? VideoFile;
-    
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    bool? CheckBoxValue;
+
+    string? HtmlInput;
+    string? TitleInput;
+    string? DescriptionInput;
+
     string? NewLang;
-    
+
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
     int ChosenDifficulty = 0;
-    
+
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
     }
-    
+
     private void OnChooseType(int type)
     {
         ChosenType = type;
     }
-    
+
     //Methods for image uploads
     private async Task OnImageFileSelection(InputFileChangeEventArgs e)
     {
         ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
-        
+
         if (!AllowedImageContent.Contains(ImageFile.ContentType))
         {
             ClearImage();
@@ -194,7 +193,7 @@
             ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
+
     private async Task UploadImage()
     {
         if (ImageFile != null)
@@ -213,21 +212,21 @@
             }
         }
     }
-    
+
     private void ClearImage()
     {
         ImageName = Guid.NewGuid().ToString();
         ImageURL = null;
         ImageFile = null;
     }
-    
+
     //Methods for video upload
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
 
-        if (VideoFile.ContentType != "video/mp4")
+        if (VideoFile?.ContentType != "video/mp4")
         {
             ClearVideo();
             JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
@@ -241,7 +240,7 @@
             VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
+
     private async Task UploadVideo()
     {
         if (VideoFile != null)
@@ -261,34 +260,34 @@
             }
         }
     }
-    
+
     private void ClearVideo()
     {
         VideoName = Guid.NewGuid().ToString();
         VideoURL = null;
         VideoFile = null;
     }
-    
+
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         HtmlInput = args.Html;
     }
-    
+
     void OnTitleChange(string title)
     {
         TitleInput = title;
     }
-    
+
     void OnDescriptionChange(string description)
     {
         DescriptionInput = description;
     }
-    
+
     void OnHtmlChange(string html)
     {
         HtmlInput = html;
     }
-    
+
     void OnChosenDifficultyLevelChange(int value)
     {
         ChosenDifficulty = value;
@@ -298,18 +297,15 @@
     {
         ChosenLanguages = value;
     }
-    
+
     private async Task OnAddLanguage()
     {
         if (NewLang == null || NewLang.Trim() == "") return;
-        
+
         try
         {
-            var langToPost = new ProgrammingLanguageCreateDTO
-            {
-                Name = NewLang
-            };
-            
+            var langToPost = new ProgrammingLanguageDTO(NewLang);
+
             var response = await Http.PostAsJsonAsync("api/ProgrammingLanguages", langToPost);
 
             if (response.IsSuccessStatusCode)
@@ -347,10 +343,10 @@
             var article = new ArticleCreateDTO
             {
                 Body = HtmlInput,
-                Title = TitleInput,
+                Title = TitleInput!,
                 Type = ChosenType == 0 ? ArticleType.Video : ArticleType.Written,
                 Description = DescriptionInput,
-                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages![lang].Name).ToList(),
                 Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
                 ImageURL = ImageURL,
                 VideoURL = VideoURL
@@ -361,7 +357,7 @@
             {
                 var created = await response.Content.ReadFromJsonAsync<ArticleDTO>();
 
-                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created.Id}";
+                var uri = $"{NavigationManager.BaseUri}ArticleDetails/{created?.Id}";
 
                 NavigationManager.NavigateTo(uri);
             }

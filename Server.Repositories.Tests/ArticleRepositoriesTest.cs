@@ -14,7 +14,6 @@ public class ArticleRepositoriesTest : IDisposable
 {
     private readonly SETrainingContext _context;
     private readonly ArticleRepository _repository;
-    private bool _disposedValue;
     private const string _mockImageURL = "https://localhost:7021/mock_img";
     private const string _mockVideoURL = "https://localhost:7021/mock_vid";
 
@@ -33,6 +32,7 @@ public class ArticleRepositoriesTest : IDisposable
         var fsharp = new ProgrammingLanguage("FSharp");
         var python = new ProgrammingLanguage("Python");
         var golang = new ProgrammingLanguage("Golang");
+
         context.AddRange(
                 new Article("Introduction to Java", ArticleType.Written, DateTime.Today.ToUniversalTime(), DifficultyLevel.Expert)
                 {

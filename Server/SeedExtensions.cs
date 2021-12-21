@@ -8,14 +8,11 @@ namespace SETraining.Server;
 
 public static class SeedExtensions
 {
-    private static IArticleRepository _articleRepository = null!;
-
     public static IHost Seed(this IHost host)
     {
         using (var scope = host.Services.CreateScope())
         {
             var context = scope.ServiceProvider.GetRequiredService<SETrainingContext>();
-            _articleRepository = new ArticleRepository(context);
 
             SeedArticles(context);
         }

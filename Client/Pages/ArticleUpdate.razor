@@ -117,36 +117,36 @@
         "image/jpeg",
         "image/png"
     };
-    
+
     private string VideoName = Guid.NewGuid().ToString();
     private string? VideoURL;
     private IBrowserFile? VideoFile;
-    
-    string HtmlInput;
-    string TitleInput;
-    string DescriptionInput;
-    
-    bool? CheckBoxValue;
+
+    string? HtmlInput;
+    string? TitleInput;
+    string? DescriptionInput;
+
     string? NewLang;
-    
+
     ArticleDTO? article;
-    
+
     [Parameter]
     public int ArticleId { get; set; }
-    
+
     ProgrammingLanguageDTO[]? ProgrammingLanguages;
     IEnumerable<int> ChosenLanguages = new List<int>();
     int ChosenDifficulty;
-    
+
     protected override async Task OnInitializedAsync()
     {
         ProgrammingLanguages = await Http.GetFromJsonAsync<ProgrammingLanguageDTO[]>("api/ProgrammingLanguages");
         article = await Http.GetFromJsonAsync<ArticleDTO>($"api/Article/id={ArticleId}");
-        HtmlInput = article.Body;
-        TitleInput = article.Title;
-        ChosenType = (int) article.Type;
+        HtmlInput = article?.Body;
+        TitleInput = article?.Title;
+        ChosenType = (int) article?.Type!;
         DescriptionInput = article.Description;
         ChosenDifficulty = (int) article.Difficulty -1;
+
         LoadProgrammingLanguages();
         LoadImage();
 
@@ -158,11 +158,11 @@
 
     void LoadProgrammingLanguages()
     {
-        var ProgrammingLanguagesToStrings = ProgrammingLanguages.Select(p => p.Name).ToList();
+        var ProgrammingLanguagesToStrings = ProgrammingLanguages!.Select(p => p.Name).ToList();
         var temp = new List<int>();
-        foreach (var l in article.ProgrammingLanguages)
+        foreach (var l in article?.ProgrammingLanguages!)
         {
-           var i =  ProgrammingLanguagesToStrings.IndexOf(l);
+            var i =  ProgrammingLanguagesToStrings.IndexOf(l);
             temp.Add(i);
         }
         ChosenLanguages = temp;
@@ -170,7 +170,7 @@
 
     private void LoadImage()
     {
-        if (!string.IsNullOrWhiteSpace(article.ImageURL))
+        if (!string.IsNullOrWhiteSpace(article?.ImageURL))
         {
             ImageURL = $"{article.ImageURL}?nocache={Guid.NewGuid()}";
             ImageName = ImageURL.Split("/").Last();
@@ -182,13 +182,13 @@
     {
         ClearImage();
         ImageFile = e.GetMultipleFiles().FirstOrDefault();
-        
-        if (VideoFile.ContentType != "video/mp4")
+
+        if (VideoFile?.ContentType != "video/mp4")
         {
             ClearVideo();
             JSRuntime.InvokeAsync<bool>("alert", "Videos can only be in MP4 format");
         }
-        
+
         if (!AllowedImageContent.Contains(ImageFile.ContentType))
         {
             ClearImage();
@@ -203,7 +203,7 @@
             ImageURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
+
     private async Task UploadImage()
     {
         if (ImageFile != null)
@@ -234,22 +234,22 @@
         ImageURL = null;
         ImageFile = null;
     }
-    
+
     //Methods for video upload
     private void LoadVideo()
     {
-        if (!string.IsNullOrWhiteSpace(article.VideoURL))
+        if (!string.IsNullOrWhiteSpace(article?.VideoURL))
         {
             VideoURL = $"{article.VideoURL}?nocache={Guid.NewGuid()}";
             VideoName = VideoURL.Split("/").Last();
         }
     } 
-    
+
     private async Task OnVideoFileSelection(InputFileChangeEventArgs e)
     {
         ClearVideo();
         VideoFile = e.GetMultipleFiles().FirstOrDefault();
-        
+
         if (VideoFile != null)
         {
             var bytes = new byte[VideoFile.Size];
@@ -258,7 +258,7 @@
             VideoURL = $"data:{contentType};base64,{Convert.ToBase64String(bytes)}";
         }
     }
-    
+
     private async Task UploadVideo()
     {
         if (VideoFile != null)
@@ -278,52 +278,49 @@
             }
         }
     }
-    
+
     private void ClearVideo()
     {
         VideoName = Guid.NewGuid().ToString();
         VideoURL = null;
         VideoFile = null;
     }
-    
+
     void OnPaste(HtmlEditorPasteEventArgs args)
     {
         HtmlInput = args.Html;
     }
-    
+
     void OnTitleChange(string title)
     {
         TitleInput = title;
     }
-    
+
     void OnDescriptionChange(string description)
     {
         DescriptionInput = description;
     }
-    
+
     void OnHtmlChange(string html)
     {
         HtmlInput = html;
     }
-    
+
     void OnChosenDifficultyLevelChange(int value)
     {
         ChosenDifficulty = value;
     }
-    
+
     void OnChooseLanguages(IEnumerable<int> value)
     {
         ChosenLanguages = value;
     }
-    
+
     private async Task OnAddLanguage()
     {
         if (NewLang == null || NewLang.Trim() == "") return;
 
-        var langToPost = new ProgrammingLanguageCreateDTO
-        {
-            Name = NewLang
-        };
+        var langToPost = new ProgrammingLanguageDTO(NewLang);
         
         try
         {
@@ -363,10 +360,10 @@
             var article = new ArticleUpdateDTO
             {
                 Body = HtmlInput,
-                Title = String.IsNullOrEmpty(TitleInput) ? null : TitleInput,
+                Title = (String.IsNullOrEmpty(TitleInput) ? null : TitleInput)!,
                 Type = ChosenType == 0 ? ArticleType.Written : ArticleType.Video,
                 Description = DescriptionInput,
-                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages[lang].Name).ToList(),
+                ProgrammingLanguages = ChosenLanguages.Select(lang => ProgrammingLanguages![lang].Name).ToList(),
                 Difficulty = (DifficultyLevel) (ChosenDifficulty + 1),
                 ImageURL = ImageURL,
                 VideoURL = VideoURL

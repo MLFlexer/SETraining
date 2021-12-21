@@ -61,7 +61,7 @@ public class ProgrammingLanguagesControllerTest
     public async Task Create_creates_ProgrammingLanguage()
     {
         var logger = new Mock<ILogger<ProgrammingLanguagesController>>();
-        var toCreate = new ProgrammingLanguageCreateDTO{Name = "NewLanguage"};
+        var toCreate = new ProgrammingLanguageDTO("NewLanguage");
         var created = new ProgrammingLanguageDTO("NewLanguage");
         var repository = new Mock<IProgrammingLanguagesRepository>();
         repository.Setup(m => m.CreateAsync(toCreate)).ReturnsAsync(created);

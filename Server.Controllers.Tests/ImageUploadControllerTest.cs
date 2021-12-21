@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.Http;
 namespace Server.Controllers.Tests;
 
 public class ImageUploadControllerTest
-{
-    private ImageUploadController _controller;
-    
+{   
     [Fact]
     public async Task Create_With_Invalid_ContentType_Returns_BadRequest () {
         //Arrange
@@ -85,7 +83,7 @@ public class ImageUploadControllerTest
 
         //Assert
         Assert.IsType<CreatedResult>(actual);
-        Assert.Equal(ReturnURI.ToString(), actual.Location);
+        Assert.Equal(ReturnURI.ToString(), actual?.Location);
     }
     
     [Fact]
@@ -124,7 +122,7 @@ public class ImageUploadControllerTest
 
         //Assert
         Assert.IsType<CreatedResult>(actual);
-        Assert.Equal(ReturnURI.ToString(), actual.Location);
+        Assert.Equal(ReturnURI.ToString(), actual?.Location);
     }
     
     [Fact]
@@ -163,8 +161,7 @@ public class ImageUploadControllerTest
 
         //Assert
         Assert.IsType<CreatedResult>(actual);
-        Assert.Equal(ReturnURI.ToString(), actual.Location);
+        Assert.Equal(ReturnURI.ToString(), actual?.Location);
     }
-    
 }
 

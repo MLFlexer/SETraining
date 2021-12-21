@@ -83,7 +83,6 @@ public class VideoUploadControllerTest
 
         //Assert
         Assert.IsType<CreatedResult>(actual);
-        Assert.Equal(ReturnURI.ToString(), actual.Location);
+        Assert.Equal(ReturnURI.ToString(), actual?.Location);
     }
-    
 }

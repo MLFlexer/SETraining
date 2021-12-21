@@ -16,7 +16,7 @@ public class ProgrammingLanguagesRepository : IProgrammingLanguagesRepository
         _context = context;
     }
 
-    public async Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageCreateDTO language)
+    public async Task<ProgrammingLanguageDTO> CreateAsync(ProgrammingLanguageDTO language)
     {
         if (string.IsNullOrWhiteSpace(language.Name))
         {
